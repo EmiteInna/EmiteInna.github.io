@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">基于ComputeShader的URP脚印/车辙效果实现(开坑)</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Feb<span>r</span></span> <span class="day">20</span><span class="year">, 2023</span></span>
+								
+								
+							</div>
+								
+							
+							<p>
+								
+								<header><strong>简介</strong></header><br>
+								本次算是自己给自己的一个小作业，目标是做出类似原神沙漠的脚印效果，并且支持在凹凸不平的大型场景中运行，尽可能优化性能，当然能否用作落地还需探讨。<br>
+								出于性能的分析，从不同平台分析可以用到的方法，如果是在PC端的话，用CS做位移贴图+曲面细分着色器应该是最好的方法吧，移动端考虑是否使用CS，曲面细分着色器应该是不太会用了。<br>
+								<br>
+								<hr></hr>
+								<br>
+								<header><strong>1.轨迹效果+轨迹消失</strong></header><br>
+								Editor端初步效果（除了轨迹效果外什么都没开）<br>
+								<a class="image featured"><img src="images/gif01.gif" style="width: auto;" height="250" alt="" /></a>
+								（从美术的角度来说并不好看，并且有明显的锯齿，只是实现个轨迹+消失的效果而已）<br>
+								由于方法定在了ComputeShader（简称为cs），所以核心思路肯定是在C#脚本中给cs传值然后处理RenderTexture的计算，最后利用得到的RenderTexture来实现效果。<br>
+								在这一部分我希望可定义的参数有：轨迹的颜色、轨迹的大小、轨迹消失的时间。沙漠和雪原这种地图都是非常庞大的，而轨迹是一个和地图大小无关的细节型纹理，
+								如果用整张地图的大纹理作为计算目标显然非常消耗性能，几乎不可能实现。但是脚印存在时间是有限的，所以很容易想到可以创建一个跟随着玩家的纹理，只要玩家在全速奔跑的时候离之前踩过即将消失的脚印之间的距离不超过
+								这个纹理的长度，就可以用这个纹理代替大地图来实现运算。这里用来跟随的物体肯定是选用平面来测试最为直观，平面的Transform大小也可以为我们更改纹理大小起到一个直观显示的帮助作用。<br>
+								而当选用跟随玩家的平面来进行制作的话，就代表着玩家可以看做永远处在纹理中心点的位置，在脚本中我们可以根据玩家位移的位置和平面的大小来算出在此刻处在纹理(x,y)位置的点之前一帧处于什么位置。<br>
+								<a class="image featured"><img src="images/image02.png" style="width: auto;" height="50" alt="" /></a>
+								其中movement指玩家在此帧中的移动向量，texSize指用来储存轨迹的纹理大小，越大纹理的精度越高，支持的轨迹范围也越大，scale是平面的lossyscale。值得一提的是，当向量中某通道的值特别低时可以考虑将其归零，避免因为精度导致的即使人物不动轨迹也在移动的问题，如果是人物也在移动的话虽然也会有精度问题，但没那么容易看出来，精度问题是非常难以避免的。<br>
+								为了完成迭代，我们需要两张Rt，一张targetRT作为计算的结果来使用，一张originalRT用来储存当前帧的结果供下一帧来使用，后一张属于临时纹理，所以只需要用Temporary就可以了。<br>
+								在cs中，由于玩家在纹理中的位置永远处于中心，所以用当前位置和中心位置作距离，再与设定的轨迹的大小比较就能判断是否要在该位置添加新的轨迹，如果需要添加新的轨迹，直接在targetRT里修改。<br>
+								<a class="image featured"><img src="images/image03.png" style="width: auto;" height="50" alt="" /></a>
+								然后在脚本中用Graphics.Blit()函数把targetRT赋给originalRT，就能完成一次迭代。
+								<br><br>
+								但是很显然，现在的效果是走出来的轨迹不会消失，因为我们并没有计算消失的逻辑。一般来说，雪地中的脚印消失效果都是：
+								踩下去之后，脚印持续一段时间t1，然后在另一段时间t2内逐渐消失，我希望能够精确地控制t1和t2，但是在cs中能获取到的只有当前位置目前的颜色，仅靠这个参数是不够完成目标效果的，
+								我们还需要获取当前这个脚印已经存在多久了，这样就能完成效果，而纹理中每一个位置的时间都需要记录，我们可以用纹理的w通道来存储当前脚印持续的时间，我为了方便debug，姑且开了一张新的Rt来储存时间，这样多浪费了1/2的空间，并不值得，所以完成之后会再次修改。<br>
+								有了时间之后就可以实现上述的效果了，我们在当前位置重新生成脚印的范围内把时间设置为1，然后在各个位置让时间以参数设定的速率减少，然后在时间小于一定的阈值之后用线性插值来更新脚印的透明度，当时间归零时脚印的透明度也归零，这个过程可以用一个乘法的trick来避免使用if语句。<br>
+								<a class="image featured"><img src="images/image04.png" style="width: auto;" height="50" alt="" /></a>
+								这样我们就通过C#脚本和cs完成了轨迹的生成，接下来就是轨迹的使用，如果是平地地形的话我们大可以直接把这个平面的材质底色换成雪地的颜色直接显示出来，但是在凹凸起伏的地图上这样就行不通，不过由于玩家的位置和平面的大小都是已知的参数，我们只需要在雪地地形的材质片元着色器上利用世界坐标来计算一下就能把轨迹叠上去。<br>
+								<a class="image featured"><img src="images/image05.png" style="width: auto;" height="50" alt="" /></a>
+								这样计算得到的uv由于使用了纹理clamp计算，所以超过范围的值会被放到边缘，而边缘大概率是没有轨迹的，所以也是可行的，如果还是产生了这个原因导致的大片错误颜色，可以考虑对这个uv进行特殊判断或者是在cs中把边缘特殊处理，不过都会消耗一点性能。<br>
+								到这一步就完成了一个基础的轨迹效果，这个效果无论和场景的大小和凹凸程度无关，但是在多层的地图上可能会产生bug。
+								目前的轨迹只是一个简单的白色圆形，雪地shader上的计算也只是把颜色叠加上去，但是利用cs可以实现自定义的纹理形状，甚至是用视差或者法线贴图来实现更真实的效果。
+								（待更）
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

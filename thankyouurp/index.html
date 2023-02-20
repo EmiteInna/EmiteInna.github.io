@@ -47,9 +47,9 @@
 								传送门的颜色可以通过RenderFeature在另一个Pass中在Trasnparent顺序里用blend显示<br>
 								但是由于URP为了优化渲染，天空盒的渲染顺序在2500，这导致墙写入的深度值会导致skybox不被渲染，而墙本身也不会写入颜色，
 								这导致天空盒被挡住的那一部分不会写入任何颜色，要么继承上一帧的颜色值，要么显示黑色，形成错误的拖尾效果。<br>
-								<a href="#" class="image featured"><img src="images/image01.png" style="width: auto;" height="550" alt="" /></a>
+								<a class="image featured"><img src="images/image01.png" style="width: auto;" height="550" alt="" /></a>
 								而由于墙要去挡住不透明物体，Geometry的Queue在2500之前，并且传送门写入模板值的顺序还要在墙之前，所以墙只能在2500之前去渲染，
-								在不修改天空盒渲染顺序的情况下，这个问题就变得非常难解，而改变渲染顺序就要牺牲URP给天空盒带来的优化。
+								在不修改天空盒渲染顺序或是把传送门的Queue改成2500以后的情况下（把Queue改到2500以后会导致作用的物体不写入相机深度图，适用性不强），这个问题就变得非常难解，而改变渲染顺序就要牺牲URP给天空盒带来的优化。
 								当然如果要做这个传送门效果，估计也只能选择后者了。<br>
 								顺带一提，算了不提了，做透明顺序特效的Pass大伙应该都会，不献丑了。<br>
 								<header><strong>2.在Shader中写入摄像机深度图</strong></header>
@@ -59,9 +59,9 @@
 								但是这个Pass似乎按名字是写入深度法线图吧，在源码中还有另外一个Lightmode是写入深度图的，但是加入那个pass并没有效果，不知道
 								到底是urp的问题还是我的问题。<br>
 								另外，URP中只有渲染顺序在2500以前的物体才会写入深度图，虽然是热知识，但是当时我也搞了好久才知道……<br>
-								<header><strong>3.RenderTexture的释放</strong></header>
-								由于在Built-In中写多Pass是一个常见的效果解决方案，写CommandBuffer也和URP不一样，所以没有发现这个问题，RenderTexture的声明
-								和释放必须使用RenderTexture.GetTemporary()方法和RenderTexture.Release()方法来分配内存和释放，用rt.Release()方法并不能释放内存。<br>
+								<header><strong>3.临时RenderTexture的释放</strong></header>
+								由于在Built-In中写多Pass是一个常见的效果解决方案，写CommandBuffer也和URP不一样，所以没有发现这个问题，临时RenderTexture的声明
+								和释放必须使用RenderTexture.GetTemporary()方法和RenderTexture.ReleaseTemporary()方法来分配内存和释放，用rt.Release()方法并不能释放内存。<br>
 								在URP中CommandBuffer的Blit可以对RenderTargetIdentifier使用，而后者相比RenterTexture是一个更为完整的结构体，不过因为我没有找到
 								从RenderTargetIdentifier直接获得RenderTexture的方法，所以在需要设置材质的纹理资源，即material.SetTexture()的时候，依然需要用
 								RenderTexture来实现，目前还没有找到相关的方法。
@@ -74,8 +74,7 @@
 								后处理效果的规则是文件名必须和类名一样，这意味着每有一个后处理效果，我就得新建一个和它类名相同的文件，尽管实际上文件内容只有几行用来
 								声明控制shader的变量的代码。<br>
 								<header><strong>N.还是做个声明。</strong></header>
-								本篇实际上也算是记录了一下URP的学习过程，其实对urp并没有恶意，不是故意挑毛病的意思，URP提供了很多比较有用的东西，比如后处理这块和
-								RenderFeature这块，确实比传统的多pass要方便不少的，合理使用的话性能也比built-in要高不少。之后还会继续更新的。
+								本篇实际上也算是记录了一下URP的学习过程，其实还是很喜欢urp的，现在urp也已经成为unity的主流入门路线了。
 							</p>
 							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
 							
