@@ -1,0 +1,48 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+#pragma kernel CSPassData
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+RWStructuredBuffer<float> TimerBuffer;
+RWStructuredBuffer<float> LastTimerBuffer;
+float Width;
+float Height;
+float4 ColorSnow;
+float4 ColorTrail;
+float4 MoveVector;
+float Fade;
+float TrailSize;
+float TrailTime;
+
+float LengthAbs(float2 x,float2 y){
+    float2 dif=x-y;
+    return sqrt(dot(dif,dif));
+}
+[numthreads(16,16,2)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    
+    // TODO1: Copy the Original, and move against MoveVector.
+    int index1=clamp(id.y*Width-(int)MoveVector.y+id.x-(int)MoveVector.x,0,Width*Height-1);
+   // float index1=clamp(id.y*Width-55*Width+id.x+24,0,Width*Height-1);
+    int index2=id.y*Width+id.x;
+    float last=LastTimerBuffer[index1];
+    // TODO2: Fade the OriginalColor.
+    TimerBuffer[index2]=last;
+    // TODO3: Attach the new Color.
+    float2 center=float2(Width/2,Height/2);
+    float at=(TrailSize-LengthAbs(center,id.xy))/TrailSize;
+    if(at>0)TimerBuffer[index2]=1;
+    //if(at==0)Result[id.xy]=ColorSnow;
+    TimerBuffer[index2]=max(0,TimerBuffer[index2]-Fade/100);
+    Result[id.xy]=lerp(ColorSnow,ColorTrail,TimerBuffer[index2]*TrailTime);
+}
+
+[numthreads(16,32,2)]
+void CSPassData (uint3 id : SV_DispatchThreadID)
+{
+    int index=id.y*Width+id.x;
+    LastTimerBuffer[index]=TimerBuffer[index];
+    //Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+} 
