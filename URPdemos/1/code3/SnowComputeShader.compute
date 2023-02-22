@@ -1,0 +1,68 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+#pragma kernel CSPassData
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+RWStructuredBuffer<float2> DataBuffer;
+RWStructuredBuffer<float2> LastDataBuffer;
+float Width;
+float Height;
+float4 ColorSnow;
+float4 ColorTrail;
+float4 MoveVector;
+float Fade;
+float TrailSize;
+float TrailTime;
+float2 Unit;
+
+float LengthAbs(float2 x,float2 y){
+    
+    float2 dif=x-y;
+    return sqrt(dot(dif,dif));
+}
+float PowHeight(float x){
+    return max(0,3*pow(x,3)-2)-1;
+}
+float PowNormal(float x){
+    if(x<0.8736)return 0;
+    return 9*pow(x,2);
+}
+float3 packNormal(float3 normal){
+    return normal*0.5+0.5;
+}
+[numthreads(16,16,2)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    
+    //get last data and pass it
+    int index1=clamp(id.y*Width-(int)MoveVector.y*Width+id.x-(int)MoveVector.x,0,Width*Height-1);
+    int index2=id.y*Width+id.x;
+    // x,y for direction, z for time ,w for xPos
+    DataBuffer[index2]=LastDataBuffer[index1];
+    DataBuffer[index2].y=max(0,DataBuffer[index2].y-Fade/100);
+    float time=pow(min(TrailTime,DataBuffer[index2].y)/TrailTime,5);
+    float nowheight=lerp(0,DataBuffer[index2].x,time);
+    //figure out direction and distance
+    float2 center=float2(Width/2,Height/2);
+    float dis=LengthAbs(center,id.xy);
+    float2 direction=DataBuffer[index2].xy;
+    //update the new print
+    if(dis<TrailSize){
+        float inpos=dis/TrailSize;
+        float height=min(PowHeight(inpos),nowheight);
+        DataBuffer[index2].y=1;
+        nowheight=height;
+    }
+    DataBuffer[index2].x=nowheight;
+
+    //update Result
+    Result[id.xy]=float4(-nowheight,0,0,1);
+}
+
+[numthreads(16,32,2)]
+void CSPassData (uint3 id : SV_DispatchThreadID)
+{
+    int index=id.y*Width+id.x;
+    LastDataBuffer[index]=DataBuffer[index];
+} 
