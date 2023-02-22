@@ -1,0 +1,92 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+#pragma kernel CSPassData
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+RWStructuredBuffer<float4> DataBuffer;
+RWStructuredBuffer<float4> LastDataBuffer;
+float Width;
+float Height;
+float4 ColorSnow;
+float4 ColorTrail;
+float4 MoveVector;
+float Fade;
+float TrailSize;
+float TrailTime;
+float2 Unit;
+
+float LengthAbs(float2 x,float2 y){
+    
+    float2 dif=x-y;
+    return sqrt(dot(dif,dif));
+}
+float PowHeight(float x){
+    return max(0,3*pow(x,3)-2);
+}
+float PowNormal(float x){
+    if(x<0.8736)return 0;
+    return 9*pow(x,2);
+}
+float3 packNormal(float3 normal){
+    return normal*0.5+0.5;
+}
+[numthreads(16,16,2)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    //get last data and pass it
+    int index1=clamp(id.y*Width-(int)MoveVector.y*Width+id.x-(int)MoveVector.x,0,Width*Height-1);
+    int index2=id.y*Width+id.x;
+    // x,y for direction, z for time ,w for xPos
+    DataBuffer[index2]=LastDataBuffer[index1];
+    DataBuffer[index2].z=max(0,DataBuffer[index2].z-Fade/100);
+
+    //figure out direction and distance
+    float2 center=float2(Width/2,Height/2);
+    float dis=LengthAbs(center,id.xy);
+    float2 direction=DataBuffer[index2].xy;
+    float xpos=lerp(1,DataBuffer[index2].w,clamp(DataBuffer[index2].z*TrailTime,0,1));
+    //update the new print
+    if(dis<TrailSize){
+        float inpos=dis/TrailSize;
+        float height=PowHeight(inpos);
+        if(height<=PowHeight(xpos)){
+            xpos=inpos;
+            direction=normalize(float2(id.x-center.x,id.y-center.y));
+            DataBuffer[index2]=float4(direction,1,xpos);
+        }
+        DataBuffer[index2].z=1;
+    }
+    //count normal
+    float2 realDirection=lerp(float2(0,0),direction,clamp(DataBuffer[index2].z*TrailTime,0,1));
+    
+    //float2 realDirection=direction;
+    realDirection*=PowNormal(xpos);
+    float3 normal=float3(realDirection.x,0,realDirection.y)+float3(0,1,0);
+    normal=normalize(normal);
+    //update Result
+    Result[id.xy]=float4(packNormal(normal),1);
+    
+    //debug
+    // Result[id.xy]=float4(packNormal(direction),0);
+  //  Result[id.xy]=float4(xpos,xpos,xpos,1);
+}
+
+[numthreads(16,32,2)]
+void CSPassData (uint3 id : SV_DispatchThreadID)
+{
+    int index=id.y*Width+id.x;
+    LastDataBuffer[index]=DataBuffer[index];
+
+    //float4 sum=0;
+    //sum+=4*Result[id.xy];
+    //sum+=2*Result[id.xy+float2(0,1)];
+    //sum+=2*Result[id.xy+float2(0,-1)];
+    //sum+=2*Result[id.xy+float2(1,0)];
+    //sum+=2*Result[id.xy+float2(-1,0)];
+    //sum+=1*Result[id.xy+float2(-1,1)];
+    //sum+=1*Result[id.xy+float2(1,1)];
+    //sum+=1*Result[id.xy+float2(1,-1)];
+    //sum+=1*Result[id.xy+float2(-1,-1)];
+    //Result[id.xy]=sum/9;
+} 
