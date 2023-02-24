@@ -1,0 +1,164 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">NumberString</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">30</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							HDU 4055 Number String<br>
+							题目大意：<br>
+								由数字1到n组成的所有排列中，问满足题目所给的n-1个字符的排列有多少个，如果第i字符是'I'表示排列中的第i-1个数是小于第i个数的。如果是‘D’，则反之。<br>
+								example：“ID”对应132,231； “I?”对应123 132 231,N&lt= 1e4<br>
+								这题让我对全排列类型的题目有了新的认知，大家都已经知道了这题的做法是用dp[i][j]表示在第i个位置且最后一个位置为j时候的排列个数。关键在于，在状态上如果由于第i个位置共有i个数，有可能出现在之前的i1状态结尾出现的数也出现在了状态i2上，这个时候规定当前面的数大于等于j时将其设置为本身加一，比如原本的dp[3][3]表示的状态之一“123”转移到dp[4][2]时就变成了“1342”，从而避免了重复且覆盖了全排列。<br>
+								至于为什么选择最后一个数作为j的原因当然是为了转移和无后效性，因为下一位的数字选择只和前一位有关。<br>
+								转移非常好写，如果第i位是”?”，那么dp[i][j]等于dp[i-1]的前缀和，如果为”I”，则为dp[i-1]中小于j的和，如果为”D”，则为大于等于j，之所以大于等于j是因为上一位等于j的时候实际上等于j+1，注意遍历j的时候只能遍历到1-i，否则会产生重复和数位超界的情况。<br>
+								最后的答案是dp[i]的和，复杂度为O(n2)。<br>
+								知道解法之后这题就变得相当简单了，但是这种解决全排列的方法非常值得学习，同时也开启了线性dp的另一维度：不直接表示状态，而是通过能够决定状态的参量表示状态，也是在求方案数的dp中常见且困难的一类，关键在于想出能够表示状态且能够进行转移的参量来更好地进行状态转移，一般来讲，当要求全排列或者是n个数每个数有k种选择或者n个数里挑k个数加起来的题目大多可以转换为这种形式（或者数论形式），当然，如果n在12以内，状压也是不错的选择。<br>
+								<br>
+								#非常规状态设置 #线性dp #全排列<br>
+								代码：<br>
+								<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+#include<iostream>
+#include<queue>
+#include<cmath>
+#include<map>
+#include<stack>
+#include<set>
+#define inc(i,l,r) for(int i=l;i<=r;i++)
+#define dec(i,l,r) for(int i=l;i>=r;i--)
+#define link(x) for(edge *j=h[x];j;j=j->next)
+#define mem(a) memset(a,0,sizeof(a))
+#define ll long long
+#define eps 1e-12
+#define succ(x) (1<<x)
+#define lowbit(x) (x&(-x))
+#define sqr(x) ((x)*(x))
+#define mid (x+y>>1)
+#define NM 1005
+#define nm 5000005
+#define pi 3.1415926535897931
+const ll inf = 1000000007;
+using namespace std;
+ll read() {
+	ll x = 0, f = 1; char ch = getchar();
+	while (!isdigit(ch)) { if (ch == '-')f = -1; ch = getchar(); }
+	while (isdigit(ch))x = x * 10 + ch - '0', ch = getchar();
+	return f * x;
+}
+
+
+
+
+ll d[NM][NM], ans;
+int n;
+char s[NM];
+int main() {
+	while (~scanf("%s", s + 2)) {
+		n = strlen(s + 2) + 1; mem(d);
+		d[1][1] = 1; ans = 0;
+		inc(i, 2, n) {
+			if (s[i] == 'I')
+				inc(j, 1, i)d[i][j] = (d[i][j - 1] + d[i - 1][j - 1]) % inf;
+			else if (s[i] == 'D')
+				dec(j, i, 1)d[i][j] = (d[i][j + 1] + d[i - 1][j]) % inf;
+			else {
+				int t = 0;
+				inc(j, 1, i)t += d[i - 1][j], t %= inf;
+				inc(j, 1, i)d[i][j] = t;
+			}
+			inc(j,1,i)
+				cout << "dp." << i << "." << j << " = " << d[i][j] << endl;
+		}
+		inc(i, 1, n)ans += d[n][i], ans %= inf;
+		printf("%lld\n", ans);
+		mem(s);
+	}
+	return 0;
+}
+
+								</code></pre>
+								
+
+							
+							<p>
+								
+	
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">PermutationShift范围压缩</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">May<span></span></span> <span class="day">13</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF1553E Permutation Shift<br>
+								题目大意：给一个长为n（3e5）的permutation和一个m（&lt=n/3），问是否存在k，使得原permutation在经过一个距离为k的旋转之后只需要m以内次数的两两交换就能变成递增序列，如果能的话输出所有可能的k。<br>
+								<br>
+								首先是常识：对于一个permutation，要将其通过两两交换来使得其变回増序列需要的交换次数等同于(N-原序列和增序列中对应建图形成的连通块数)。<br>
+								证明：对于一个长度为n的闭环，我们需要n-1次交换来时期变为n个单独的连通块，而所谓的使原序列变为递增序列的本质其实就是把原序列变成n个单独的连通块，那么假设其能分成m个连通块，则每个连通块需要的交换次数都是len-1，总共的交换次数就是n-m。<br>
+								但是本题来说k有N个，每个都要通过建图检验（复杂度为N）来计算的话实在是太过苛刻。<br>
+								M&lt=n/3，这里肯定有问题，其实对于我们来讲，假设一共需要交换m次能回到原位（接下来我都用原位来表示増序列中每个数的位置），那么交换之前不在原位的数最多只有2*m个，也就是说，至少需要有n-2*m个数是在原位的，在这里交换的次数最多是n/3，也就是说至少要有n/3个数在原位我们才能够保证成立。<br>
+								而旋转k次之后在原位的数的数量我们可以预处理求出（即对于每个数，求出它需要多少步旋转来回到原位，用一个数组ksize来记录）<br>
+								但即使如此，如何知道一共有多少个k呢？其实已经很清楚了，当ksize&gtn/3时才有成功的可能，m如果小于n/3的话这个阈值会更大，而所有ksize的总和是n，换句话说，即使m取到最大值，也只可能有3个合格的k出现，不合格的k会被ksize&gt=n-2*m这个条件筛掉，而只有符合条件的k才去进行建图检验，复杂度为O(3n)。<br>
+								非常优秀的题目，考验依靠数学来化简复杂度的能力，同时也考验了对于题目中常数范围的理解，算是范围压缩的经典题目。<br>
+								<br>
+								代码：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 300005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(int i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+#define pi 3.141592657
+using namespace std;
+ll gcd(ll a, ll b) {
+	if (a &lt b)swap(a, b);
+	if (b == 0)return a;
+	return gcd(b, a % b);
+}
+ll cpow(ll x, ll n) {
+	ll ans = 1;
+	while (n &gt 0) {
+		if (n & 1) ans = (ans * x) % mdl;
+		x = (x * x) % mdl;
+		n &gt&gt= 1;
+	}
+	return ans;
+}
+
+/*
+-----------------------------------------------------------------------------------
+100
+10 4
+10 6 8 4 7 5 2 3 9 1
+*/
+vector&ltint&gt tree[maxn];
+bool vis[maxn];
+int a[maxn],ksize[maxn];
+
+
+void dfs(int n, int dad) {
+//	cout &lt&lt "now dfsing" &lt&lt n &lt&lt endl;
+	vis[n] = 1;
+	inc(i, 0, tree[n].size()) {
+		int son = tree[n][i];
+		if (son == dad||vis[son]==1)continue;
+		dfs(son, n);
+	}
+}
+int cntnum(int n) {
+	int cnt = 0;
+	inc(i, 0, n) {
+		if (vis[i] == 0) {
+			dfs(i, -1);
+			cnt++;
+		}
+	}
+	return n - cnt;
+}
+vector&ltint&gt ans;
+int main() {
+	cfast;
+	int t=1;
+	cin &gt&gt t;
+	while (t--) {
+		int n, m;
+		cin &gt&gt n &gt&gt m;
+		inc(i, 0, n) {
+			ksize[i] = 0;
+		}
+		ans.clear();
+		inc(i, 0, n) {
+			cin &gt&gt a[i];
+			a[i]--;
+			if (a[i] &lt= i) {
+				ksize[i-a[i]]++;
+			}
+			else {
+				ksize[i + n - a[i]]++;
+			}
+		}
+		inc(k, 0, n) {
+			if (ksize[k] &gt= n - 2 * m) {			
+				inc(i, 0, n) {
+					int mc = (i + n - k) % n;
+					tree[mc].push_back(a[i]);
+					tree[a[i]].push_back(mc);
+				//	cout &lt&lt "pushed " &lt&lt mc &lt&lt " and " &lt&lt a[i] &lt&lt endl;
+				}
+
+				int c = cntnum(n);
+			//	cout &lt&lt "c=" &lt&lt c &lt&lt endl;
+				if (c &lt= m)ans.push_back(k);
+				inc(i, 0, n) {
+					tree[i].clear();
+					vis[i] = 0;
+				}
+			}
+		}
+		cout &lt&lt ans.size() &lt&lt " ";
+		inc(i, 0, ans.size()) {
+			cout &lt&lt ans[i] &lt&lt " ";
+		}cout &lt&lt endl;
+	}
+}
+/*
+2022.5.5 13:04
+*/
+
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

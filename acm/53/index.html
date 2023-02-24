@@ -1,0 +1,175 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">BagofMice概率dp入门</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">15</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF148D Bag of Mice<br>
+								题目大意：有b只黑老鼠和w只白老鼠（都<=1000），公主先抽，公主抽完不会有任何变化，只是抽到的老鼠消失，龙抽完之后除了被抽的那只消失，还有另一只会跑出去，他们俩谁先抽到白老鼠谁赢，问公主赢的概率。<br>
+								<br>
+								概率DP入门题，求概率顺推，求期望逆推，本题的状态非常好想：dp[i][j]表示还剩下i只白老鼠和j只黑老鼠并轮到公主抽卡（？）的概率，那么这个概率乘上公主抽到白老鼠的概率就是答案的一部分，而如果没抽到的话，龙有两种情况，一种是抽到黑老鼠并有白老鼠跑了，一种是抽到黑老鼠并有黑老鼠跑了，两种都可以顺利转移，只要求一下概率就行。<br>
+								概率DP定态的关键是找到一定操作后的“现状”，因为只有有了现状才能去推到下一步，本题实际上完全无法表现概率DP真正困难的地方，但是却有定态现状的思想，所以还算适合作为入门题去考虑。题目也没有什么坑，记得特判组合数越界的情况以及两个都为0的情况（因为C00等于1所以会出错）。<br>
+								<br>
+								代码：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 500005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(ll i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+using namespace std;
+double dp[1001][1001];
+inline double C(int btm, int top) {
+	if (btm == 0)return 0;
+	if (top == 0)return 1;
+	if (top == 1) {
+		return (double)btm;
+	}
+	else {
+		return (double)btm * (double)(btm - 1.0) / 2.0;
+	}
+}
+int main() {
+	//cfast;
+	int w, b;
+	cin &gt&gt w &gt&gt b;
+	if (w + b == 0) {
+		cout &lt&lt "0.000000000";
+		return 0;
+	}
+	double ans = 0;
+	dp[w][b] = 1;
+	for (int i = w; i &gt= 0; i--) {
+		for (int j = b; j &gt= 0; j--) {
+			if (dp[w][b] != 0){
+				if (j != 0)
+					ans += dp[i][j] * C(i, 1) / C(i + j, 1);
+				else ans += dp[i][j];
+			}
+			if (i &gt= 1 && j &gt= 2) {
+				double mul = C(j, 1) / C(j + i, 1) * C(j - 1, 1) / C(i + j - 1, 1) * C(i, 1) / C(i + j - 2, 1);
+				dp[i - 1][j - 2] += dp[i][j] * mul;
+	///			cout &lt&lt "editing" &lt&lt i - 1 &lt&lt "." &lt&lt j - 2 &lt&lt "mul="&lt&ltmul&lt&ltendl;
+			}
+			if (j &gt= 3) {
+				dp[i][j - 3] += dp[i][j] * C(j, 1) / C(j + i, 1) *C(j-1,2)/C(j+i-1,2);
+			}
+		//	cout &lt&lt "dp." &lt&lt i &lt&lt "." &lt&lt j &lt&lt " = " &lt&lt dp[i][j] &lt&lt endl;
+		}
+	}
+	printf("%.9lf", ans);
+}
+
+
+/*
+3
+2 2 2
+5 5 5
+5 5 5
+*/
+	
+
+
+
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

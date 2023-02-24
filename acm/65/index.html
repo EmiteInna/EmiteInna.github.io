@@ -1,0 +1,184 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">GamewithCards决策线性dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">30</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 1539E Game with Cards<br>
+								题目大意：起始时每只手上有一张卡，值全为0，每轮会发下一张卡，可以替换左手或者右手（一定要换），使得替换完之后左右手的卡数值都在给定的范围内（每次给定的范围不同），求能否在完成n轮（2e5）后还能一直满足条件，输出满足条件的替换方法。<br>
+								<br>
+								据说是套路题，但个人感觉是很难的题。如果直接无脑去定义状态（按轮数和替换方法，或者按左右手）会发现转移非常困难，记录转移更是麻烦，问题的关键在于之前的替换手牌会影响之后这只手是否在不替换卡牌的情况下能满足条件。换句话说，只要被替换的是当前这只手，那么就可以覆盖掉之前所有的替换。所以一只手能否满足条件取决于他当前被替换的卡牌以及上一次被替换的时间，注意是时间而不是数值，因为时间是可以维护的而数值不行。<br>
+								那么分类讨论，如果第n轮左手被换并且上一次右手被换是在第k轮，此时满足条件，那么说明在第k+1到n轮内，我们拿到的所有卡牌都满足左手的条件，且右手手上的第k轮拿到的卡牌在这些轮内都满足右手的条件，第一部分我们可以通过递推的方式完成，而第二部分必须每次都继承。写成公式就是dpLeft[i]=dpLeft[i-1]&&(rightrangeL<=dpRight[k]<=rightrangeR)，只要存在这个k那么dpLeft就是存在的（这里用dp加方向表示在这个方向的手上第i轮抽卡能不能满足条件）。那么显然维护的关键就在于右手的这个k了。<br>
+								这个时候如果正向去维护的话是非常麻烦的，因为你永远不知道哪个k才有可能是合格的，而范围也在不断变换，这可能会造成后效性。但如果反向维护的话，就变成了维护范围，并通过范围来判断能否从i转移到k，而这个范围只要不断取交集，并用单调队列去维护就行了，由于每次转移的实质其实是靠变换方向的（因为都是从一边转移到另一边），所以答案的记录只要在遍历的同时完成就行了，是一个O(n)的神奇解法。<br>
+								个人在理解上还是花了很长的时间，在做到的dp里感觉也属于是非常难了，然而大佬们都说是套路题，我哭死。<br>
+								代码里其实并没有用到单调队列，因为实际上倒推的话已经没有后效性了，那么能转移的地方就可以放心转移，转移之后原来的范围限制直接归零，对于更往前的抽卡增加了容忍性，其实也包含了贪心的思想在里面，如果这步结论推出来，那么代码就是纯纯的模拟题了。<br>
+								<br>
+								代码：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 200005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(int i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+using namespace std;
+int l[maxn][2], r[maxn][2], c[maxn], nxt[maxn][2],wh[2],L[2],R[2];
+int main() {
+	cfast;
+	int n,m;
+	cin &gt&gt n&gt&gtm;
+	wh[0] = n + 1, wh[1] = n + 1;
+	inc(i, 1, n + 1) {
+		cin &gt&gt c[i] &gt&gt l[i][0] &gt&gt r[i][0] &gt&gt l[i][1] &gt&gt r[i][1];
+	}
+	L[0] = L[1] = 0, R[0] = R[1] = m;
+	int t0=1, t1=1;
+	for (int i = n; i &gt 0; i--) {
+		
+		if (l[i][0] &gt c[i] || c[i] &gt r[i][0])t0 = 0;
+		if (l[i][1] &gt c[i] || c[i] &gt r[i][1])t1 = 0;
+		L[0] = max(L[0], l[i][1]), L[1] = max(L[1], l[i][0]);
+		R[0] = min(R[0], r[i][1]), R[1] = min(R[1], r[i][0]);
+		int ju0 = 0, ju1 = 0;
+		if (t0 == 1 && L[0] &lt= c[i - 1] && c[i - 1] &lt= R[0])ju0 = 1;
+		if (t1 == 1 && L[1] &lt= c[i - 1] && c[i - 1] &lt= R[1])ju1 = 1;
+		if (ju0 == 1)nxt[i][0] = wh[0];
+		if (ju1 == 1)nxt[i][1] = wh[1];
+		if (ju0 == 1) {
+			t1 = 1;
+			wh[1] = i;
+			L[1] = 0;
+			R[1] = m;
+		}
+		if (ju1 == 1) {
+			t0 = 1;
+			wh[0] = i;
+			L[0] = 0;
+			R[0] = m;
+		}
+	}
+	if (wh[0] &gt 1 && wh[1] &gt 1) {
+		cout &lt&lt "No" &lt&lt endl;
+		return 0;
+	}
+	cout &lt&lt "Yes" &lt&lt endl;
+	int p = 1;
+	if (wh[1] &gt 1)p = 1;
+	else p = 0;
+	for (int i = 1; i &lt= n; i = nxt[i][p], p = 1 - p) {
+		//cout &lt&lt "p=" &lt&lt p &lt&lt " next"&lt&lti&lt&lt"."&lt&ltp&lt&lt" = " &lt&lt nxt[i][p] &lt&lt endl;
+		inc(j, i, nxt[i][p]) {
+			cout &lt&lt p &lt&lt " ";
+		}
+	}
+
+}
+/*
+2022.4.27 14:46
+3
+1 1
+3 2
+2 3
+*/
+
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

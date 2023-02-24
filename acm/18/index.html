@@ -1,0 +1,191 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">GameMaster思维&值型dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">31</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF1608C Game Master<br>
+								题目大意，有n个人（n范围为1e5），分别在a场和b场上有a[i]，b[i]战力，现在你来分配对战顺序和对战场地来使得其中一人最终获胜，问有哪些人可以获胜。<br>
+								<br>
+								其实是道思维题，我们首先用结构体记录，然后按a[i]上的战力从大到小排序，最大的那个显然是可以赢的，只要在a场上一路暴杀下去就可以了，那么之后呢？<br>
+								假设刚刚这个人为p，如果有一个人在b场上可以打赢p，那么他就可以赢得比赛，我只要让p先把其他人鲨完再输给他就行了，换句话说，只要在b场上能够打赢p的就能赢。<br>
+								也就是说，b[i]>b[p]的都能赢。<br>
+								按b场战力顺序排序，顺序找到b[p]的位置就行（为什么是顺序而不是二分接下来会说，实际上要记录答案也不能二分吧）。在查找的过程中更新一个a[i]的最小值，至于为什么不用多说了。<br>
+								没错，赢了能赢的就能赢。<br>
+								接下来再一次遍历a场战力排序的那个数组，只要a[i]大于上轮在b里找到的最小值就能赢，同时再更新b组中的最小值，一直往复更新，每次搜索的时候从上次的最小值到这次的最小值顺序搜索，复杂度不会超过O(n)，直到我无法再找到任何一个大于那个最小值的数，剩下的人就赢不了了。<br>
+								吐槽一下，题目的标签有dfs，有datastructure，有dp，却没有sorting啊，明明只要sort就结束了。<br>
+								<br>
+								代码（我代码不是这么写的，而是一直在判b，实时更新b的最小值，至于为什么能AC，自己想想捏）：<br>
+								<br>
+								<br>
+								
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 100005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+using namespace std;
+struct node {
+	ll a, b, num, avlb;
+	friend bool operator<(node n1, node n2) {
+		return n1.a < n2.a;
+	}
+}ply[maxn];
+bool cmp(node n1, node n2) {
+	return n1.num < n2.num;
+}
+int main()
+{
+	cfast;
+	int t;
+	cin >> t;
+	while (t--) {
+		int n;
+		cin >> n;
+		int f1 = 0,f2=0;
+		ll ma1=0, ma2=0;
+		for (int i = 0; i < n; i++) {
+			cin >> ply[i].a;
+			ply[i].num = i;
+			ply[i].avlb = 0;
+			if (ply[i].a > ma1) {
+				ma1 = ply[i].a;
+				f1 = i;
+			}
+		}
+		for (int i = 0; i < n; i++) {
+			cin >> ply[i].b;
+			if (ply[i].b > ma2) {
+				ma2 = ply[i].b;
+				f2 = i;
+			}
+		}
+		ply[f1].avlb = 1;
+		ply[f2].avlb = 1;
+		ll aneed = ply[f2].a,bneed=ply[f1].b;
+		ll last = n;
+		sort(ply, ply + n);
+		int f = 1;
+		while (f == 1) {
+			f = 0;
+			for (int i = last-1; i >=0; i--) {
+				if (ply[i].b > bneed) {
+					f = 1;
+					for (int j = i; j < last; j++) {
+						ply[j].avlb = 1;
+						bneed = min(bneed, ply[j].b);
+					}
+					last = i;
+					break;
+				}
+			}
+		}
+		sort(ply, ply + n, cmp);
+		for (int i = 0; i < n; i++)cout << ply[i].avlb;
+		cout << endl;
+	}
+
+
+}
+/*
+2
+1 3 1 2 3
+2 6 -1 4 -2 3 -2 3
+*/
+
+	
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

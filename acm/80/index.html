@@ -1,0 +1,281 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">LCMSums</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Oct<span>o</span></span> <span class="day">31</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								1712E2 LCM Sum(hard version)<br>
+								题目大意：1e5个询问，给l,r(2e5)，求有多少三元组使其lcm&gt=元素和。<br>
+								<br>
+								第一眼先知道方向是<br>
+								首先我们知道lcm肯定是最大数k的倍数，如果这个倍数&gt=3那么lcm肯定&gt和。为1肯定小于，而为2的时候呢？要是为2，那么i和j至少有一个是2k的因数，且i+j&gtk，可以发现这种条件仅当i=2x/4,j=2x/3或者i=2x/5,j=2x/3时可以满足，而这也就是倍数为2的所有情况。显然满足这种条件的k分别是6和15的倍数，那么这种元祖的数量就是r/6-(l-1)/3和r/15-(l-1)/6个。<br>
+								接下来讨论倍数为1的情况，如果在easy version的t=5情况下，暴力就能n√n地把答案求出来，而t多了之后首先想到离线+区间的操作，这样的操作会给我们提出一个要求：我们需要在排序完，之后一边（假设是l）按顺序减小（r就是增加了）时需要通过另一个值（对应地是r）来O(能过)地求出这个区间的答案，在本题里，和r相关的显然是三元组里的k，而k可以是l+2到r区间内的任意一个数，所以肯定需要区间和来做到O(能过)求贡献数，这就要求区间里的每个点都是对应k的贡献。<br>
+								那么k的贡献是什么，显然i和j都＜k，且当lcm=k时i和j都是k的因数，那么以k为结尾的三元组就是C(之前出现的因数数量,2)，也就是一个等差数列和，那么就可以实时维护。<br>
+								按l从大到小排序的情况下，将一个cur从max(r)下移，为每个cur，枚举其所有倍数来维护这个等差数列和，把答案维护到区间数据结构里（单点修改），然后到cur=l的时候，查询区间(l,r)（或者(1,r)），然后维护答案。<br>
+								之后用C(n,3)去减一下就能得到ans，复杂度为O(rlogn+nlogr)。<br>
+								<br>
+								答案：<br>
+								<br>
+<pre><code>
+#pragma comment(linker, "/STACK:102400000,102400000")
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltbits/stdc++.h&gt
+#include &ltunordered_map&gt
+using namespace std;
+#define pb push_back
+#define fi first
+#define se second
+#define ll long long
+#define maxn 200005
+#define ls o&lt&lt1
+#define rs (o&lt&lt1)+1
+#define endl '\n'
+#define cfast ios::sync_with_stdio(0), cin.tie(0),cout.tie(0)
+#define mdl 998244353
+#define inc(i,a,b) for(int i=a;i&ltb;i++)
+#define pii pair&ltint,int&gt
+//----------------------------------------------------------------------------------------------------------------------//
+template&lttypename t1, typename t2&gt
+void debug(t1 x, t2 y) {
+	cout &lt&lt x &lt&lt " : " &lt&lt y &lt&lt endl;
+}
+template&lttypename t1&gt
+void debug(t1 x) {
+	inc(i, 0, x.size()) {
+		cout &lt&lt x[i] &lt&lt " ";
+	}cout &lt&lt endl;
+}
+template&lttypename t1&gt
+void debug(t1 x, int l, int r) {
+	inc(i, l, r) {
+		cout &lt&lt x[i] &lt&lt " ";
+	}cout &lt&lt endl;
+}
+ll cpow(ll x, ll n, ll md) {
+	int ans = 1;
+	while (n &gt 0) {
+		if (n & 1) ans = (ans * x) % md;
+		x = (x * x) % md;
+		n &gt&gt= 1;
+	}
+	return ans;
+}
+ll gcd(ll a, ll b) {
+	if (a &lt b)swap(a, b);
+	if (b == 0)return a;
+	else return gcd(b, a % b);
+}
+ll string2ll(string s) {
+	ll tmp = 1;
+	ll res = 0;
+	for (int i = s.length() - 1; i &gt= 0; i--) {
+		res += (ll)(s[i] - '0') * tmp;
+		tmp *= 10ll;
+	}
+	return res;
+}
+string ll2string(ll num) {
+	string res = "";
+	while (num) {
+		res += (char)(num % 10 + '0');
+		num /= 10;
+	}
+	reverse(res.begin(), res.end());
+	return res;
+}
+ll f[300005], inv[300005];
+void inif() {
+	f[0] = inv[0] = 1;
+	for (ll i = 1; i &lt= 300000; i++) {
+		f[i] = f[i - 1] * i % mdl;
+		inv[i] = cpow(f[i], mdl - 2, mdl);
+	}
+}
+inline ll C(ll n, ll m) {
+	if (m &gt n)return 0;
+	return f[n] * inv[m] % mdl * inv[n - m] % mdl;
+}
+
+struct ST {
+	ll st[maxn * 4], a[maxn],tag[maxn*4];
+	void build(int o, int l, int r) {
+		if (l == r) {
+			st[o] = a[l];
+			return;
+		}
+		int mid = (l + r) &gt&gt 1;
+		build(ls, l, mid);
+		build(rs, mid + 1, r);
+		st[o] = st[ls]+ st[rs];
+	}
+	void push_down(int o, int l, int r) {
+		int mid = (l + r) / 2;
+		if (tag[o]) {
+			tag[rs] += tag[o];
+			tag[ls] += tag[o];
+			st[ls] += (mid - l + 1) * tag[ls];
+			st[rs] += (r - mid) * tag[rs];
+			tag[o] = 0;
+		}
+	}
+	void push_up(int o) {
+		st[o] = st[ls] + st[rs]; 
+	}
+	void queryadd(int o, int l, int r, int ql, int qr,ll val) {
+		
+		if (ql &lt= l && r &lt= qr) {
+			tag[o] += val;
+			st[o] += (r - l + 1) * val;
+			return;
+		}
+		push_down(o, l, r);
+		int mid = (l + r) &gt&gt 1;
+		if (ql &lt= mid)queryadd(ls, l, mid, ql, qr, val);
+		if (qr &gt mid)queryadd(rs, mid + 1, r, ql, qr, val);
+		push_up(o);
+	}
+	ll querysum(int o, int l, int r, int ql, int qr) {
+		if (ql &lt= l && r &lt= qr) {
+			return st[o];
+		}
+		push_down(o, l, r);
+		int mid = (l + r) &gt&gt 1;
+		ll ans = 0;
+		if (ql &lt= mid)ans+=querysum(ls, l, mid, ql, qr);
+		if (qr &gt mid)ans+=querysum(rs, mid + 1, r, ql, qr);
+		return ans;
+	}
+}st;
+struct ttm {
+	int l, r, num;
+	friend bool operator&lt(ttm t1, ttm t2) {
+		return t1.l &gt t2.l;
+	}
+}ques[maxn];
+ll ans[maxn];
+ll num[maxn];
+vector&ltint&gt facs;
+int main() {
+	cfast;
+	int t = 1;
+
+	//inif();
+	cin &gt&gt t;
+	inc(tt, 0, t) {
+		cin &gt&gt ques[tt].l &gt&gt ques[tt].r;
+		ques[tt].num = tt;
+		ll n = ques[tt].r - ques[tt].l + 1;
+		ans[tt] = n * (n - 1) * (n - 2) / 6;
+		ans[tt] -= max(0, ques[tt].r / 6 - (ques[tt].l-1) / 3) + max(0, ques[tt].r / 15 - (ques[tt].l-1) / 6);
+	}
+	sort(ques, ques + t);
+
+	st.build(1, 1, 2e5);
+	
+	//cout &lt&lt st.querysum(1, 1, 2e5, 1, 10);
+	int now = 2e5;
+	inc(i, 0, t) {
+		while (now &gt= ques[i].l) {
+			ll base = now;
+			for (ll j = now * 2; j &lt= 2e5; j += base) {
+				st.queryadd(1, 1, 2e5, j, j, num[j]);
+				num[j]++;
+			}
+			now--;
+		}
+
+		ans[ques[i].num] -= st.querysum(1, 1, 2e5, 1, ques[i].r);
+	}
+	inc(i, 0, t) {
+		cout &lt&lt ans[i] &lt&lt endl;
+	}
+}
+/*
+6 2
+5 5 10 10 5 5
+6 3
+5 5 10 10 5 5
+*/
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

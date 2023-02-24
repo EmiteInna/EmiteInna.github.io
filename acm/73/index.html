@@ -1,0 +1,204 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">AmShZandGOAT子序列存在问题</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Jun<span>e</span></span> <span class="day">21</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF1610E AmShZ and G.O.A.T<br>
+								大意：一个数组，求至少删除几个数能使得新的得到的数组里不存在任何子序列，子序列中大于平均数的数严格大于小于平均数的数。<br>
+								<br>
+								首先我们很容易发现，任何不符合条件的子序列，它中间至少会有一个长度为3的子序列，不满足条件，而问题就转化为了消除所有长度为3的子序列a,b,c，其中b-a&gtc-b。<br>
+								而如果满足条件的序列长度为m，那么显然am-am-1&gtam+1-am，通过这个传递性，我们可以得到，实际上am-am0&gtam+1-am。<br>
+								换句话说这是一个跨度逐渐大的级数，如果从一个固定点开始的话我们可以通过二分来得到一条符合条件的路，但值得注意的是，这个开始的固定点是不确定的。<br>
+								但是没关系，由于这个转移带来的区间是不断增大的，而且每次至少会增加一倍，而ai的范围是1e9，我们可以得到实际上，每个符合条件的序列中与开始的数不同的数的数量一定&ltlog1e9。因此即使枚举开始点，复杂度也不过是O(nlognlog1e9)。<br>
+								注意上文中的“与开始的数不同”，当一个序列里所有数都相等时，显然序列是成立的，因为am-am0恒等于0，这个时候序列中数的数量显然很容易就超过了log1e9。不过我们反而可以去利用这个特性——当一个起始点与前一个起始点相同时，我们可以直接跳过当前的起始点，因为它的序列长度必定比前一个少1。<br>
+								由于转移是从两个数开始的，所以要注意特判n=1的情况。<br>
+								相当有意思的题目，算是数论范畴内吧。<br>
+								<br>
+								代码：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltqueue&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 300005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(int i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+#define pi 3.141592657
+using namespace std;
+ll gcd(ll a, ll b) {
+	if (a &lt b)swap(a, b);
+	if (b == 0)return a;
+	return gcd(b, a % b);
+}
+ll cpow(ll x, ll n) {
+	ll ans = 1;
+	while (n &gt 0) {
+		if (n & 1) ans = (ans * x) % mdl;
+		x = (x * x) % mdl;
+		n &gt&gt= 1;
+	}
+	return ans;
+}
+ll getpos(int p, ll n) {
+	return n / cpow(10, p - 1) % 10;
+}
+ll getwei(ll n) {
+	int res = 0;
+	while (n) {
+		res++;
+		n /= 10;
+	}
+	return res;
+}
+/*
+
+---------------------------------------------------------------------
+5 4
+1 3 11 15 32
+*/
+ll a[maxn];
+int main() {
+	cfast;
+	
+	int t;
+	cin &gt&gt t;
+	while (t--) {
+		int n;
+		cin &gt&gt n;
+		inc(i, 0, n) {
+			cin &gt&gt a[i];
+		}
+		ll mx = 0;
+		if (n == 1) {
+			cout &lt&lt 0 &lt&lt endl;
+			continue;
+		}
+		inc(i, 0, n-1) {
+			if (i &gt 0 && a[i] == a[i - 1])continue;
+			ll st = a[i];
+			ll tmp = a[i + 1];
+			ll nxt = 2 * a[i + 1] - st;
+			int x=i+1;
+			ll ans = 2;
+			while (x!=n) {
+				//cout &lt&lt " i= "&lt&lti&lt&lt" x= " &lt&lt x &lt&lt endl;
+				ans++;
+				tmp = a[x];
+				nxt = 2 * tmp - st;
+				//cout &lt&lt " tmp= " &lt&lt tmp &lt&lt " nxt= " &lt&lt nxt &lt&lt endl;
+				x = lower_bound(a + x + 1, a + n, nxt) - a;
+			}
+			mx = max(mx, ans);
+		}
+		cout &lt&lt n - mx+1 &lt&lt endl;
+	}
+}
+/*
+2 3
+1 4
+
+*/
+
+
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

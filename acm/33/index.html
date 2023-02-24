@@ -1,0 +1,172 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">DivanKostomuksha数论dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">2</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 1614D1 Divan and Kostomuksha (easy version)<br>
+题目大意：给一个数组，长度为n（级别为1e5），每个数字范围在（1-5e6），现在你可以任意改变数组的顺序，使得∑gcd(a1,a2,...,ai)最大，求这个最大值。<br>
+<br>
+看见gcd就一定要想到倍数，想到倍数就想到了之前那个O(1+1/2+...+1/n)的暴力算法，一看数据5e6，好像有点惊险，但好在常数几乎等于没有并且数据只有一组，感觉可行。<br>
+显而易见，如果用g[i]表示前i个数的gcd的话，g[i]随着i的增加一定是减小的，而一旦g[i]降低到一个值，使得i之后的数都无法继续降低这个值的时候，后面的排列方式就已经无所谓了。<br>
+换句话说，我的gcd是不断降低的，并且降低只能从它的倍数到它自己，那么就存在子问题的转移，我们知道，对于一个数a，如果它是从a*k转来的，那么除了a*k的倍数以外，所有a的倍数与它的gcd都是a，其他数则暂时不谈，因为他们会导致gcd继续下降，这样我们就知道了：对于gcd等于a时g[i]数组的前缀和可以通过a*k转移得到，那么复杂度是多少呢？就是那个O(1+1/2+...+1/n)了。<br>
+原数组中数字的顺序已经无所谓了，但我需要记录每个数字出现的个数，如果用dp[i]表示当前g[i]为i并且g[i+1]不等于g[i]时g的前缀和的话，我们首先需要判一下它自己没有转移来源的情况，也就是它作为g[i]第一个的情况dp[i]=cnt[i]*i，之后对于每个倍数已经处理过的数来讲，dp[i]=max(dp[i*k]+i*(cnt[i*k]-cnt[i]))。<br>
+最后我们要求的是g[i]达到最小值时的前缀和，但由于这个值并不确定，而我又嫌麻烦，所以我在原有的数里多添加一个1，这样我g[i]的最小值就一定是1了，最后我只要在答案里减去一个1就行。<br>
+Gcd相关的dp题一定要想到倍数，暴力算法是在1e6范围内都能500ms暴杀的，本题的5e6范围实际上也只会跑到2500ms，因为只有一组样例，我就直接跑完了。<br>
+嗯，优点是无论n多大跑得都一样快，缺点是无论n多小跑得都一样慢，哈哈，一个样例2.5秒，交一次等几分钟，不愧是我。<br>
+补充hard version,就是把5e6改成了2e7，原来的筛法直接寄了，改为用类似欧筛的素数筛法，不同的是要把素数放在循环最外围，目的是保证筛的时候不会出现同一个数的两个不同路径添加两次的情况，之后的结果处理同样用素数处理，没什么细节。<br>
+想到gcd就想到倍数，想到倍数就想到素数，想到素数就想到……<br>
+再想想吧。<br>
+<br>
+代码(hard version)：<br>
+<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <stack>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 200005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair<ll,ll>
+#define inc(i,a,n) for(int i=a;i<n;i++)
+#define vset(a,n,m) for(int i=0;i<n;i++)a[i]=m;
+using namespace std;
+ll a[maxn], cnt[20000005], dp[20000005];
+ll is_prime[20000005], prime[20000005];
+int Eratosthenes(ll n) {
+	ll p = 1;
+	for (ll i = 0; i <= n; ++i) is_prime[i] = 1;
+	is_prime[0] = is_prime[1] = 0;
+	for (ll i = 2; i <= n; ++i) {
+		if (is_prime[i]) {
+			prime[p++] = i;
+			if (i * i <= n)
+				for (ll j = i * i; j <= n; j += i)
+					is_prime[j] = 0;
+		}
+	}
+	return p;
+}
+int main() {
+	cfast;
+	int era = Eratosthenes(20000005);
+	//	cout << prime[1];
+	int n;
+	cin >> n;
+	inc(i, 0, n) {
+		cin >> a[i];
+		cnt[a[i]]++;
+	}
+	cnt[1]++;
+	for (ll j = 1; j < era; j++) {
+		for (ll i = 2e7 / prime[j]; i >= 1; i--) {
+
+			cnt[i] += cnt[i * prime[j]];
+		}
+	}
+	ll ans = 0;
+	for (ll i = 2e7; i >= 1; i--) {
+		//	if (cnt[i] == 0)continue;
+		dp[i] = cnt[i] * i;
+		for (ll j = 1; i * prime[j] <= 2e7; j++) {
+			dp[i] = max(dp[i * prime[j]] + i * (cnt[i] - cnt[i * prime[j]]), dp[i]);
+		}
+	}
+
+	cout << dp[1] - 1;
+}
+
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

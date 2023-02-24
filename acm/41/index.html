@@ -1,0 +1,225 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">XHXJ‘sLIS数位状压lis</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">7</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								HDU4352 XHXJ’s LIS<br>
+								题目大意：给两个数l，r（范围为1<<64），和k（范围为10），求范围内有多少个数位上lis长度为k的数。<br>
+									<br>
+								看见l和r就知道是数位dp，不过转移方程推起来很困难，原因在于lis的转移是需要知道前面整个数列的，这样就失去了后效性，但是由于lis长度最大只为10，所以我们可以直接状压作为状态，这样就可以转移了。<br>
+								最后再次吹一波雨巨的数位dp记忆化dfs板子，让原来很难搞的对数字求值变得简单无脑了……<br>
+								Dp[i][j][k]表示当数位为i并且lis状态为j，lis长度为k时的数字数量（k这一维可以省，但没必要，没去省是自以为能省下10倍的时间复杂度，后来发现并不行，见下文）。注意首0是不算做数字的，所以k等于要求值时还要检查一下j是否等于0。转移的过程和lis相同，由于只有10位所以也不需要二分了。<br>
+								值得一提的是dp的值如果只设置i，j两维的话，对于不同的k会传出不同的k值，所以实际上还不如不省来得方便，题目卡了32MB的空间，10的地方不能开15只能开11，满满的恶意。<br>
+								也算是长见识了，把三个完全不在同一个世界的dp联系到一起了。<br>
+								<br>
+								一开始没想到状压，想传数组的方法，但传数组就没法记忆化了……实际上，看见本题较小的参数（64,10）很自然地就应该想到可以用状压表示所有状态。<br>
+								<br>
+								代码：<br>
+								<br>
+								
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <stack>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 200005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair<ll,ll>
+#define inc(i,a,n) for(ll i=a;i<n;i++)
+#define vset(a,n,m) for(ll i=0;i<n;i++)a[i]=m;using namespace std;
+ll k;
+ll dp[25][1025][11][11], digits[25];
+string getbin(int n) {
+	if (n == 0)return "0";
+	string res = "";
+	int b = 1;
+	while (b <= n) {
+		b <<= 1;
+	}
+	b >>= 1;
+	int tmp = n;
+	while (b) {
+		if (tmp >= b) {
+			res += "1";
+			tmp -= b;
+		}
+		else res += "0";
+		b >>= 1;
+	}
+	return res;
+}
+ll dfs(int pos, int flag, int state, int kk) {
+	if (pos == -1) {
+		if (kk == k && state != 0) {
+			return 1;
+		}
+		else return 0;
+	}
+	if (!flag && dp[pos][state][kk][k] != -1) {
+		return dp[pos][state][kk][k];
+	}
+	int fmax;
+	if (flag == 0)fmax = 9;
+	else fmax = digits[pos];
+	ll res = 0;
+	int ct = 9;
+	while (ct >= 0 && ((1 << ct) & state) == 0)ct--;
+	for (int i = 0; i <= fmax; i++) {
+		if (state == 0) {
+			if (i != 0)
+				res += dfs(pos - 1, flag == 1 && i == fmax, state + (1 << i), 1);
+			else
+				res += dfs(pos - 1, flag == 1 && i == fmax, 0, 0);
+			continue;
+		}
+		int st = state;
+		if (i > ct)res += dfs(pos - 1, flag == 1 && i == fmax, st + (1 << i), kk + 1);
+		else {
+			int act = 9;
+			int minu = -1;
+			while (act >= i) {
+				if (((1 << act) & st) != 0) {
+					minu = act;
+				}
+				act--;
+			}
+			if (i == act)
+				res += dfs(pos - 1, flag == 1 && i == fmax, st, kk);
+			else
+				res += dfs(pos - 1, flag == 1 && i == fmax, st + (1 << i) - (1 << minu), kk);
+
+		}
+	}
+	if (flag == 0)dp[pos][state][kk][k] = res;
+	return res;
+}
+ll cnt(ll a) {
+
+	ll tmp = a;
+	int xb = 0;
+	while (tmp) {
+		digits[xb++] = tmp % 10;
+		tmp /= 10;
+	}
+	return dfs(xb - 1, 1, 0, 0);
+}
+int main() {
+	cfast;
+	int t;
+	cin >> t;
+	int ct = 0;
+	inc(i, 0, 25) {
+		inc(j, 0, 1025) {
+			inc(k, 0, 11) {
+				inc(m, 0, 11)
+					dp[i][j][k][m] = -1;
+			}
+		}
+	}
+	while (t--) {
+		ct++;
+		ll a, b;
+		cin >> a >> b >> k;
+		cout << "Case #" << ct << ": " << cnt(b) - cnt(a - 1) << endl;
+	}
+}//((()
+
+	
+
+
+	
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

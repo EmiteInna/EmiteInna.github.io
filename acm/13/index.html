@@ -1,0 +1,183 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">BAString傻逼题</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">30</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								1620C BA-String<br>
+题目大意：给你一个长度为N的字符串，包含a和*，你可以将每个*转换成(0-k)个’b’，现在要求你能得到的字典序第x大的字符串。<br>
+看似非常简单，实际上就是一个进制问题，每一串连续的*表示n*k个单位，而一个单位的大小则是后一个串能表示的最大数量，可以用dp来记录也可以纯粹地用函数去计算，n只有2000，不用担心t的问题，求答案时将单位从大到小除一下取值就行。<br>
+问题在于，虽然题面说了x的大小不会大于1e18，但你的单位的大小却有可能超过1e18，超过1e18之后下场自然是溢出，溢出就会造成错误的判断，于是你需要用取对数的方法来判断你即将得到的单位是否超过1e18，但这依然不够，因为有可能你在判断溢出的过程中它就已经溢出了，所以建议是将乘区的两部分分别转化为double再去计算log10的值，log2应该也行。<br>
+Debug了好久，总之就是很sb，除了知道要判溢出以外什么都没学到。<br>
+本来不想专门写一篇的，结果还是写了……<br>
+<br>
+<br>							
+
+								
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 200005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+using namespace std;
+ll dp[2005],seg[2005],ans[2005];
+char a[2005],res[4000005];
+
+int main() {
+	std::ios::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+	ll t;
+	cin >> t;
+	while (t--) {
+		ll n, k, x;
+		cin >> n >> k >> x;
+		scanf("%s", a);
+		ll xb = 0,tmp=0;
+		for (ll i = 0; i < n; i++) {
+			if (a[i] == '*') {
+				tmp++;
+				if (i == n - 1 || a[i + 1] == 'a') {
+					seg[xb++] = tmp;
+					tmp = 0;
+				}
+			}
+		}
+		dp[0] = 1;
+		int ii = 0;
+		for (ll i = 1; i <= xb; i++) {
+			dp[i] = dp[i - 1] * (1+seg[xb - i]*k);
+			ii = i;
+			if (i<xb&&log10((double)dp[i])+log10((double)(1+seg[xb-i-1]*k))>=18) {
+				ii++;
+				break;
+			}
+			
+		}
+		ll xx = ii;
+		x--;
+		while (xx) {
+			if (x < dp[xx-1]) {
+				ans[xb - xx] = 0;
+			}
+			else {
+				ans[xb - xx] = x / dp[xx - 1];
+				x -= x / dp[xx - 1] * dp[xx - 1];
+			}
+			xx--;
+		}
+		ll stp = 0,sg=0;
+		for (ll i = 0; i < n; i++) {
+			if (a[i] == '*') {
+				for (int j = 0; j < ans[sg]; j++) {
+					res[stp++] = 'b';
+				}
+				i += seg[sg] - 1;
+				sg++;
+			}
+			else res[stp++] = 'a';
+		}
+		for (ll i = 0; i < stp; i++) {
+			printf("%c", res[i]);
+		}
+		printf("\n");
+		clr(ans, 2005);
+	}
+	
+}
+
+	
+	
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

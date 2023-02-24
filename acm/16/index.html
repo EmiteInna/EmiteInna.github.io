@@ -1,0 +1,173 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">Portals形状dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">30</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF1580A Portals<br>
+								给一个大小为n*m(都小于等于400)的棋盘，分为0和1，你可以进行任意次操作，每次将一个0变成1或者1变成0，然后你需要得到一个传送门<br>
+								形状如下<br>
+								*111*<br>
+								10001<br>
+								*111*<br>
+								角的材质任意，边必须是1，中间必须是0，大小任意，求获得一个传送门最小需要的操作数量。<br>
+								<br>
+								第一眼看这题人是麻的，你光让我找一个传送门出来我都不一定找得到……<br>
+								首先既然传送门大小是任意的，那么高和宽我肯定要规定一个，将二维转化为一维，这是做形状为正方形的题目时的经验之一。<br>
+								在这里我选择了去决定高度，也就是建立一个二层循环定下决定高度的两点，而接下来我就只能再允许O(n)的复杂度了……<br>
+								假设高度确定的情况下我从头开始去建立一个宽度为k的传送门，我可以依靠预处理线段来快速求得我所需要的操作数量，这个时候你会发现，你需要的传送门其实是一个连续的段，而你要求的是最小段和，咱一直求的都是最大段和啥时候求过最小段和啊。因此我们可以倒过来求，首先求出建一个最大的传送门所需要的步数，然后让子段去代表将其还原为原来所需要的步数，实际上求出的也就是能够省下的步数，这样要求的就变成了最大子段和，用通常的lis就可以完成，值得注意的是由于题目中奇葩的传送门定义，边界判断变得异常恶心，思路乱掉的时候一定要先在纸上把思路捋清楚，做好前缀和再去写状态转移方程。<br>
+								实际上这题由于求的传送门是一个规则的长方形所以做起来没有那么麻烦，那要是之后让我求个三角形啊菱形怎么办呢？不管怎么说，对于形状固定的二维操作，最先进行的都是降维，之后的最优想办法转化为子问题或者经典的子段模型，船到桥头自然直。<br>
+								那么Portal2，将题中的长方形改为菱形吧！<br>
+								属于是开创一门新的形状DP了。<br>
+								<br>
+									
+
+								
+<pre><code>
+	#define _CRT_SECURE_NO_WARNINGS
+	#include <iostream>
+	#include <algorithm>
+	#include <utility>
+	#include <vector>
+	#include <istream>
+	#include <map>
+	#include <cmath>
+	#include <cstring>
+	#include <string>
+	#define ll long long
+	#define maxn 200005
+	#define mdl 1000000007
+	#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+	using namespace std;
+	char str[405][405];
+	int ones[405][405], dp[405][405];
+	int cnt(int x1, int y1, int x2, int y2) {
+		return ones[x2][y2] - ones[x2][y1 - 1] - ones[x1 - 1][y2] + ones[x1 - 1][y1 - 1];
+	}
+	int main() {
+		std::ios::sync_with_stdio(false);
+		cin.tie(0);
+		cout.tie(0);
+		int t;
+		cin >> t;
+		while (t--) {
+			int n, m, i, j, k, ans = 1e9;
+			scanf("%d%d", &n, &m);
+			for (int i = 0; i &lt n; i++)scanf("%s", str[i]);
+			for (i = 1; i &lt= n; i++) {
+				for (j = 1; j &lt= m; j++) {
+					ones[i][j] = ones[i - 1][j] + ones[i][j - 1] - ones[i - 1][j - 1];
+					if (str[i - 1][j - 1] == '1') {
+						ones[i][j]++;
+					}
+	
+				}
+			}
+	
+			for (i = 1; i &lt= n; i++) {
+				for (j = i + 4; j &lt= n; j++) {
+					for (k = 4; k &lt= m; k++) {
+						dp[j][k] = cnt(i + 1, 1, j - 1, k - 1) + k - 2 - cnt(i, 2, i, k - 1) + k - 2 - cnt(j, 2, j, k - 1) + j - i - 1 - cnt(i + 1, k, j - 1, k);
+					}
+					for (k = m - 1; k >= 4; k--) {
+						dp[j][k] = min(dp[j][k], dp[j][k + 1]);
+					}
+					for (k = 1; k &lt= m - 3; k++) {
+						int tmp;
+						if(k==1)tmp = dp[j][k + 3] - cnt(i + 1, 1, j - 1, k) + j - i - 1 - cnt(i + 1, k, j - 1, k);
+						else  tmp = dp[j][k + 3] - cnt(i + 1, 1, j - 1, k) -(k-1- cnt(i, 2, i, k)) -(k-1- cnt(j, 2, j, k)) + j - i - 1 - cnt(i + 1, k, j - 1, k);
+						if (tmp &lt ans) {
+							ans = tmp;
+						}
+					}
+				}
+			}
+			printf("%d\n", ans);
+		}
+	}
+	
+
+	
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

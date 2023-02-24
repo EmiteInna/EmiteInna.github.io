@@ -1,0 +1,231 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">NamomoSequence巧妙降维</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Jul<span>y</span></span> <span class="day">14</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								2020西安EC-final A<br>
+								题目大意：给一个长度为n(1e6)的字符串，包含大小写字母和0-9间的数字，问其中有多少个形如”namomo”的子序列（未必连续），也就是1234四个字母各不相同,56分别和34相同。<br>
+								<br>
+								由于字母有62个，硬dp的话至少需要6*62*62*1e6的复杂度（你至少需要选择两个），但是考虑到结构问题，如果只是求出以a开头或是结尾时长度为b种类为c的序列数量是不需要储存和遍历n的，这样一来复杂度就是62^(c-1)b（因为第一种也就是排头或结尾的字母完不用储存而是直接运算并并入接下来的长度里，所以第二种字母可以直接储存）<br>
+								在本题中namomo sequence有四种字母，即使用63^3*n的算法依然过不了，所以考虑在这个dp里只关系到两个字母，另外两个字母用前缀和直接求出来。<br>
+								显然选择momo这两个字母更加容易，因为na两个字母没有顺序问题的担忧，于是dp[m][o][3]来表示上述dp，因为是在从后往前推，所以表示的是m为m，并且当前位置就是m开头的位置时的方案数量，那么前面ab的数量可以用容斥原理求出。<br>
+								即C(pos-1,2)的总量-两个字母相同的的量-一个字母是m一个不是的量-一个字母是o一个不是的量再加上两个字母分别是m和o的量，相乘即可。<br>
+								由于题目的阴间卡常以及dp和容斥的常数存在，把模运算改成了快速的模加法运算才在cf上2300ms冲过去。<br>
+								值得一提的是由于当前位置的m之后仅仅会以第3位的形式出现，当前位置的dp[m][o][0]不会再被用到，所以可以新建一个变量去计算，也可以每次都把dp[m][o][0]置0即可，复杂度并没有太大的变化，6.2e7的复杂度常数稍微高一点就会被T了，人菜常数大选手表示卑微。<br>
+								<br>
+								代码：（开了个O3但并没有卵用）<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#pragma GCC optimize(3)
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltqueue&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 1000005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(int i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+#define PI 3.14159265358979
+using namespace std;
+ll gcd(ll a, ll b) {
+	if (a &lt b)swap(a, b);
+	if (b == 0)return a;
+	return gcd(b, a % b);
+}
+ll cpow(ll x, ll n) {
+	ll ans = 1;
+	while (n &gt 0) {
+		if (n & 1) ans = (ans * x) % mdl;
+		x = (x * x) % mdl;
+		n &gt&gt= 1;
+	}
+	return ans;
+}
+ll getpos(int p, ll n) {
+	return n / cpow(10, p - 1) % 10;
+}
+ll getwei(ll n) {
+	int res = 0;
+	while (n) {
+		res++;
+		n /= 10;
+	}
+	return res;
+}
+//ll F[300005], inv[300005];
+//void initF()
+//{
+//	F[0] = inv[0] = 1;
+//	for (int i = 1; i &lt= 300000; i++)F[i] = F[i - 1] * i % mdl;
+//	inv[300000] = cpow(F[300000], mdl - 2);
+//	for (int i = 299999; i &gt= 1; i--)inv[i] = inv[i + 1] * (i + 1) % mdl;
+//}
+//ll C(ll n, ll m)
+//{
+//	return F[n] * inv[m] % mdl * inv[n - m] % mdl;
+//}
+/*
+
+---------------------------------------------------------------------
+100
+10
+0 0 0 0 0 3 2 8 2 2
+
+*/
+int a[maxn];
+int pre[maxn][62];
+int dp[62][62][3];
+char str[1000002];
+inline void add(int& x, int y) {
+	x = (x + y &lt mdl ? x + y : x + y - mdl);
+}
+int main()
+{
+	//cfast;
+
+	int t=1;
+//	cin &gt&gt t;
+	while (t--) {
+		int ans = 0;
+		//string str;
+		scanf("%s", str);
+		int len = strlen(str);
+		inc(i, 1, len+1) {
+			if (str[i-1] &gt= '0' && str[i-1] &lt= '9')a[i] = str[i-1] - '0';
+			else if (str[i-1] &gt= 'a' && str[i-1] &lt= 'z')a[i] = 10 + str[i-1] - 'a';
+			else a[i] = 36 + str[i-1] - 'A';
+			inc(j, 0, 62) {		
+				pre[i][j] = pre[i - 1][j];
+			}
+			pre[i][a[i]]++;
+		}
+		for (int i = len; i &gt= 3; i--) {
+			int m = a[i];
+			inc(j, 0, 62) {
+				if (m == j)continue;
+				add(dp[m][j][0], dp[j][m][1]);
+				add(dp[m][j][1], dp[j][m][2]);
+				add(dp[m][j][2], pre[len][j] - pre[i][j]);
+			//	cout &lt&lt "i=" &lt&lt i &lt&lt " dp.0=" &lt&lt dp[m][j][0] &lt&lt endl;
+			}
+			int tmp = (1ll*(i - 1) * (i - 2) / 2) % mdl;
+			inc(j, 0, 62) {
+				add(tmp,mdl - (1ll * pre[i - 1][j] * (pre[i - 1][j] - 1) / 2) % mdl);
+			}
+			inc(j, 0, 62) {
+				int minu = (1ll * (pre[i - 1][j]) * (i - 1 - pre[i - 1][j]) % mdl + 1ll * (pre[i - 1][m]) * (i-1 - pre[i - 1][m]) % mdl)%mdl;
+				int tt = tmp;
+				add(tt, mdl - minu);
+				add(tt, 1ll * pre[i - 1][m] * pre[i - 1][j] % mdl);
+				add(ans, 1ll * tt * dp[m][j][0] % mdl);
+				dp[m][j][0] = 0;
+			}
+		}
+		printf("%d\n", ans);
+		
+	}
+	return 0;
+}
+
+
+
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

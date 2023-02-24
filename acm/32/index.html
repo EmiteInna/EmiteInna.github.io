@@ -1,0 +1,214 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">ASimpleTask状压</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">31</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 11D A Simple Task（好老的题呢）<br>
+								题目大意：给你一个简单联通图，点的数量<=19，让你求图中环的个数<br>
+								<br>
+								一看见“19”和个数就知道是状压了，图带来的无顺序性也决定了线性dp会因为有后效性而实效，所以直接选择去考虑状压。<br>
+								由于转移的需求，很容易想到状压的第二维用当前路线的结尾表示（第一维当然是状态啦），当结尾与头之间有联系就说明成了一个环。<br>
+								那么问题来了，头是啥？实际上，对于一个环来讲，头在哪是无所谓的，但是解题就有所谓了，因此我们需要自己对状态设置一个头，为了统一，我在这里假定出现在状态里的序号最小的点就是头，比如包含点“1”的状态中1就是头，如果没有但是有2的话那就是2，以此类推。那么接下来我只要在状态转移的过程中判断一下转移去的最后那个点是否和头连接，如果是的话就说明这是一个环，注意尽管设置了头，但环是有两个行进方向的，所以最后答案还要再除以2。<br>
+								写出来，wa了，为什么呢，因为重复了，重复的原因在于在已经有头的情况下还把新的头加了进去，换句话说，当我原本是110这样的状态，头是2的情况下如果去连接了1，那么头瞬间就变成了1，这样就和从1开始去连接2造成了重复，但是这种重复并不是因为方向性导致的错误，而是直接形成了两个不同的状态，因为在以1位头的状态衍生出的状态中是不允许产生没有1的状态的（所以说这些全组合真是麻烦啊）这样解释可能有点绕，简单来讲那就是：只要是头为i的状态，就必须由i自己产生出来，这样就杜绝了所有的重复，只有方向上的重复。<br>
+								所以说特判一下，如果加进去的那个点在加进去后会直接成为状态的头，那就别加进去。<br>
+								算是需要注意一点小细节的状压，最后还是要说一点，状压的时候状态一定是放在最外层的循环的。复杂度为O(19*19*2^19)，算下来其实是2e8，但是因为避免了重复所以会有一定量的剪枝，但是只跑了576ms我也是没有想到，只能说还是不够懂状压吧……<br>
+								这是道2200分的题，但是对状压来讲实则不难，非常基础，请务必弄懂其中的原理，尤其是中间那段为什么要排除掉新添加的节点本身作为环头，对本身没有线性关系的状压来讲，避免重复是非常重要的。<br>
+								代码（可以看出我费尽心思地在剪枝了，想不到最后跑的这么快……）：<br>
+								<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <stack>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 200005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair<ll,ll>
+#define inc(i,a,n) for(int i=a;i<n;i++)
+#define vset(a,n,m) for(int i=0;i<n;i++)a[i]=m;
+using namespace std;
+
+ll dp[(1 << 19) + 5][20];
+ll link[20][20];
+ll fir[1 << 19],num[1<<19];
+int getfirst(int n) {
+	if (fir[n] != 0)return fir[n];
+	int i = 1,res=1;
+	while ((i & n) == 0) {
+		i = i << 1;
+		res++;
+	}
+	fir[n] = res;
+	return res;
+}
+int getnum(int n) {
+	if (num[n] != 0)return num[n];
+	int i = 0, res=0;
+	while ((1<<i)<=n) {
+		if (((1 << i) & n) !=0)res++;
+		i++;
+	}
+	num[n] = res;
+	return res;
+}
+string getbin(int n) {
+	if (n == 0)return "0";
+	string res = "";
+	int b = 1;
+	while (b <= n) {
+		b <<= 1;
+	}
+	b >>= 1;
+	int tmp = n;
+	while (b) {
+		if (tmp >= b) {
+			res += "1";
+			tmp -= b;
+		}
+		else res += "0";
+		b >>= 1;
+	}
+	return res;
+}
+int main()
+{
+	//cout << getfirst(7);
+	cfast;
+	int n, m;
+	scanf("%d%d", &n, &m);
+	while (m--) {
+		int a, b;
+		scanf("%d%d", &a, &b);
+		link[a][b] = 1;
+		link[b][a] = 1;
+	}
+	ll ans = 0;
+	inc(i, 1, n + 1)dp[1 << (i - 1)][i] = 1;
+	inc(i, 0, (1<<n)) {
+		inc(tail, 1, n + 1) {
+			if (dp[i][tail] == 0)continue;
+			inc(j, 1, n + 1) {
+				if (link[tail][j] == 1) {
+					if ((1 << (j - 1) & i) == 0&&getfirst(i+(1<<(j-1)))!=j) {
+						dp[i + (1 << (j - 1))][j] += dp[i][tail];
+						
+					}
+				}
+			}
+		}
+	}
+	inc(i, 0, 1 << n) {
+		inc(tail, 1, n + 1) {
+			if (dp[i][tail] == 0)continue;
+			if (link[getfirst(i)][tail] == 1 && getnum(i) > 2) {
+				ans += dp[i][tail];
+			}
+		}
+	}
+	/*inc(i, 0, (1 << n)) {
+		inc(j, 1, n + 1)
+			cout << " num of " << getbin(i) << " with " << j << " = " << dp[i][j] << endl;
+	}*/
+	cout << ans/2;
+
+}
+/*
+3
+4 12 6 
+*/
+	
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

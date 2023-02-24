@@ -1,0 +1,184 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">OptimalPartition权值线段树dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">25</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 1668D Optimal Partition<br>
+								题目大意：一个数组(5e5)，其中每个子段的价值为：当子段和为正则为子段长度，为负则为子段长度的相反数，为0则为0。现将其划分为任意个子段，需要求得价值的最大值并输出最大价值。<br>
+								<br>
+								一眼dp，转移依靠区间，5e5的复杂度不允许去枚举区间的割点，于是想到分离参数去单调队列，但是由于区间的转移是和转移的子段正负有关的，很难去直接用单调队列分离。<br>
+								题目需要进一步的结论，事实上通过贪心我们知道，如果全是正数那么怎么分都可以，而如果有负数的话，我们尽量用正数把它拉上来使其价值从-1变为1，但是如果实在没法拉上来的负数，我们更加倾向于让他单独一个划分，使其造成的影响最小，避免其将原本的正数拉成负数。<br>
+								所以在进行区间转移的时候，我们只需要考虑正区间的转移，也就是dp[i]=dp[k]+val(k+1,i)时，sum(k+1,i)一定为正，而另一种转移则是直接dp[i]=dp[i-1]+a[i]/abs(a[i])，考虑负数的情况。<br>
+								但是即便如此，我们依然不知道对于i来说，哪些k能够进行转移，这时候用到权值线段树解决这个问题。<br>
+								将原数组的前缀和求出，并按照前缀和去从小到大排序，记录下每一个数在前缀和序中的位置，这样很容易发现，在前缀和序中排在后面的减去前面的（并且原本在数组中就出现在前面的）肯定区间和大于0，那么对于每个数，我只要维护比它位置更小的数里面分参后最大的数，这个过程可以通过权值线段树实现。<br>
+								各种意义上非常nb的题目，前后用到了贪心、单调队列dp、权值线段树、前缀和相减的思想，实在是2100之鉴。<br>
+								<br>
+								代码（虽然代码用的树状数组）：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltcstdio&gt
+#include &ltcstring&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 500005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(ll i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+using namespace std;
+ll n,tree[maxn],a[maxn],qzh[maxn],pos[maxn],dp[maxn];
+struct cpr {
+	ll qzh, pos;
+	friend bool operator&lt(cpr c1, cpr c2) {
+		if (c1.qzh == c2.qzh)return c1.pos &gt c2.pos;
+		return c1.qzh &lt c2.qzh;
+	}
+}cp[maxn];
+ll lowbit(ll num) {
+	return num & -num;
+}
+void add(ll s, ll num) {
+	for (ll i = s; i &lt= n+2; i += lowbit(i)) tree[i]=max(tree[i],num);
+}
+ll ask(ll s) {
+	ll ans = -1e18;
+	for (ll i = s; i &gt= 1; i -= lowbit(i)) ans=max(ans,tree[i]);
+	return ans;
+}
+int main() {
+	cfast;
+	int t;
+	cin &gt&gt t;
+	while (t--) {
+		cin &gt&gt n;
+		inc(i, 1, n + 2)tree[i] = -1e18;
+		qzh[1]=a[1] = 0;
+		inc(i, 2, n+2) {
+			cin &gt&gt a[i];
+			qzh[i] = qzh[i - 1] + a[i];
+			cp[i].qzh = qzh[i];
+			cp[i].pos = i;
+		}
+		cp[1].qzh = 0;
+		cp[1].pos = 1;
+		sort(cp+1, cp + n + 2);
+		inc(i, 1, n + 2) {
+			pos[cp[i].pos] = i;
+		}
+		inc(i, 1, n + 2) {
+			dp[i] = dp[i - 1] + a[i] / max(1ll, abs(a[i]));
+			ll tmp = ask(pos[i]);
+			// cout &lt&lt "tmp=" &lt&lt tmp &lt&lt endl;
+			dp[i] = max(dp[i], tmp + i);
+			add(pos[i], dp[i] - i);
+		}
+		cout &lt&lt dp[n+1] &lt&lt endl;
+	}
+}
+/*
+
+
+
+*/
+	
+	
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

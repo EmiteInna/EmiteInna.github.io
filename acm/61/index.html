@@ -1,0 +1,194 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">EraseandExtend字符串dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">25</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF1537 E2 Erase and Extend (hard version)<br>
+								题目大意：一个字符串（5e5），你可以消去其结尾，也可以将其整个扩大两倍，求得任意次操作后使得字符串长度达到k的时候字典序最小的字符串。<br>
+								<br>
+								经过证明（其实一想就知道）问题可以转化为求得一个前缀，使得这个前缀一直延续到k后字典序最小。那么这个前缀满足的条件显然是：放大n倍直到其与原本字符串中存在不同的字符时，放大后的前缀比原字符串小。<br>
+								但由于无法直接枚举前缀的分界点，这里采用动态维护的方法，即当认同一个点为前缀分界点的时候去证明之后合格。<br>
+								那么怎么去选取分界点呢？关键在于第一个字符，可以很容易发现，复制一次之后第二段的开头相等于第一个字符，那么如果字符串里原本这个位置是大于这个字符的，复制一定更优，如果是小于，那么显然不能去取这个位置，所以只有当前缀头的字符和开头字符相等时才有去继续往后讨论的必要。<br>
+								而一旦相等，往后的讨论就变成了一个相同的子问题，即从第二段开头到第一段开头长度相等的区间内谁的字典序更小，如果第一段更小，那么直接让它去取代第二段，否则把整个两段作为新的前缀然后继续向下讨论。<br>
+								注意扩展的时候如果遇到了比开头字符小的字符，那么是可以无条件将其加入前缀中的。<br>
+								有非常多的细节值得注意，但只要理清思维之后也没有这么复杂，关键是第一段到第二段的重复问题转移，使得这道显然是字符串的题目也有了dp的味道（虽然tag里没有）。<br>
+								非常考验耐心和细心的题目，建议每天进行一个顾的回。<br>
+								<br>
+								代码（wa了一万次……）：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 500005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(ll i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+using namespace std;
+string bs;
+int main() {
+	cfast;
+	int n, k;
+	cin &gt&gt n &gt&gt k;
+	string str;
+	cin &gt&gt str;
+	char tc = str[0];
+	int bst = 0;
+	int f = 0;
+	int flg = 0;
+	inc(i, 1, n) {
+		if (f == 1)break;
+		if (str[i] &lt tc) {
+			flg = 1;
+			bst=i;
+		}
+		else if (str[i] == tc) {
+			if (flg == 0) {
+				bst = i;
+				continue;
+			}
+		//	cout &lt&lt "i=" &lt&lt i &lt&lt endl;
+			f = 1;
+			int j;
+			int g = 0;
+			for (j = i + 1; j &lt min(n,i+i); j++) {
+				if (str[j] &lt str[j - i]) {
+					f = 0;
+					bst = j;
+				//	cout &lt&lt "bst=" &lt&lt bst &lt&lt endl;
+					break;
+				}
+				if (str[j] != str[j - i]) {
+					g = 1;
+				}
+				if (str[j] &gt str[j - i]) {
+					break;
+				}
+			}
+			if (g == 0) {
+				f = 0;
+				//bst = min(bst + i, n - 1);
+			}
+			i = j;
+		}
+		else {
+			break;
+		}
+	}
+	int tmpk = 0;
+	string ans = "";
+	while (tmpk &lt k) {
+		inc(i, 0, bst+1) {
+			ans += str[i];
+			tmpk++;
+			if (tmpk == k)break;
+		}
+	}
+	cout &lt&lt ans &lt&lt endl;
+}
+/*
+2022.4.21   (13:00 - 13:22) - (14:03 - 15:35)
+
+*/
+
+	
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

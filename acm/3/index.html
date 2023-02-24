@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">LCS</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">10</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+								
+							
+							<p>
+								
+								如果要说最经典的三个线性dp，那一定是最大子段和，LIS和LCS了吧，02中我讲了讲自己对于LIS的浅薄理解，但是对我来讲，LCS又和前两者都有根本上的不同，因为它需要用二维来解决（虽然其实也有一维解决的方法，即利用反方向替换转化为LIS）<br>
+二维线性dp，其实是真正做题时候最容易碰到的dp类型了，而往往他们都会拥有一个共同的前置状态转移方程：<br>
+dp[j][i] = max(dp[j - 1][i], dp[j][i-1]);<br>
+结束。<br>
+这个方程其实已经表示了二维线性dp的一切：即它的状态转移同时代表了两个决策<br>
+我们知道，在背包中，第一维表示当前拥有的物品数量，第二维表示体力，在我拿一个新的物品之前，我的状态当然就是在“最后一个物品是前一个物品，且体力和我现在相等”的状态，这个转移非常具有意义，而如果是“当我花费这么多体力前，我已经拿过这个物品，且体力是xxx”这个状态则没有任何意义——显然它直接违反了背包的规则，因此它不能称之为二维线性dp，或者说，这种特性将背包和二维线性dp牢牢分开来。也就是说，你只能在真正的二维线性dp中见到上面那个方程。<br>
+因为对于LCS来说，dp[j][i]即可以是“我之前分别考虑到了j-1和i，现在我要考虑j和i”，也可以是“我之前分别考虑到了j和i-1，而现在我要考虑j和i”，这碰巧的是，这两者之前都已经进行过一次状态转移了，这也意味着二维线性dp的基础复杂度永远得是n²，而它的推论已经很简单了，无论我要求多少个串的LCS，我都只需要做相同的事情，max的括号中就是串的个数，复杂度也就是n的串次方，当然，接下来要做的事情根据题目具体要做的事情来决定，只要满足1.我在利用上述方程进行转移时，我的转移来源已经进行过了转移（即位置形dp的非跳跃性），2.每一个维度之间对称。<br>
+这里就能做出一个不负责任的结论——多维线性dp中，每个维度表示的东西大概都是相同，可以替换的，比如a和b的lcs，和b和a的lcs，显然是没有区别的，而满足这种特性的，一定可以成为多维线性dp。<br>
+那么如果不是LCS，而是把LIS所表示的“值”形dp和多维结合起来会成为什么题目呢，我到现在还没见过，个人觉得估计是因为，多维了就没法二分了吧（所有的算法都是二分，确信）。<br>
+
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

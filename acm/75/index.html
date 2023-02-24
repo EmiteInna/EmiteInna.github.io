@@ -1,0 +1,213 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">NewYearsProblem思维</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Jul<span>y</span></span> <span class="day">4</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								1619D New Years Problem<br>
+								题目大意：有n个人和m个商店，p[n][m]表示这个人收到m商店买的东西时的愉悦度，你只能去最多n-1个商店，求min[joy[n]]的最大值。<br>
+								<br>
+								纯纯的思维题，因为是最小值的最大值，一眼二分，问题是怎么分。<br>
+								由于要求的是最小值，那么这个值绝对不会大于原本所有joy可能达到的最大值的最小值，所以二分的边界就在0和这个值之内。<br>
+								既然只能去n-1个商店，而二分的这个值又是&lt=每个joy的最大值的，说明只要有一个商店可以买到至少两个超过二分值的商品就足够了，剩下的n-2个商店可以随便取。<br>
+								一开始为了要不要二分而产生了由于，捏了些特殊样例试图贪心，后来发现了答案的数值就是最有能力的判断方式，所以果断二分了。<br>
+								铁没有1800应有的难度。<br>
+								<br>
+								代码：<br>
+								<br>					
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltqueue&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 300005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(int i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+#define PI 3.14159265358979
+using namespace std;
+ll gcd(ll a, ll b) {
+	if (a &lt b)swap(a, b);
+	if (b == 0)return a;
+	return gcd(b, a % b);
+}
+ll cpow(ll x, ll n) {
+	ll ans = 1;
+	while (n &gt 0) {
+		if (n & 1) ans = (ans * x) % mdl;
+		x = (x * x) % mdl;
+		n &gt&gt= 1;
+	}
+	return ans;
+}
+ll getpos(int p, ll n) {
+	return n / cpow(10, p - 1) % 10;
+}
+ll getwei(ll n) {
+	int res = 0;
+	while (n) {
+		res++;
+		n /= 10;
+	}
+	return res;
+}
+/*
+
+---------------------------------------------------------------------
+
+*/
+vector&ltll&gt p[maxn];
+ll mx[maxn];
+int main() {
+	cfast;
+	int t = 1;
+	cin &gt&gt t;
+	while (t--) {
+		int m, n;
+		cin &gt&gt m &gt&gt n;
+		inc(i, 0, n) {
+			mx[i] = 0;
+		}
+		inc(i, 0, m) {
+			p[i].clear();
+			inc(j, 0, n) {
+				ll d;
+				cin &gt&gt d;
+				p[i].push_back(d);
+				mx[j] = max(mx[j], d);
+			}
+		}
+		ll left = 0, right = 1e9,ans=0;
+		inc(i, 0, n) {
+			right = min(right, mx[i]);
+		}
+		while (left &lt= right) {
+			ll mid = (left + right) / 2;
+			int f = 0;
+			inc(i, 0, m) {
+				int cnt = 0;
+				inc(j, 0, n) {
+					if (p[i][j] &gt= mid)cnt++;
+				}
+				if (cnt &gt= 2) {
+					f = 1;
+					break;
+				}
+			}
+			if (f == 1) {
+				ans = max(ans, mid);
+				left = mid + 1;
+			}
+			else {
+				right = mid - 1;
+			}
+		}
+		cout &lt&lt ans &lt&lt endl;
+	}
+}
+/*
+2 3
+1 4
+
+*/
+
+
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

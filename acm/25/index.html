@@ -1,0 +1,168 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">ForGamersbyGamers类埃筛式预处理</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">31</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF1657D For Gamers. By Gamers.<br>
+								<br>
+								题目大意：你有n种随从可以招募（数量级为3e5），第i种消费ci元，攻击力为di,血量为hi，让后现在有m种怪物（数量级同为3e5），血量为H，攻击力为D，你只能招募一种随从任意数量只，你需要完胜怪物（即自己一个随从不死），求解需要的最小钱数，你最多有C元钱（数量级为1e6），如果不能则输出-1。<br>
+								<br>
+								看起来有二元其实是一元，因为赢下的条件是n*di*hi>D*H，这里我们把h*d看作一个随从的“强度”，那么显然购买n个该随从后的强度就是n*di*hi，要求的即是买到强度大于等于D*H的随从所需要的最小钱数。<br>
+								由于m的大小是3e5，一开始想用mlogn的二分解法，后来还是理所当然地t了，仔细想想，虽然不同的随从有着性价比之分，但由于它们强度和金钱的关系依然的离散的，所以无法形成一个合理的顺序表。<br>
+								反过来想，每个随从强度和金钱的关系是离散的，但是总强度和金钱的关系却是连续的，因此我们可以用dp来算出每个金钱数对应的最高能达到的强度，然后二分来求金钱数。<br>
+								那么怎么求呢？容易想到，对于一个花费c元强度为q的随从来讲，有状态dp[kc]=max(kq,dp[kc])，k的范围是1到C/c，如果把3e5个暴力求出来还是会t的。<br>
+								但是注意到，如果是同金钱而强度不同的随从，该选择的肯定是强度最高的那个吧，所以每种消费的随从我最多只要一个，这样一来我得到的最坏情况是消费分别为1，2,3，...，3e5的随从们。<br>
+								靠一个二重循环直接加上去，复杂度为(1+1/2+1/3+...+1/n)，这个复杂度是不是挺熟悉的？正是各种筛法所使用的复杂度，一开始我也不知道是多少，暴力测了一下，当n=1e6的时候复杂度是14*1e6，这是预处理的时间，而对于每个m我只要二分求解即可。<br>
+								获取这题可以看作一个只能拿一种东西的背包问题？<br>
+								代码：<br>
+								<br>
+
+<pre><code>
+	#define _CRT_SECURE_NO_WARNINGS
+	#include <iostream>
+	#include <algorithm>
+	#include <utility>
+	#include <vector>
+	#include <istream>
+	#include <map>
+	#include <cmath>
+	#include <stack>
+	#include <set>
+	#include <cstring>
+	#include <string>
+	#define ll long long
+	#define maxn 1000005
+	#define mdl 1000000007
+	#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+	#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+	#define pll pair<ll,ll>
+	#define inc(i,a,n) for(int i=a;i<n;i++)
+	using namespace std;
+	ll era[maxn];
+	int main(){
+		int n;
+		int C;
+		cin >> n >> C;
+		inc(i, 0, n) {
+			int c;
+			ll a, b;
+			scanf("%d%lld%lld", &c, &a, &b);
+			era[c] = max(era[c], a * b);
+		}
+		inc(i, 1, C+1) {
+			for (int j = i; j <= C; j += i) {
+				era[j] = max(era[j], era[i] * (j / i));
+			}
+		}
+		inc(i, 1, C + 1) {
+			era[i] = max(era[i], era[i - 1]);
+		}
+		int m;
+		cin >> m;
+		while (m--) {
+			ll D, H;
+			scanf("%lld%lld", &D, &H);
+			if (era[C] <= D * H) {
+				cout << "-1" << " ";
+				continue;
+			}
+			int ans = C;
+			int l = 1, r = C;
+			while (l <= r) {
+				int mid = (l + r) / 2;
+				if (era[mid] > D * H) {
+					r = mid - 1;
+					ans = min(ans, mid);
+				}
+				else l = mid + 1;
+			}
+			cout << ans << " ";
+		}
+	}
+	/*
+	
+	*/
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

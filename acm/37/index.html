@@ -1,0 +1,167 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">PowerBoards大型找规律现场</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">2</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 1646E Power Board<br>
+								题目大意：给一个大小为n,m的board（规模都为1e6），其中第i,j格的数为i^j，问这个board里有多少种数。<br>
+								<br>
+								第一行全是1，不用管。<br>
+								之后开始就会出现重复了，可以看到2^2=4这种常见的重复类型，很容易就能推出来，当a^b=c^d的时候，c和a一定是同一个数的k次幂（注意，并不一定a是c的k次幂，血的教训）。也就是说对于每个i来讲，它都是有其源头的，而那个源头则是没有源头的，比如说2，它无法表示成除自己以外任何数的幂。根据因式分解的思路可以发现，不同源的数衍生出的数彼此是无法相等的<br>
+								那么就拿2举例，2的这行有2^1,2^2,...,2^m，2^2的一行也有2^2^1,2^2^2,...以此类推。到了最后2这个数已经无所谓了，只要后面的次数相同就表示数字相同，而这个次数是j和目标行对于源的次数的成绩。<br>
+								我们可以把形如<br>
+								2 4 8 16 32<br>
+								4 16 64 256 1024<br>
+								8 64 512 4096 4096*8<br>
+								这样的矩阵转化为<br>
+								1 2 3 4 5<br>
+								2 4 6 8 10<br>
+								3 6 9 12 15<br>
+								注意到了这个阶段，我的不重复数字个数就已经彻底和作为源的那个“2”没有关系了，由于宽度m是固定的，唯一会影响结果的其实也就是高度了。<br>
+								那么高度会是多少呢，是源的1,2,3...n次幂，那么很显然，即使源是最小的2，在1e6的范围内这个高度最高也只有19，换句话说，我们可以通过19*1e6的复杂度把每个高度对应的不同数字个数暴力计算出来。<br>
+								之后去遍历所有的源，计算出其对应矩阵高度然后直接加上算出的值就完了，然后在加上一个1。<br>
+								这里其实是重复子问题（不同源但高度相同的数对应不同数字个数相同，而且不会与其它源重复），隐藏的特别巧妙啊，相当有意思的题。<br>
+								你说它是dp吧，它没有状态转移，归类于基于找规律的暴力吧，碰到这种题得不出结论就把数字全print出来找规律好了。<br>
+								<br>
+								代码：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <stack>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 200005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair<ll,ll>
+#define inc(i,a,n) for(ll i=a;i<n;i++)
+#define vset(a,n,m) for(ll i=0;i<n;i++)a[i]=m;
+using namespace std;
+ll types[20];
+int vis[20000005];
+int main() {
+	cfast;
+	ll n, m;
+	cin >> n >> m;
+	ll ans = 1;
+	ll cnt = 0;
+	inc(i, 1, 20) {
+		inc(j, 1, m+1) {
+			if (vis[i * j] == 0) {
+				cnt++;
+				vis[i * j] = 1;
+			}
+		}
+		types[i] = cnt;
+	}
+	inc(i, 1, n + 1)vis[i] = 0;
+	inc(i, 2, n + 1) {
+		if (vis[i] == 1)continue;
+		ll ct = 0,tmp=i;
+		while (tmp <= n) {
+			ct++;
+			vis[tmp] = 1;
+			tmp *= i;
+		}
+		ans += types[ct];
+	}
+	cout << ans << endl;
+}
+
+
+
+	
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

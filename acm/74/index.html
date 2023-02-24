@@ -1,0 +1,213 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">PermutationForceII限制全排列</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Jul<span>y</span></span> <span class="day">4</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 1698E Permutation Force II<br>
+								题目大意：存在两个permutation(2e5)a,b和一个s，以及一种操作，这种操作进行n次，第i次可以交换范围在[i,i+s]内的任何两个数字的位置，要将a通过操作变成b，b并不是一个完整的数组，而是有很多-1，可以替换为任何数（需要使结果的b是一个permutation），求b的可能性的数量。<br>
+								<br>
+								由于操作具有顺序性，实际上可以发现，要将a中一个大的数换掉使得其成为b中对应位置上偏小的数，你只能在这个小数或者其之前去交换他，无论如何，这都要求s&gt=a[i]-b[i]。<br>
+								也就是说可能性的b实际上要求每个对位的数都得&gt=a在这个位置上的数-s。<br>
+								于是我们得到了一个具有范围限制的全排列问题，由于序列的特性，其实这个全排列非常简单。<br>
+								首先，原来b里固定的数是没法用的，所以先通过一个前缀和的方式来求出对于每个x，有多少个&gt=x的数可以用。可以发现这里存在：如果x0&ltx1，当一个位置上的要求是b[i]&gt=x1时，我用掉一个数，那么下次到b[j]&gt=x0的要求时，可用的数就少了一个。从这里可以判断出，我们需要先从较大的x来算起，然后再算小的x，于是将b中对应-1的a从大到小排序起来，通过刚刚的前缀和求出可能性的数量，并使剩下的可能性数量全部-1，答案就是所有可能性的乘积。<br>
+								题目偏思维，定了个2300个人觉得有点偏高吧。虽然自己也是比赛的时候没做出来之后看了hint做出来了。题目涉及到一个没什么普遍意义的交换结论以及一个有意义的限制全排列做法，还是很不错的。<br>
+								<br>
+								代码：<br>
+								<br>			
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltqueue&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 300005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(int i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+#define PI 3.14159265358979
+using namespace std;
+ll gcd(ll a, ll b) {
+	if (a &lt b)swap(a, b);
+	if (b == 0)return a;
+	return gcd(b, a % b);
+}
+ll cpow(ll x, ll n) {
+	ll ans = 1;
+	while (n &gt 0) {
+		if (n & 1) ans = (ans * x) % mdl;
+		x = (x * x) % mdl;
+		n &gt&gt= 1;
+	}
+	return ans;
+}
+ll getpos(int p, ll n) {
+	return n / cpow(10, p - 1) % 10;
+}
+ll getwei(ll n) {
+	int res = 0;
+	while (n) {
+		res++;
+		n /= 10;
+	}
+	return res;
+}
+/*
+
+---------------------------------------------------------------------
+
+*/
+ll a[maxn],b[maxn],vis[maxn],chs[maxn];
+vector&ltint&gt fre;
+bool cmp(int i1, int i2) {
+	return i1 &gt i2;
+}
+int main() {
+	cfast;
+	int t = 1;
+	cin &gt&gt t;
+	while (t--) {
+		fre.clear();
+		int n;
+		cin &gt&gt n;
+		int s;
+		cin &gt&gt s;
+		inc(i, 0, n) {
+			vis[i + 1] = 0;
+			cin &gt&gt a[i];
+		}
+		int f = 0;
+		inc(i, 0, n) {
+			cin &gt&gt b[i];
+			vis[b[i]] = 1;
+			if (b[i]&gt0&&b[i] &lt a[i] - s) {
+				f = 1;
+			}
+		}
+		if (f == 1) {
+			cout &lt&lt 0 &lt&lt endl;
+			continue;
+		}
+		inc(i, 0, n) {
+			if (b[i] == -1)fre.push_back(a[i]);
+		}
+		ll ans = 1;
+		chs[n + 1] = 0;
+		for (int i = n; i &gt= 1; i--) {
+			chs[i] = chs[i + 1] + (vis[i] == 0);
+		}
+		sort(fre.begin(), fre.end(), cmp);
+		inc(i, 0, fre.size()) {
+			int nd = max(1, fre[i] - s);
+			ans *= (chs[nd] - i);
+			ans %= mdl;
+		}
+		cout &lt&lt ans &lt&lt endl;
+	}
+}
+/*
+2 3
+1 4
+
+*/
+
+	
+
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

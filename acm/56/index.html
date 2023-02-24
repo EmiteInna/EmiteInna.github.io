@@ -1,0 +1,198 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">LostTree技巧型思维交互</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">19</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF1534D lost tree<br>
+								交互题，有一棵大小为n的树（2000），一次询问一个点将会得到每个点对于这个点的距离，最多询问n/2（向上取整）次，要求出这棵树。<br>
+								<br>
+								可以知道，当询问一个点时，只要是距离为1的点就一定是和他链接的。而开局的时候问哪个点都一样，所以我们问“1”。<br>
+								画几张图可以发现，无论我们怎么取点询问，除非是通过将距离与被询问点为1的点和被询问点连边或者只剩一个节点没问过的时候将它连到最后一个没有问过的点（这个概率太小而且非常麻烦），我们是无法获取整棵树的。<br>
+								也就是说无论如何对于一对连通的点，我们至少要询问其中的一个。<br>
+								那么问题就很简单了，这些点最好是互相间隔的，无论如何我们都不想询问一对连通点中的两个点，因为这毫无意义，于是一开始想到了multiset的方法，只要问过的点，都不再去与它连接的点，但是直接被样例1卡了，只能说是高质量样例啊。<br>
+								为什么呢？因为这个方法实际上是把所有点一分为二，然后取其中的一个集合，但我们必须保证自己取的是更小的那个集合，而不是随便取一个，显然，更小的那个集合里面的点数一定是小于n/2的。<br>
+								那么怎么得到这个集合呢？通过一开始问的那个1，因为信息除了距离为1的点还有其他的点，依靠距离有没有什么能够直接把点集一分为二的方法呢？有，距离的奇偶，既然连接的节点距离只能为1，那么奇数节点就只能和相邻的偶数节点连接，反之亦然，所以只要询问奇偶节点里数量小的那部分即可。<br>
+								至于为什么是n/2向上取整，就是因为第一个问的那个1了，卡的非常死啊。<br>
+								遇到n/2的时候要首先想到把整个集合分成两个部分，这是非常关键的，也是在思维题中可以积累出来的技巧。<br>
+								<br>
+								代码：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 400005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(ll i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+using namespace std;
+int n;
+vector&ltpll&gt ans;
+multiset&ltint&gt st;
+int qr[2005];
+map&ltpll, int&gt vi;
+int vis[2001];
+vector&ltint&gt dis[2005];
+void add_edge(int a, int b) {
+	pll p;
+	p.first = a;
+	p.second = b;
+	if (vi[p] == 0)ans.push_back(p);
+	vi[p] = 1;
+	p.first = b;
+	p.second = a;
+	vi[p] = 1;
+}
+int main() {
+	cfast;
+	cin &gt&gt n;
+	cout &lt&lt "? 1" &lt&lt endl;
+	cout.flush();
+	int od = 0, ev = 0;
+	inc(i,1,n+1){
+		cin &gt&gt qr[i];
+		if (qr[i] == 1) {
+			add_edge(1, i);
+		}
+		if (i == 1)continue;
+		if (qr[i] % 2 == 1) {
+			od++;
+		}
+		else {
+			ev++;
+		}
+	}
+	int cas = 0;
+	if (od &lt ev)cas++;
+	inc(i, 2, n + 1) {
+		if (qr[i] % 2 == cas) {
+			cout &lt&lt "? " &lt&lt i &lt&lt endl;
+			cout.flush();
+			inc(j, 1, n + 1) {
+				int tmp;
+				cin &gt&gt tmp;
+				if (tmp == 1)add_edge(i, j);
+			}
+		}
+	}
+	cout &lt&lt "!" &lt&lt endl;
+	inc(i, 0, n-1) {
+		cout &lt&lt ans[i].first &lt&lt " " &lt&lt ans[i].second &lt&lt endl;
+	}
+	cout.flush();
+}
+//11:50
+/*
+9
+? 1
+0 1 1 2 2 3 3 4 4
+? 6
+3 4 2 3 1 0 2 3 3
+? 7
+3 4 2 3 1 2 0 1 1
+? 4
+2 3 1 0 2 3 3 4 4
+? 2
+1 0 2 3 3 4 4 5 5
+*/
+
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

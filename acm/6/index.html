@@ -1,0 +1,159 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">求l到r不含有“4”和“62”的数字数量</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">26</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								大家都知道，数位DP难点不是DP的过程，而是求解的过程，将一个表示为abcdefg的数一一对应地求出结果才是最困难的……，也是可能会花一两个小时debug的，没有办法的事情。<br>
+没有办法就上板子吧，代码：<br>
+（原题目是求l到r中不含有“4”和“62”的数字数量）<br>
+<pre><code>
+#define _CRT_SECURE_NO_DEPRECATE
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <queue>
+#include <algorithm>
+#include <vector>
+#include <stack>
+#include <math.h>
+#include <iostream>
+#include <functional>
+using namespace std;
+#define pow(i) (1<<(i))
+#define INF (1<<29)
+#define mem(x) memset(x,0,sizeof(x))
+#define mem1(x) memset(x,-1,sizeof(x))
+typedef long long LL;
+int dp[10][2];
+int digit[20];
+int dfs(int pos, bool state, bool fp)//pos为当前位数，state为当前状态[1]，fp为上一位是否到达上限的标志
+{
+	if (!pos)  //若计算到最后一位，return结果[2]。
+		return 1;
+	if (!fp && dp[pos][state] != -1) //若前一位不满足上限，并且dp[pos][state]已经确定，直接return，这里体现了记忆化搜索
+		return dp[pos][state];
+	int i, fpmax, ret = 0; //fpmax为当前循环的上限，ret为此时的值
+	fpmax = fp ? digit[pos] : 9;  //若上一位到达上限，此时最多枚举到这一位的数值，否则枚举到最大[3]
+	for (i = 0; i <= fpmax; i++)
+	{
+		if (i == 4 || state && i == 2)//根据题意，这里是若本位为4，或者上一位为6本位为2，则不满足
+			continue;
+		ret += dfs(pos - 1, i == 6, fp && i == fpmax);//否则继续递归下一位，根据题意判定state及fp[4]
+	}
+	if (!fp) //若前一位不是上限，即这一位可以到最大，则更新dp值[5]
+		dp[pos][state] = ret;
+	return ret;  //返回ret
+}
+int cal(int x)
+{
+	int i, len;
+	len = 0;
+	while (x) //求出每一位
+	{
+		digit[++len] = x % 10;
+		x /= 10;
+	}
+	return dfs(len, 0, 1);
+}
+int main()
+{
+	int n, m;
+	int i, j;
+	while (scanf("%d %d", &n, &m) != EOF)
+	{
+		if (n == 0 && m == 0)
+			break;
+		mem1(dp);//dp数组初始化为-1.多组数据实际上只需一次初始化
+		printf("%d\n", cal(m) - cal(n - 1)); //计算时由右届到左界减一
+	}
+	return 0;
+}
+
+</code></pre>
+代码也都注释了，递归函数第一位表示位数，第二位表示状态（数位DP一定要有可以表示成单个或多个数字的状态，否则也要用数论化简），状态数量根据题目来定，第三位表示这一位有没有到原数最高位，简单无脑。<br>
+嗯，简单无脑就不讲了吧。<br>
+其实这个DFS看似简单无脑，而且只能处理数个state之间的关系，但实际上上限非常之高，具体的变换可以根据题目进行应变，举个例子：<br>
+“求l到r内含有“13”而且可以整除13的数”<br>
+由于13不是3这种特殊数字而且本身太大，无法用直接求出来，只能通过同余来化简，那么和这个dfs有什么关系呢，很显然，这个dfs会遍历一个数的所有位，因此我多设置一个state2，最开始记录最高位的数字，到下一位的时候将其乘10，并加上本位数字，再模13，一直进行到最后一位，如果最后的模值是0则通过，否则不通过，而由于记忆化搜索的缘故，每位最多也就多了13个不同的state2，复杂度提高较小。<br>
+							
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">sequence反演</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">26</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								牛客14648 序列<br>
+								有两个序列a,b(1e5)，数字大小<=序列长度，求有多少对x,y满足gcd(x,y)=1且a[b[x]]=b[a[y]]。<br>
+								<br>
+								很容易让人联想到反演的板子题，但是本题还有一个限定条件，不过本质还是通过反演把不定的gcd转化为有规律的筛法，问题转化为对于每个i，求得a[b[x]]=b[a[y]]的对数，其中x和y都是i的倍数。<br>
+								这个东西好像确实是有点麻烦……整理一下，由于选择了筛法的做法，也就是先枚举i，然后再枚举i的倍数，复杂度大约在1e6，这个时候实际上i的倍数x和y之间是没有联系的，只要他们都是i的倍数就行，那么我们可以直接分开枚举，只要使得x和y满足条件即可。而满足条件的对数则是存在x,y为i的倍数使得a[b[x]]=b[a[y]]的对数。由于使用分开处理的思想，这里大可以先求出所有不同的a[b[x]]的个数，存入map，然后遍历b[a[x]]即可，x的选择和y的选择完全无关，通过这1e6的复杂度就可以处理出f(i)-对于i来讲，x,y是i的倍数时的对数。<br>
+								然后直接反演求g(1)就行了。<br>
+								算是比板子题灵活一点的板子题吧，还考到了数组存在性的问题，整体不是很难。<br>
+								<br>
+								代码：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 14000005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(int i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+using namespace std;
+bool is_prime[100001] = { 1,1 };
+int prime[100001];
+int mu[100001];
+int getmu(int n) {
+	mu[1] = 1;
+	int cnt = 0;
+	for (int i = 2; i &lt= n; i++) {
+		if (!is_prime[i]) {
+			prime[++cnt] = i;
+			mu[i] = -1;
+		}
+		for (int j = 1; j &lt= cnt && i * prime[j] &lt= n; j++) {
+			is_prime[i * prime[j]] = 1;
+			if (i % prime[j] == 0) { mu[i * prime[j]] = 0; break; }
+			else mu[i * prime[j]] = -mu[i];
+		}
+	}
+	return cnt;
+}
+ll part[maxn],a[maxn],b[maxn];
+map&ltint, int&gt nums;
+int main() {
+	cfast;
+//	cout &lt&lt "okinit";
+	getmu(100000);
+	ll n;
+	cin &gt&gt n;
+	inc(i, 1, n + 1) {
+		cin &gt&gt a[i];
+	}
+	inc(i, 1, n + 1) {
+		cin &gt&gt b[i];
+	}
+	inc(i, 1, n + 1) {
+		nums.clear();
+		for (int j = i; j &lt= n; j += i) {
+			nums[a[b[j]]]++;
+		}
+		for (int j = i; j &lt= n; j += i) {
+		//	if (nums[b[a[j]]] &gt 0) {
+				part[i] += nums[b[a[j]]];
+		//	}
+		}
+	}
+	ll ans = 0;
+	inc(i, 1, n + 1) {
+		ans += (ll)mu[i] * part[i];
+	}
+	cout &lt&lt ans &lt&lt endl;
+}
+/*
+
+*/
+
+	
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">UnstableString细节线性dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">19</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF1535C Unstable String<br>
+								题目大意：给一个串(2e5)，包含’1’,’0’,’?’，其中问号可以任意替换为0或1，求有多少个子串，子串中相邻位置不能相同（每个子串中的问号都可以任意变为0和1）。<br>
+								<br>
+								2e5的复杂度让区间问题成为不可能，于是容易想到是线性，对于这题来说，不同位置有明显的转化，’1’的位置可以作为’0’的位置的后继，反之亦然，而’?’可以作为任何一个字符的后继，于是定态dp[i][j]，i表示位置，j表示字符是0还是1，问号的时候两个一起转化，至于dp表示的值那就是结尾为i的合格串最长长度了，也就是说：<br>
+								Dp[i][0]=dp[i-1][1] 为0<br>
+								Dp[i][1]=dp[i-1][0] 为1<br>
+								问号的时候两个都转移。<br>
+								为什么取长度呢？因为知道结尾和满足条件的长度，那么合格的串数不就等于长度吗？但是这个问题里有所区别，因为子串只和头尾位置有关，那么同位置的串中即使问号表示的字符不同也算是同一个串，所以在求和的时候要求max(dp[i][0],dp[i][1])而不是相加。<br>
+								算是有些细节的线性dp，蛮有意思的水题。<br>
+								（标签里还有binary search，这就不是很懂了）<br>
+								<br>
+								代码：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltcstdio&gt
+#include &ltcstring&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 200005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(ll i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+using namespace std;
+ll dp[maxn][2];
+int vis[maxn];
+inline ll cntlen(ll len) {
+	return (1 + len) * len / 2;
+}
+int main() {
+	cfast;
+	int t;
+	cin &gt&gt t;
+	while (t--) {
+		string s;
+		cin &gt&gt s;
+		ll res = 0;
+		inc(i, 1, s.length() + 1) {
+			if (s[i - 1]=='0') {
+				dp[i][0] = dp[i - 1][1] + 1;         
+			}
+			else if (s[i - 1] == '1') {
+				dp[i][1] = dp[i - 1][0] + 1;
+			}
+			else {
+				dp[i][1] = dp[i - 1][0] + 1;
+				dp[i][0] = dp[i - 1][1] + 1;
+			}
+			res += max(dp[i][0],dp[i][1]);
+		}
+		inc(i, 1, s.length() + 1) {
+			dp[i][0] = 0;
+			dp[i][1] = 0;
+		}
+		cout &lt&lt res &lt&lt endl;
+		
+	}
+}
+//2022.4.19 13:14
+/*
+
+
+
+*/
+
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

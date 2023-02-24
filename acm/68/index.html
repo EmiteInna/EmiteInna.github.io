@@ -1,0 +1,178 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">FixedPoint思维+多个限制条件</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">May<span></span></span> <span class="day">3</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF1551E Fixed Point<br>
+								题目大意：有一个序列，长度为n（2000），现在需要删掉其中的一些数，删掉之后原来的序列会自动缩进，你的目的是使得至少有k个数和他们的下标相等（从1开始），求最少需要删去的数的数量。<br>
+								<br>
+								这题n只有2000所以靠一个简单的dp就过去了，但如果出到2e5的话就是完全的另一道题目，可以看作是拥有多个限制条件的值型状态转移。<br>
+								<br>
+								通过观察可以发现，如果前面有一个数a，将其移动到第a个位置需要移除的数个数为m，而它后面有个数b，移动它到第b个位置需要移除的数个数为n，且n&gt=m，那么实际上我在移动这个b的时候就能顺带地把a移动到合适的位置，实际上，对于我最后得到的结果，它一定是以这个形式：每个在后面的数移动到合适位置需要的个数永远大于等于前面的数，因此最后的移除个数实际上就是那个最关键的b移动到合适位置所需要的移除个数。<br>
+								解决了这个问题之后就可以解决k的问题了，现在我们知道，存在着一个b（就叫它b吧），将其移动到位的过程中有一堆数被携带着移动到位了，有没有一种可能这些数的数量刚好大于等于k-1呢。<br>
+								那么dp的值就确定了：dp[i]表示将i移动到位后一共有多少个数被移动到位，则dp[i]=max(dp[k])+1，这里k需要满足的条件是a[k]&lta[i]且need[k]&lt=need[i]（need表示需要移除的数的个数），由于n只有2000，直接n2复杂度就能解决了，当dp[i]&gt=k时通过need[i]来更新答案的最小值。<br>
+								<br>
+								而如果n是2e5呢，由于转移需要满足a[k]&lta[i]且need[k]&lt=need[i]的两个完全没什么关系的条件，我们赖以生存的单调队列和权值线段树都没法派上用场……这个问题就留待解决吧。<br>
+								<br>
+								代码：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 200005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(int i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+#define pi 3.141592657
+using namespace std;
+ll gcd(ll a, ll b) {
+	if (a &lt b)swap(a, b);
+	if (b == 0)return a;
+	return gcd(b, a % b);
+}
+ll cpow(ll x, ll n) {
+	ll ans = 1;
+	while (n &gt 0) {
+		if (n & 1) ans = (ans * x) % mdl;
+		x = (x * x) % mdl;
+		n &gt&gt= 1;
+	}
+	return ans;
+}
+ll dp[2001],a[2001],need[2001];
+int main() {
+	cfast;
+	int t=1;
+	cin &gt&gt t;
+	while (t--) {
+		memset(dp, 0, sizeof(dp));
+		int n, k;
+		cin &gt&gt n &gt&gt k;
+		int tmp = 0;
+		inc(i, 1, n+1) {
+			cin &gt&gt a[i];
+		}
+		ll mi = -1;
+		inc(i, 1, n+1) {
+			need[i]= i - a[i];
+			if (need[i] &lt 0)continue;
+			ll ma = 0;
+			inc(j, 0, i) {
+				if (need[j] &lt= need[i]&&a[j]&lta[i]) {
+					ma = max(ma, dp[j]);
+				}
+			}
+			dp[i] = ma + 1;
+			if (dp[i] &gt= k) {
+				if (mi == -1)mi = need[i];
+				else mi = min(mi, need[i]);
+			}
+		}
+		cout &lt&lt mi &lt&lt endl;
+	}
+}
+/*
+2022.5.3 10:34
+*/
+
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

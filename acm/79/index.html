@@ -1,0 +1,244 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">暗月马戏团-线段树维护DP</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Aug<span>u</span></span> <span class="day">14</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								杭电杯中超联赛第八场1002<br>
+								<br>
+								题意：给一个长度为n（2e5）的序列（序列中没有重复值），现要将其分段，使得每一段中最大值出现的位置在该段的奇数位置，最小值出现在该段的偶数位置，问分段的方法数量（MOD 998244353）。<br>
+								<br>
+								一眼计数类dp问题，转移方程非常好写，dp[i]=∑dp[j] (when [j+1,i]是满足条件的段)，但是无论是求和还是判定条件都有些困难。<br>
+								在求最值问题上我们会想到单调栈，维护一个递减单调栈，那么<br>
+								栈中两个相邻元素x,y中后面的元素y是[x+1,y]这一段区间的中任何一个位置到i的区间最大值。<br>
+								最小值同理，依靠这个我们可以得到对于以当前位置i结尾的区间而言有多少个区间是满足条件的，但是别忘了问题中的奇偶是根据当前分段的奇偶来定的，这就对进入维护的元素位置有一定的要求，因此我们需要分开来维护。由于前面的单调栈操作已经让我们知道了最大元素的位置，那么决定这个位置的奇偶性的时候的主要元素是区间的左界，因此，当当前最大值在原数组的奇位置时，只有区间左界也是奇数的时候才能符合条件，反之亦然。通过这个方法我们得到了哪些位置是可以进行转移的。<br>
+								但是光靠这个单调栈还是不够，符合条件的左界实在太多了，我们需要维护一个区间值来进行dp的转移，这时考虑使用线段树。从前面的分析可以看出我们需要两个线段树分别维护左界为奇/偶位置时是否满足条件，然后最后我们需要一个区间和，这个区间和包含了所有符合转移条件的位置，这个时候会使用到一个双线段树，一个用来维护每个点满足的条件的数量（满足两个条件则表明这个点可以进行转移），另一个线段树用于求和，树上维护每个点的dp值，求和时如果该点满足条件数量为2则加入和中。<br>
+								为了更全面地维护每个点满足条件的数量，我们需要对单调栈添加一个动态的操作，很显然，对于递减栈来讲，每次弹出的比当前位置值更小的值，它们曾经满足的条件（本身作为一段区间的最大值）已经不满足，所以我们在弹出的时候对它们的对应区间-1，比当前位置更大的值依然满足条件，所以不需要动，而新的值作为最大值的区间在最后进行一次+1处理。<br>
+								最后dp的转移只需要加上两个线段树分别的sum即可，要求的答案即为dp[n]。<br>
+								<br>
+								代码：（题解的代码，因为线段树还是不会写……）<br>
+								<br>
+<pre><code>
+//1002, std
+#include&ltbits/stdc++.h&gt
+#define mset(a, b) memset(a, b, sizeof(a))
+#define mcpy(a, b) memcpy(a, b, sizeof(a))
+#define lc (rt &lt&lt 1)
+#define rc (rt &lt&lt 1) | 1
+using namespace std;
+typedef long long LL;
+const int MAXN = 300005;
+
+template &lttypename T&gt inline void read(T& WOW) {
+	T x = 0, flag = 1;
+	char ch = getchar();
+	while (!isdigit(ch)) {
+		if (ch == '-') flag = -1;
+		ch = getchar();
+	}
+	while (isdigit(ch)) {
+		x = x * 10 + ch - '0';
+		ch = getchar();
+	}
+	WOW = flag * x;
+}
+
+namespace ModCalculator {
+	const int MOD = 998244353;
+	inline void Inc(int& x, int y) {
+		x += y; if (x &gt= MOD) x -= MOD;
+	}
+	inline int Add(int x, int y) {
+		Inc(x, y); return x;
+	}
+}
+using namespace ModCalculator;
+
+int n, a[MAXN], dp[MAXN], stk1[MAXN], top1, stk2[MAXN], top2;
+
+struct SegmentTree {
+	int mx[MAXN &lt&lt 2], tag[MAXN &lt&lt 2], sum[MAXN &lt&lt 2];
+
+	inline void puttag(int rt, int tg) {
+		mx[rt] += tg;
+		tag[rt] += tg;
+	}
+
+	inline void pushdown(int rt) {
+		if (tag[rt]) {
+			puttag(lc, tag[rt]);
+			puttag(rc, tag[rt]);
+			tag[rt] = 0;
+		}
+	}
+
+	inline void pushup(int rt) {
+		mx[rt] = max(mx[lc], mx[rc]);
+		sum[rt] = 0;
+		if (mx[rt] == mx[lc]) {
+			Inc(sum[rt], sum[lc]);
+		}
+		if (mx[rt] == mx[rc]) {
+			Inc(sum[rt], sum[rc]);
+		}
+	}
+
+	void Build(int rt, int b, int e) {
+		mx[rt] = tag[rt] = sum[rt] = 0;
+		if (b == e) return;
+		int mid = (b + e) &gt&gt 1;
+		Build(lc, b, mid);
+		Build(rc, mid + 1, e);
+	}
+
+	void Insert(int rt, int b, int e, int pos, int val) {
+		if (b == e) {
+			sum[rt] = val;
+			return;
+		}
+		int mid = (b + e) &gt&gt 1;
+		pushdown(rt);
+		if (pos &lt= mid) Insert(lc, b, mid, pos, val);
+		else Insert(rc, mid + 1, e, pos, val);
+		pushup(rt);
+	}
+
+	void Update(int rt, int b, int e, int l, int r, int v) {
+		if (l &lt= b && e &lt= r) {
+			puttag(rt, v);
+			return;
+		}
+		int mid = (b + e) &gt&gt 1;
+		pushdown(rt);
+		if (l &lt= mid) Update(lc, b, mid, l, r, v);
+		if (r &gt mid) Update(rc, mid + 1, e, l, r, v);
+		pushup(rt);
+	}
+} seg[2];
+
+void solve() {
+	read(n);
+	for (int i = 1; i &lt= n; ++i) {
+		read(a[i]);
+	}
+	seg[0].Build(1, 1, n);
+	seg[1].Build(1, 1, n);
+	top1 = top2 = 0;
+	dp[0] = 1;
+	for (int i = 1; i &lt= n; ++i) {
+		seg[(i & 1)].Insert(1, 1, n, i, dp[i - 1]);
+		while (top1 && a[i] &gt a[stk1[top1]]) {
+			seg[(stk1[top1] & 1)].Update(1, 1, n, stk1[top1 - 1] + 1, stk1[top1], -1);
+			--top1;
+		}
+		stk1[++top1] = i;
+		seg[(i & 1)].Update(1, 1, n, stk1[top1 - 1] + 1, i, 1);
+		while (top2 && a[i] &lt a[stk2[top2]]) {
+			seg[(stk2[top2] & 1) ^ 1].Update(1, 1, n, stk2[top2 - 1] + 1, stk2[top2], -1);
+			--top2;
+		}
+		stk2[++top2] = i;
+		seg[(i & 1) ^ 1].Update(1, 1, n, stk2[top2 - 1] + 1, i, 1);
+		dp[i] = 0;
+		if (seg[0].mx[1] == 2) {
+			Inc(dp[i], seg[0].sum[1]);
+		}
+		if (seg[1].mx[1] == 2) {
+			Inc(dp[i], seg[1].sum[1]);
+		}
+	}
+	printf("%d\n", dp[n]);
+}
+
+int main() {
+	int T; read(T);
+	while (T--) {
+		solve();
+	}
+	return 0;
+}
+
+
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

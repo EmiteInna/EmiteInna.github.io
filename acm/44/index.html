@@ -1,0 +1,169 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">StringPainter两次区间dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">7</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+HDU 2476 String Painter<br>
+题目大意：两个长度为n（<=100）的字符串，现可以进行任意次操作：选中一个区间将第一个字符串的该区间内字符全改成选定字符，求将两个字符串变得相同的最小操作数。<br>
+<br>
+本题表现出区间特征的地方在于如果选中两个相邻区间涂成相同颜色的话则只需要一次涂色，也就是说区间的转移依赖于将要涂成的颜色，那么在定态的时候颜色就要包含在内，小写字母一共有26个，区间dp的复杂度乘上26，也就是2e7，大概是能过的。<br>
+Dp[i][j][k]表示将i，j区间涂成k字符之后还需要的最少操作次数，同时dpm[i][j]表示将区间i,j完成所需的最小操作次数，更新dp的时候顺带求出dpm的最小值，之后再用dpm去反向更新一次dp，为什么这么做？因为一个区间的值必须包含子区间的所有情况，而单独的一个k是无法包含的，反向更新表示的是先将区间涂成k，然后再涂成m之后需要的最小次数，这个次数是很有可能小于dp[i][j][k]的。<br>
+一次区间dp之后我们得到了dpm，这个时候我们需要进行第二次区间dp来合并答案，因为显然最优的策略中并不一定整个字符串是同时涂成一种颜色再去修改的，这一步中值得注意的是对于每个i，如果str[i]==str2[i]，那么dpm[i][i]=0，代表断开的不需要合并的区间。<br>
+第二次区间dp之后得到答案就是dpm[1][n]。<br>
+细节看上去很多，实际上自己想想都能推出来，本题非常典型地体现出了区间dp的特性，很值得反复品。<br>
+<br>
+代码：<br>
+<br>
+								
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <stack>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 200005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair<ll,ll>
+#define inc(i,a,n) for(ll i=a;i<n;i++)
+#define vset(a,n,m) for(ll i=0;i<n;i++)a[i]=m;using namespace std;
+ll dp[101][101][26],dpm[101][101];
+int main() {
+	cfast;
+	string str1, str2;
+	while (cin >> str1 >> str2) {
+		int len = str1.length();
+		inc(step, 1, len + 1) {
+			inc(i, 1, len+2-step) {
+				int j = i + step - 1;
+				ll mi = 1001;
+				inc(k, 0, 26) {
+					if (i == j) {
+						dp[i][j][k] =1+ !(str2[i-1] - 'a' == k);
+						continue;
+					}
+					dp[i][j][k] = 1000;
+					inc(m, i, j) {
+						ll uni;
+						uni = dp[i][m][k] + dp[m + 1][j][k] - 1;
+						dp[i][j][k] = min(dp[i][j][k],uni);
+					}
+				}
+				dpm[i][j] = mi;
+				inc(k, 0, 26) {
+					dp[i][j][k] = min(dp[i][j][k], 1ll + mi);
+				}
+			}
+		}
+		inc(i, 1, len + 1) {
+			if (str1[i - 1] == str2[i - 1])dpm[i][i] = 0;
+			else dpm[i][i] = 1;
+		}
+		inc(step, 1, len + 1) {
+			inc(i, 1, len + 2-step) {
+				int j = i + step - 1;
+				inc(k, i,j) {
+					dpm[i][j] = min(dpm[i][j], dpm[i][k] + dpm[k + 1][j]);
+				}
+			}
+		}
+		cout << dpm[1][len] << endl;
+	}
+}
+	
+
+
+	
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

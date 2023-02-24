@@ -1,0 +1,181 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">BookofEvil双向树形dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">7</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF192D Book of Evil<br>
+								众所周知之前做了道假的双向树形dp，这次这个是真的了……<br>
+								题目大意：给一棵树，有n个节点（1e5），m个被污染的点，一个d值，求树上距离这m个点最远距离不超过d的节点数量。<br>
+								<br>
+								由于一个结点通过子树达到的最远距离可以通过后序遍历轻松得出，而除此之外只有通过父亲的走法，这样走到的最远距离即是先走到父亲结点再走到父亲结点能走到的最远距离对应的路（除了本身所在的路）<br>
+								最为典型的双向树形dp，第一次后序遍历的时候用vector或者优先队列保存下来每一个子树传上来的距离，传完之后进行排序，之后进行一次前序遍历，通过之前保存的距离，先判断是否是原先走过的距离，之后向下推。有个细节就是：前序遍历时，如果子节点已经有值，那么父亲节点必须有大于两个值时才能去转移（否则那个唯一的值肯定是该子节点传上来的），但如果子节点没有值，那么父亲节点即使只有一个值也要传下去，不过其实如果写法足够严谨的话是不需要担心这个问题的。<br>
+								如果用stl的话要注意各种越界问题，如果都照顾到的话这题算是一道水题。<br>
+								<br>
+								代码：<br>
+								<br>
+								
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <stack>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 200005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair<ll,ll>
+#define inc(i,a,n) for(ll i=a;i<n;i++)
+#define vset(a,n,m) for(ll i=0;i<n;i++)a[i]=m;
+using namespace std;
+ll ans,d,vis[maxn];
+vector<ll> tree[maxn], dp[maxn];
+bool cmp(ll l1, ll l2) { return l1 > l2; }
+void dfs(int n, int dad) {
+	if (vis[n] == 1)dp[n].push_back(0);
+	for (int i = 0; i < tree[n].size(); i++) {
+		int son = tree[n][i];
+		if (son == dad)continue;
+		dfs(son, n);
+		if(dp[son].size())dp[n].push_back(dp[son][0]+1);
+	}
+	sort(dp[n].begin(), dp[n].end(),cmp);
+}
+void dfs2(int n, int dad) {
+	
+	for (int i = 0; i < tree[n].size(); i++) {
+		int son = tree[n][i];
+		if (son == dad)continue;
+		if (dp[n].size() >= 2) {
+			if (dp[son].size() && dp[son][0] + 1 == dp[n][0]) {
+				dp[son].push_back(dp[n][1]+1);
+			}
+			else {
+				dp[son].push_back(dp[n][0]+1);
+			}
+		}
+		else if (dp[n].size() >= 1&&dp[son].size()==0) {
+			dp[son].push_back(dp[n][0] + 1);
+		}
+		sort(dp[son].begin(), dp[son].end(),cmp);
+		dfs2(son, n);
+	}
+	if (dp[n][0] <= d)ans++;
+}
+int main() {
+	cfast;
+	ans = 0;
+	int n, m;
+	cin >> n >> m >> d;
+	inc(i, 0, m) {
+		ll mon;
+		cin >> mon;
+		vis[mon] = 1;
+	}
+	inc(i, 0, n - 1) {
+		ll a, b;
+		cin >> a >> b;
+		tree[a].push_back(b);
+		tree[b].push_back(a);
+	}
+	dfs(1, -1);
+	dfs2(1, -1);
+	cout << ans;
+}
+
+	
+
+
+	
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

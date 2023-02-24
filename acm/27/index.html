@@ -1,0 +1,183 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">MinimalCoverage线段问题端点处理</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">31</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 1579G Minimal Coverage<br>
+								<br>
+题目大意：给n个数（n级别为1e4）的数组a（a[i]级别为1e3），你一开始在原点，你可以选择向左或者右走a[i]步，求最后你走过的路的最小覆盖长度。<br>
+<br>
+一开始以为是类似于快递员问题，但是这个问题的选择非常固定，而且对于每个线段，你的结束位置并不一定在端点上，而且这个结束位置和下一步的状态有关。这里我已经说“状态”了，因为很显然这题就是dp，一眼就能看出来。<br>
+仔细想想，对于每个状态来讲，当前他处在的位置并不重要，重要的只是他左边最远去过的距离和右边最远去过的距离，而这两个距离的和就是我们要求的答案，所以实际上我们的状态中只要包含其中的一个距离就行。<br>
+dp[i][j]表示在第i个数的时候我离向左边去过的最远的点的距离为j时向右边达到的最远距离，那么我状态转移就显而易见了，有四种情况，自己画图去。<br>
+关键在于这么dp我要遍历多久捏，我可以一路跑到最远的地方，离左边距离为1e4*1e3。<br>
+实际上大家可以模拟一下就会发现，最终的结果最大也不会超过两倍的最大线段的长度（因为实在不行我可以在无视最大的那个线段的情况下，能向中间就向中间），所以需要遍历的j只有2000个（然后我怂了，写了3000个，还用vector存，丢人）<br>
+<br>
+这题其实比较接近几何的领域吧，面对这种不是很明显的状态转移，千万不要去想复杂的数学化简方法，一步到位的状态转移永远是最好的，状态直接定为好算的那个就行了。<br>
+有时候dp只是工具，但有时候dp可以自成整道题呢。<br>
+<br>
+代码（这题代码写的很丑……）：<br>
+<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <stack>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 1000005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair<ll,ll>
+#define inc(i,a,n) for(int i=a;i<n;i++)
+#define vset(a,n,m) for(int i=0;i<n;i++)a[i]=m;
+using namespace std;
+ll dp[3000],roller[3000],vis[3000];
+ll a[10005];
+vector<int> hav[10005];
+int main(){
+	cfast;
+	int t;
+	cin >> t;
+	while (t--) {
+		int n;
+		cin >> n;
+		inc(i, 1, n + 1)scanf("%d", &a[i]);
+		hav[1].push_back(0);
+		clr(dp, 3000);
+		dp[0] = 0;
+		ll ans = 1e5;
+		inc(i, 1, n + 1) {
+			//cout << "i = " << i << endl;
+			vset(roller, 3000, 1e5);
+			clr(vis, 3000);
+			inc(j, 0, hav[i].size()) {
+				int tj = hav[i][j];
+				if (tj >= a[i]) {
+
+					roller[tj - a[i]] = min(roller[tj - a[i]], dp[tj] + a[i]);
+					if (i == n)ans = min(ans, tj-a[i]+roller[tj - a[i]]);
+					if (vis[tj - a[i]] == 0)hav[i+1].push_back(tj - a[i]),vis[tj-a[i]]=1;
+					//cout << "r." << tj - a[i] << " = " << roller[tj - a[i]] << endl;
+					if (tj + a[i] <= 2000) {
+						roller[tj + a[i]] = min(roller[tj + a[i]], max((ll)0, dp[tj] - a[i]));
+						if (i == n)ans = min(ans, tj + a[i] + roller[tj + a[i]]);
+						if (vis[tj + a[i]] == 0)hav[i + 1].push_back(tj + a[i]), vis[tj + a[i]] = 1;
+						//cout << "r." << tj + a[i] << " = " << roller[tj + a[i]] << endl;
+					}
+				}
+				else {
+					roller[0] = min(roller[0], dp[tj] + a[i]);
+					if (i == n)ans = min(ans, roller[0]);
+					if (vis[0] == 0)hav[i+1].push_back(0), vis[0] = 1;
+					//cout << "r." << 0 << " = " << roller[0] << endl;
+
+					if (tj + a[i] <= 2000) {
+						roller[tj + a[i]] = min(roller[tj + a[i]], max((ll)0, dp[tj] - a[i]));
+						if (i == n)ans = min(ans, tj + a[i] + roller[tj + a[i]]);
+						if (vis[tj + a[i]] == 0)hav[i + 1].push_back(tj + a[i]), vis[tj + a[i]] = 1;
+						//cout << "r." << tj + a[i] << " = " << roller[tj + a[i]] << endl;
+					}
+				}
+			}
+			memcpy(dp, roller, 3000 * sizeof(ll));
+		}
+		cout << ans << endl;
+		inc(i, 1, n + 2)hav[i].clear();
+	}
+}
+/*
+
+*/
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">Trade单调队列优化dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">11</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								HDU 3401 Trade<br>
+								题目大意：有个T天，最多手上拿P张股票，每次进行购买股票或出售的操作之后都要隔W天才能再下一次操作，T天中第i天时，每张股票购入加格为ap[i]，出售价格为bp[i]，最多购买as[i]张，最多出售bp[i]张，一天不能同时买和卖，假设开局金钱无限，求最多能赚多少钱，所有数据范围为2000以内。<br>
+								<br>
+								很容易看出的是可以通过持有股票的张数来进行状态转移，间隔W天或以上的问题可以通过最大前缀转化为间隔刚好W天，那么设定状态dp[i][j]为第i天手上还有j张股票的时候最大的赚钱量（为什么有无后效性就不再阐述了，倒着推就行）。此时状态转移为<br>
+								dp[i][j]=max(dp[i-1][j],dp[i-W-1][k]+delta)这时买和卖可以分开考虑，之后的dp[i-W-1][k]+delta可以分解为dp[i-W-1][j-k] - k*ap[i]和dp[i-W-1][j+k] +k*bp[i]，但是如果去枚举k的话复杂度为O(n3)，寄。<br>
+								分解我们刚刚得到的公式dp[i-W-1][j-k]-k*ap[i]，其中ap[i]是固定的，但j-k和k是变化的，这导致了没有单调性的问题，但我们可以转化公式为dp[i-W-1][j-k]+(j-k-j)*ap[i]，这样就把j-k和k独立出来，也就是对于每个j，求比它小的数j-k，使得dp[i-W-1][j-k]+(j-k)*ap[i]最大，而且k有范围的要求，于是我们使用单调队列进行优化，并对卖的情况同样进行操作，复杂度优化到了O(4n2)。<br>
+								这是典型的通过分离项来将两个独立的参量的影响变为单个参量的影响，如果没有每天的购买出售限制的话，不用单调队列而用sort也是可以的，不过因为这里的递推是顺序的，后面的值一定是由前面的值得出，所以你永远可以相信单调队列。<br>
+								<br>
+								代码：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <stack>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 1000005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair<ll,ll>
+#define inc(i,a,n) for(int i=a;i<n;i++)
+#define vset(a,n,m) for(ll i=0;i<n;i++)a[i]=m;
+#define endl '\n'
+#define cst 130000
+using namespace std;
+int dp[2001][2001];
+int qr[2001],rk[2001];
+int ap[2001], bp[2001], as[2001], bs[2001];
+int main() {
+	cfast;
+	int t;
+	cin >> t;
+	while (t--) {
+		int n, p, w;
+		cin >> n >> p >> w;
+		inc(i,1, n+1) {
+			cin >> ap[i] >> bp[i] >> as[i] >> bs[i];
+		}
+		int ans = 0;
+		inc(i, 1, n+1) {
+			inc(j, 0, p+1) {
+				if (j <= as[i]) {
+					dp[i][j] = -j * ap[i];
+				}
+				else dp[i][j] = -1e9;
+			}
+		}
+		inc(i, 2, n + 1) {
+				inc(j, 0, p + 1) {
+					dp[i][j] = max(dp[i][j], dp[i - 1][j]);
+				}
+				if (i - w - 1 >= 1) {
+					int from = i - w - 1;
+					int head = 0, tail = -1;
+					inc(j, 0, p + 1) {
+						ll now = dp[from][j] + j * ap[i];
+						while (head <= tail && qr[tail] <= now) {
+							tail--;
+						}
+						tail++;
+						qr[tail] = now;
+						rk[tail] = j;
+						while (head <= tail && j - as[i] > rk[head])head++;
+						dp[i][j] = max(dp[i][j], qr[head] - j * ap[i]);
+					}
+					head = 0, tail = -1;
+					for (int j = p; j >= 0; j--) {
+						ll now = dp[from][j] + j * bp[i];
+						while (head <= tail && qr[tail] <= now) {
+							tail--;
+						}
+						tail++;
+						qr[tail] = now;
+						rk[tail] = j;
+						while (head <= tail && j + bs[i] < rk[head])head++;
+						dp[i][j] = max(dp[i][j], qr[head] - j * bp[i]);
+						if (i == n) {
+							ans = max(ans, dp[i][j]);
+						}
+					}
+				}
+				
+			
+		}
+		cout << ans << endl;
+	}
+}
+	
+
+
+
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

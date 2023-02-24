@@ -1,0 +1,160 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">KeepTheAverageHigh贪心线性dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">31</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF1616D Keep the Average High<br>
+								<br>
+题目大意：给一个数组和一个x，大小范围为5e4，数字范围为±1e6，你可以为其中任意个数上标记，要求最终对于每个长度大于1的子段来说，要么其中有数没有被标记，要么其平均值>=x，问最多能打多少个标记。<br>
+实际上标记起的作用在于把原来的数组划分为k段，并且保证每段内包括自身的所有子段平均值都大于等于x，那么显然这个标记我是能打就打，不能打就算了，因为不标记的这个数依然会参与之后的计算，所以不存在我可以选择不打这个标记反而导致之后可以多打标记的情况（为什么，好好想想是不是这样）。<br>
+好接下来，对于平均值大于等于x的说法实在太麻烦了，因此我们简化一下吧，把所有数都减去x，只要让段和大于等于0就相当于平均值大于等于x。<br>
+然后如何保证每段中的所有子段和都大于等于0呢？<br>
+如果我当前的段已经能够保证合格，现在我给这个段新添加一个数，那么最有可能<0的段显然肯定是后缀和最小的那个段，但是我不可能一个一个去遍历后缀和吧，复杂度不允许呀。<br>
+注意，我原本后缀和最小的那个段即使在加上新的数之后，它本身还依然是后缀和最小的那个段，因此对于我新加了一个数之后新得到的段中后缀和最小的段就是原本后缀和就最小的段。不，还有可能是他本身，因为他本身在上一次计算中无法单独存在（段长度>1），但是在下一次计算的时候就可能是他单独加上新的数了。用dp[i]表示从当前开始处（设为tmp）到i的最小后缀和，dp[i]=min(dp[i-1]+a[i],a[i])，添加新的数的时候，判断dp[i-1]+a[i]是否大于等于0，如果不是，那么这个数没法打标记了，如果用cnt记录下无法打标记的数的数量，那就是使cnt++，接下来再让tmp从下一个数开始。<br>
+这是道偏向思维的线性dp，dp含量其实不高，重要的是找到转化原题目的方法，dp只是手段而不是方法，不要看到题目看着像或者标签有dp就直接开始硬想状态方程。Dp从来都是把思维题想着想着，转化着就发现，草，这不dp么。<br>
+<br>
+代码：<br>
+<br>
+<pre><code>
+	#define _CRT_SECURE_NO_WARNINGS
+	#include <iostream>
+	#include <algorithm>
+	#include <utility>
+	#include <vector>
+	#include <istream>
+	#include <map>
+	#include <cmath>
+	#include <stack>
+	#include <set>
+	#include <cstring>
+	#include <string>
+	#define ll long long
+	#define maxn 200005
+	#define mdl 998244353
+	#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+	#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+	using namespace std;
+	ll a[50001];
+	int dp[50001];
+	int main()
+	{
+		cfast;
+		int t;
+		cin >> t;
+		while (t--) {
+			int n;
+			ll x;
+			cin >> n;
+			for (int i = 0; i &lt n; i++) {
+				cin >> a[i];
+			}
+			cin >> x;
+			int num = 0;
+			int tmp = 0;
+			for (int i = 0; i  &lt n; i++) {
+				a[i] -= x;
+				if (tmp == i) {
+					dp[i] = a[i];
+				}
+				else {
+					if (a[i] + dp[i - 1]  &lt 0) {
+						tmp = i + 1;
+						num++;
+						continue;
+					}
+					else {
+						dp[i] = min(a[i] + dp[i - 1], a[i]);
+					}
+				}
+			}
+			cout  &lt &ltn-num  &lt &lt endl;
+		}
+	
+	}
+
+	
+	
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

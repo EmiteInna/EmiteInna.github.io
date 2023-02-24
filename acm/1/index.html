@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">写博客</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">10</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+								
+							
+							<p>
+								
+	题目大意：<br>
+	给一堆单词，以及一个N，表示每行的宽度，让我们把这些单词按这个宽度分成k行，在这k行中，每行的难看程度为每个空白段(空格数-1)²的和，如果该行只有一个单词且其长度不为N，那么难看度为500，在这里N<=80，单词长度小于N，总长度不超过10000，要求最小的总难看程度。<br>
+	<br>
+	FORMAT.IN<br>
+		28<br>
+		This is the exampleyou are<br>
+		actually considering.<br>
+	FORMAT.OUT<br>
+		Minimal badness is 12.<br>
+	解：<br>
+	1.首先想办法将不确定的状态依靠数学转换成可确定的状态，在这里我们可以轻易看出，如果一行有的单词数量和各长度已经确定的话，那么这一行的难看程度一定确定为空白段长度最为接近的情况，所以可以依靠这个来定态。<br>
+	2.	那么要在状态中确定一行中的单词，显然需要同时获得其开头和结尾，当dp[k]（k为最后一个单词的编号）表示结尾为k时的最优状态时，显然dp[k]=max(dp[i]+badness[i+1,k])，之所以得到这个式子，是由于当我确定了这一行是第i+1到第k个词时，前面无论怎么放都和这一行没有关系，即“无后效性”。而之所以使用一行结尾定态，是因为通过转移中的两个状态对应的结尾就可以确定转移过程中这一行的内容，即badness[i+1,k]，当k-i==1时特判，如果该单词长度等于N，badness就为0，否则为500。<br>
+	3.	起始状态当然是dp[0]等于0，而每一次转移中i到k的距离最大为该行宽度，即N（如果结果为N个单词长度为1且紧挨在一起），时间复杂度为O(k*n)<=10000*80，在这里远远足够。<br>
+	<br>
+	菜鸡的一些想法：<br>
+	1.	这个dp给我的第一反应是用行数定态，后来发现转移其实也需要该行的单词数，而且每一行只能和下一行进行状态转移，转移用到的还是单词数，所以行数完全是没有任何用处的...因此，线性dp尽量选择转移时能直接使用到的数据为状态，这点好像类似于背包？<br>
+	2.	想了想如果不是这题在dp进阶之路上，我会认为他是dp吗？或许我的第一反应会是贪心，但是仔细想想，贪心的每一步最优选择都能保证结果的最优选择一定是在这一步的基础上，而这题显然不具备这样的特征，而是后面的最优解可能会建立在前期并非那么最优的解的基础上，这么看就很像线性dp了，打为标准线性dp题目。<br>
+	3.	发现其实在段类线性dp的题目中，将一段的结尾作为状态好像是经常会有的事（最大子段和等等）<br>
+	<pre>
+	代码：
+	<code>
+	#define _CRT_SECURE_NO_WARNINGS
+	#include <iostream>
+	#include <algorithm>
+	#include <utility>
+	#include <vector>
+	#include <map>
+	#include <cstring>
+	#define ll long long
+	#define maxn 10005
+	using namespace std;
+	int dp[maxn];
+	int len[maxn];
+	int qzh[maxn];
+	int N;
+	int main() {
+		cin >> N;
+		char str[maxn];
+		int xb = 1;
+		while (scanf("%s", str)!=EOF) {
+			//cout << str << endl;
+			//cout << xb << endl;
+			len[xb++] = strlen(str);
+		}
+		for (int i = 1; i <= xb-1; i++) {
+			qzh[i] = qzh[i - 1] + len[i];
+			dp[i] = 500+dp[i-1];
+			for (int j = 2; i-j>=0&&j<=xb; j++) {
+				if (qzh[i] - qzh[i - j] +j-1> N)break;
+				int cha = N-(qzh[i] - qzh[i - j]);
+				int space = cha / (j-1);
+				int extra = cha % (j-1);
+				int result = (j -1- extra) * (space - 1) * (space - 1) + extra * space * space;
+				
+				dp[i] = min(dp[i], dp[i - j] + result);
+			//	cout << "dp." << i << " = " << dp[i] <<"when j = "<< j << endl;
+			}
+			
+		}
+		printf("Minimal badness is %d\n", dp[xb-1]);
+	}
+
+	</code>
+								</pre>
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">背包小记录</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">7</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								分别是POJ1276 2392和3211<br>
+								第一题是多重背包，题解是用二进制转化为01背包，即将可取ni次的wi物品分解为wi,2wi,4wi,...,(ni-2^k+1)wi个不同物品然后转化为01背包。<br>
+								但个人不是那么解的，从下往上遍历已有的点，记录一个cnt表示这个点是已经拿取了cnt[i]个物品才得到的，这样的话当转移来源的cnt值等于ni就无法转移，也算是一种方法，不过只有在求存在性的时候可用，如果要求最优解，转化为二进制依然是不错的办法。<br>
+								第二题还是多重背包，但是有个贪心策略需要排个序，由于ni最多只有10所以也不需要二进制转化了。<br>
+								第三题是分组背包，用差值记录，虽然理论上时间复杂度不超过1e7但还是t了，转为用vector写，很快过了，说明是样例太多的问题。<br>
+								<br>
+								在这里小记录一下背包的一些套路……<br>
+								更新：<br>
+								状压背包，类似商场优惠类题目，这里背包物品的重量可以是很多维，直接用循环去判非常恶心，所以使用状压直接减算，状压并不是压成二进制，而是根据维度的数量来压缩（如果有6件商品那就是6进制）。<br>
+								限制背包，类似DIABLO III，每种物品只能选一个，并且可能会有其他条件但都可以转化过来，挺有意思。<br>
+								数学背包，例如给一个数，求一种划分来使得所有数的lcm最大，实际上就是转化成素数的01背包来做。<br>
+								依赖背包（树上背包），其实就是树形dp，但要记得遍历的时候从上到下并且起点要预留父亲的体积，返回值时要将预留出的这些体积也赋上值。<br>
+								<br>
+								
+<pre><code>
+
+
+
+	
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

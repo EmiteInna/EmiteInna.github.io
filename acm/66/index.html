@@ -1,0 +1,196 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">IntegersHaveFriend区间GCD段</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">May<span></span></span> <span class="day">2</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF1548B Intergers Have Friend<br>
+								题目大意：一个数组（2e5），要求其最大的一个子段，使得存在一个整数m>=2，该段内所有数模m后得到的结果相同。<br>
+								<br>
+								通过观察（猜测）很容易发现，该子段的差分数组gcd一定大于1，实际上这个gcd就是整数m，于是问题就转化成了求得一个最大子段，使得该段gcd>=2。<br>
+								<br>
+								关于这题本人有一个惨烈的历程，首先想到了正解，后来t了，以为是这个解法的问题，之后去写了线段树，然后线段树是真正的t了，但我以为是我树的问题，于是坐牢一个小时，看题解发现说是可以用线段树和st表，仔细想想st表确实可以（但我不会？），我坚持线段树是不行的，于是去看人家的代码，点开榜一代码一看，草这不是我最开始的做法吗？然后发现自己vector没开long long，给负数求gcd导致t了……然后找了好久也没找到线段树做法，百思不得其解，后来发现官方一共有54个点，我的线段树t了第57个点，欧亨利式结尾了属于是。<br>
+								<br>
+								那么这个正确的解法是什么呢？如果暴力地去求区间gcd肯定是不行的，但是我们可以递推的去求，因为一旦对于一个数来讲，如果它和前面某段区间的gcd为1，那么这段即使延伸到后面，它的gcd也一定为1了，因此我们可以果断地抛弃这段，而如果它和前面这段的gcd不为1，假设其为g，显然如果原来之前那段的gcd为f，那么g=f/k，这里被舍弃的这个k由于无法通过当前这个数传递到后面，也可以作废，换句话说，对于每个数，传递到下一个数的可能的gcd数量一定<=前面传来的gcd数量（因为可能会出现重复和1）+1，+1是因为自己本身一定是作为一个数传递到下面的gcd的，但是这个数本身一定是g的倍数，所以对于下一个数a[i]来讲，如果它和g的gcd大于1，那么这个新的gcd一定等于它和上一个a[i-1]的gcd，而如果不是这样的话，它虽然有可能是和a[i]的gcd>1，但还是绝对不可能和g跟a[i]产生两个不同的gcd，所以每个数传递到后面的gcd数量一定<=2，我可以直接用vector记录下这些gcd，滚不滚动都无所谓，这样解法就是O(nlog1e18)了。<br>
+								而线段树的解法是O(2nlognlognlog1e18)，st表是O(nlognlog1e18)，全然不如这个dp做法。<br>
+								<br>
+								Gcd的世界非常的奇妙，但既然已经证明过了，我选择将其记下来以后用就完了。<br>
+								<br>
+								代码（st表代码不提供）：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#include &ltunordered_map&gt
+#define ll long long
+#define maxn 200005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(int i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+#define pi 3.141592657
+using namespace std;
+ll gcd(ll a, ll b) {
+	//if (a &lt b)swap(a, b);
+	//cout &lt&lt "gcding " &lt&lt a &lt&lt " and " &lt&lt b &lt&lt endl;
+	if (b == 0)return a;
+	return gcd(b, a % b);
+}
+ll a[maxn], cf[maxn];
+vector&ltll&gt nums[maxn];
+map&ltpll, ll&gt dp;
+unordered_map&ltll, ll&gt vis;
+int main() {
+	cfast;
+	int t;
+	cin &gt&gt t;
+	while (t--) {
+		dp.clear();
+		int n;
+		cin &gt&gt n;
+		inc(i, 0, n) {
+			nums[i].clear();
+			cin &gt&gt a[i];
+			if (i &gt 0) {
+				cf[i] = abs(a[i] - a[i - 1]);
+				//cout &lt&lt "cf." &lt&lt i &lt&lt " = " &lt&lt cf[i] &lt&lt endl;
+			}
+		}
+		if (n == 1) {
+			cout &lt&lt 1 &lt&lt endl;
+			continue;
+		}
+		ll ans = 0;
+		inc(i, 1, n) {
+			vis.clear();
+			int len = nums[i - 1].size();
+			//cout &lt&lt "len = " &lt&lt len &lt&lt endl;
+			inc(j, 0, len) {
+				ll g = gcd(nums[i - 1][j], cf[i]);
+				//cout &lt&lt "g=" &lt&lt g &lt&lt endl;
+				if (g &gt 1 && vis[g] == 0) {
+					vis[g] = 1;
+					nums[i].push_back(g);
+				//	cout &lt&lt g &lt&lt " pushed" &lt&lt endl;
+					pll p, pf;
+					p.first = i, p.second = g;
+					pf.first = i - 1, pf.second = nums[i - 1][j];
+					dp[p] = max(dp[p], dp[pf] + 1);
+					ans = max(ans, dp[p]);
+				}
+			}
+			if (vis[cf[i]] == 0) {
+				nums[i].push_back(cf[i]);
+			//	cout &lt&lt cf[i] &lt&lt " pushed" &lt&lt endl;
+			}
+			pll p;
+			p.first = i, p.second = cf[i];
+			if (cf[i] == 1)dp[p] = max(dp[p], 0ll);
+			else dp[p] = max(dp[p], 1ll);
+			ans = max(ans, dp[p]);
+		}
+		cout &lt&lt ans + 1 &lt&lt endl;
+	}
+}
+/*
+2022.5.2 8:14
+*/
+
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

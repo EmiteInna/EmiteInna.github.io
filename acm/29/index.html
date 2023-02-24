@@ -1,0 +1,185 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">Crystalfly决策型树形dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">31</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								2021ICPC南京H题<br>
+题目大意：给一棵树，大小为n（级别为1e5），你一开始在节点1的位置，每个节点上会a[i]只晶蝶，他们在你接近这个节点邻近的节点后会开始润，需要t[i]（只有1,2,3三种取值）时间润掉，然后你就抓不到它了，你单位时间只能走一步，要求大能捉住的晶蝶数量。<br>
+<br>
+推荐这题在看题解之前多自己想想。<br>
+好，首先我们可以轻易看出，当我们到达一个节点的时候，所有的最近子节点上的晶蝶都会被惊动，这个时候你肯定得抓啊，但是如果你抓完一个还不马上回来，那其他的肯定全跑了，如果你马上回来，那么t值为3的晶蝶还在，其他都没了，与此同时，你第一个抓的那只晶蝶的所有子节点都跑了。<br>
+这是不是有点类似于老板和员工只有一个上班的树形dp问题。<br>
+对于一个节点你只有两种选择：①拿完之后马上回来拿另一个t为3的晶蝶，②拿完之后我不回来，直接去拿别的。<br>
+那么我可以用此来定态：dp[i][0]表示拿完i晶蝶后马上回去时i的所有子节点抓到的最大晶蝶树木，dp[i][1]则是表示不马上回去时的。这里为什么是子节点而不直接算上本身稍后会说明，实际上是为了方便状态转移。<br>
+dp[i][0]的值很好转移，因为你马上回去了，i的所有子节点全跑了，因此对于i的所有子节点你都不存在拿一个再回到i再去拿另一个的操作，所以dp[i][0]就等于i的所有儿子的dp[son][1]之和。<br>
+而dp[i][1]呢，因为是不回去，所以你有两种选择，一种是我直接拿一个儿子上的晶蝶然后接着往下走，另一种是我拿一个儿子上的晶蝶再回头然后再去拿另外一个t值为3的晶蝶。我们要求的是这两种情况的最大值，也就是<br>
+max(wei[son]+∑dp[sons][1], wei[son]+wei[son2]+dp[son][0]-dp[son][1]+∑dp[sons][1])，<br>
+至于实现上可以使用multiset，也可以直接记录，实现上要注意一些细节，时刻记得这是一个整体的式子，不要去进行局部的贪心，multiset的复杂度完全是够用的。<br>
+最后要求的结果就是dp[1][1]了<br>
+<br>
+实际上在vp的时候因为某些奇妙的bug做了两个多小时……其实是非常模板化的决策型树形dp了，如果做的时间久了点的话还是多恋恋吧。<br>
+<br>
+代码：<br>
+<br>
+<pre><code>
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ll long long
+#define pint pair<int,int>
+#define pll pair<ll,ll>
+#define fi first
+#define se second
+#define maxn 200005
+int wei[maxn],tag[maxn];
+vector<int> tree[maxn];
+int dp[maxn][2];
+
+void dfs(int n,int dad){
+	int siz=tree[n].size();
+	multiset<int> st;
+	int ma=-1e18,ma2=-1e18,son2=-1,ma3=0,tt1=0;
+	for(int i=0;i<siz;i++){
+		int son=tree[n][i];
+		if(son==dad)continue;
+		dfs(son,n);
+		tt1+=dp[son][1];
+		if(tag[son]==3){
+			st.insert(wei[son]);
+		}
+		ma3=max(wei[son],ma3);
+	}
+	dp[n][0]=tt1;
+	ll ma4=0;
+	st.insert(ma4);
+	for(int i=0;i&ltsiz;i++){
+		int son=tree[n][i];
+		if(son==dad)continue;
+		if(tag[son]==3)st.erase(st.find(wei[son]));
+		ma4=max(ma4, wei[son]+*st.rbegin()+dp[son][0]-dp[son][1]);
+		if(tag[son]==3)st.insert(wei[son]);
+	}
+	dp[n][1]=max(ma3,ma4)+tt1;
+}
+signed main(){
+	std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+	int t;
+	cin>>t;
+	while(t--){
+		int n;
+		cin>>n;
+		for(int i=1;i&lt=n;i++)cin>>wei[i];
+		for(int i=1;i&lt=n;i++)cin>>tag[i];
+		for(int i=1;i&lt=n;i++){
+			tree[i].clear();
+			dp[i][0]=0;
+			dp[i][1]=0;
+		}
+		int nn=n-1;
+		while(nn--){
+			int a,b;
+			cin>>a>>b;
+			tree[a].push_back(b);
+			tree[b].push_back(a);
+		}
+		dfs(1,-1);
+		cout&lt&ltdp[1][1]+wei[1]&lt&ltendl;
+	}
+	return 0;
+} 
+/*
+8
+8
+1 1 1 1 1 1 1 1
+1 3 2 1 3 2 1 3
+1 2
+1 3
+1 4
+2 5
+2 6
+5 7
+5 8*/
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

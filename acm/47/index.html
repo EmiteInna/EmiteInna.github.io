@@ -1,0 +1,193 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">Dividing很坑的二进制背包</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">11</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								HDU 1059 Dividing<br>
+								题目大意：有六种价值的大理石，每种Ni个（合不超过2e4），问能否分成价值相同的两份。<br>
+								<br>
+								很容易想到的是二进制优化背包，但是有很多细节，不如是hdu特有的坑吧……<br>
+								主要的坑点：①只给了32mb内存，导致必须用滚动数组来存，②没有给有多少组样例（深坑）<br>
+								代码中我保留了之前写二进制的坏习惯，把所有背包平分成了两组，后来发现其实根本没必要，因为二进制分包已经包含了所有可能的分配情况，包括偶数平分成两份的情况。<br>
+								不过再后来发现，其实还是有必要的，为了简化整个背包的价值范围。<br>
+								最坏情况的价值范围：全是6块，并且2e4个，这个时候需要2e5的存储范围，每次循环的时候由于滚动数组的原因还得去遍历多次，而且在没有给具体样例数量的情况下很有可能t，因此存储范围的值必须通过题目数据确定，不然很容易被大量小数据的样例卡掉……<br>
+								最后t了很多发，靠交题二分（？）的方法找到了一个稳定的常数（最大的那个背包重量*4和100的较大值）来作为背包范围，终于过了。<br>
+								只要没有不给组数的多组样例，你永远可以相信hdu。<br>
+								不过这题提供了很不错的背包优化思想（不是二分，不是二分），因为求差值的多重背包肯定是存在差值的极限的，而二进制优化背包虽然说优化了物品个数，但是反而拉高了对于差值极限的要求，本题中我之前的代码（分成两部分二进制化）虽然在正常题目中没有必要，但在本题中反而发挥了奇效：仅仅是背包中的物品加倍换来了差值极限的减半，从而导致空间不会爆，对滚动数组的运算量也减少，背包的复杂度两个乘区的相乘，而背包中物品的加倍倍率是比差值极限减小倍率小很多的（表面上是两个乘数一个乘2，一个除2，但因为误差的原因，两个乘数越是接近，乘积就会明显减少……）<br>
+								总之就是非常神奇，不过主要目的还是过空间复杂度，时间上其实也没有省下太多。<br>
+								<br>
+								代码：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <stack>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 1000005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair<ll,ll>
+#define inc(i,a,n) for(ll i=a;i<n;i++)
+#define vset(a,n,m) for(ll i=0;i<n;i++)a[i]=m;
+#define endl '\n'
+#define cst 130000using namespace std;
+ll num[6];
+ll dp[2][cst*2];
+ll val[200];
+int main() {
+	cfast;
+	int tim = 0;
+	while (1) {
+		tim++;
+		ll sum = 0;
+		inc(i, 0, 6) {
+			cin >> num[i];
+			sum += num[i];
+		}
+		if (sum == 0)break;
+		ll cs =100;
+		int ts = 0;
+		inc(i, 0, 6) {
+			ll tmp = 1;
+			ll tp = num[i] / 2;
+			if (num[i] % 2 == 1)val[ts++] = i + 1;
+			while (tp >= tmp) {
+				val[ts++] = (i + 1)*tmp;
+				val[ts++] = (i + 1)*tmp;
+				tp -= tmp;
+				tmp *= 2;
+				cs = max(cs,2*val[ts - 1]);
+			}
+			if (tp > 0) {
+				val[ts++] = (i + 1)*tp; 
+				val[ts++] = (i + 1)*tp;
+			}
+		}
+		//cout << cs << endl;        inc(i, 0, 2) {
+			inc(j, 0, cs * 2) {
+				dp[i][j] = 0;
+			}
+		}
+		inc(i, 0, ts) {
+			inc(j, 0, cs * 2)dp[1][j] = 0;
+			inc(j, 0, cs*2) {
+				if (i == 0) {
+					dp[1][cs + val[i]] = 1;
+					dp[1][cs - val[i]] = 1;
+				}
+				else {
+					if (dp[0][j] == 1) {
+						if (j + val[i] < cs*2)dp[1][j + val[i]] = 1;
+						if (j - val[i] >= 0)dp[1][j - val[i]] = 1;
+					}
+					
+				}
+			}
+			inc(j, 0, cs * 2)dp[0][j] = dp[1][j];
+			
+		}
+		cout << "Collection #" << tim << ":" << endl;
+		if (dp[1][cs] == 1) {
+			cout << "Can be divided." << endl;
+		}
+		else cout << "Can't be divided." << endl;
+		cout << endl;
+	}
+}
+
+
+
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

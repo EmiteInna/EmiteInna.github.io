@@ -1,0 +1,203 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">Let'sPlaytheHat模拟</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Jul<span>y</span></span> <span class="day">4</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 1619F Let’s Play the Hat<br>
+								题目大意：n个人坐m张桌子玩k场游戏，每张桌子要么坐n/m个人，要么n/m+1个人，每次游戏坐n/m+1人的桌子上的人val会+1，要求一个安排方式，使得不存在任何时候两个人的val相差1以上。<br>
+								<br>
+								从题意可以看出，每场游戏的玩家会分成两批，一批不+1，一批+1，贪心而言我需要保证每次val少的那批被+1，而val多的那批不会，但这样的话由于后效性的存在没法进行，所以看出是个构造。<br>
+								最简单的构造方法：既然大家都要差不多的val，那就雨露均沾，按顺序来，每次+1的部分都从1开始往后循环一些，下一次再从上次的最后一个开始，超过n就回到1。<br>
+								模拟就解决了。<br>
+								偏向思维题的模拟，对于贪心的后效性解决有一定的意义。<br>
+								<br>
+								代码：<br>
+								<br>		
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltqueue&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 300005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(int i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+#define PI 3.14159265358979
+using namespace std;
+ll gcd(ll a, ll b) {
+	if (a &lt b)swap(a, b);
+	if (b == 0)return a;
+	return gcd(b, a % b);
+}
+ll cpow(ll x, ll n) {
+	ll ans = 1;
+	while (n &gt 0) {
+		if (n & 1) ans = (ans * x) % mdl;
+		x = (x * x) % mdl;
+		n &gt&gt= 1;
+	}
+	return ans;
+}
+ll getpos(int p, ll n) {
+	return n / cpow(10, p - 1) % 10;
+}
+ll getwei(ll n) {
+	int res = 0;
+	while (n) {
+		res++;
+		n /= 10;
+	}
+	return res;
+}
+/*
+
+---------------------------------------------------------------------
+
+*/
+int vis[maxn];
+int main() {
+	cfast;
+	int t = 1;
+	cin &gt&gt t;
+	while (t--) {
+		int n, m, k;
+		cin &gt&gt n &gt&gt m &gt&gt k;
+		int t0 = n / m;
+		int rmd = n % m;
+		int n1 = rmd * (t0 + 1), n2 = n - n1;
+		int head = 0;
+		inc(i, 0, k) {
+			inc(j, 0, n) {
+				vis[j] = 0;
+			}
+			inc(j, 0, rmd) {
+				cout &lt&lt t0 + 1 &lt&lt " ";
+				inc(k, 0, t0 + 1) {
+					vis[head] = 1;
+					cout &lt&lt head + 1 &lt&lt " ";
+					head++;
+					head %= n;
+				}
+				cout &lt&lt endl;
+			}
+			int pointer = 0;
+			inc(j, 0, m - rmd) {
+				cout &lt&lt t0 &lt&lt " ";
+				inc(k, 0, t0) {
+					while (vis[pointer] == 1)pointer++;
+					cout &lt&lt pointer + 1 &lt&lt " ";
+					pointer++;
+				}
+				cout &lt&lt endl;
+			}
+		}
+		cout &lt&lt endl;
+	}
+}
+/*
+2 3
+1 4
+
+*/
+
+
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

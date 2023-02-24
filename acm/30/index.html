@@ -1,0 +1,172 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">FourSegments划分型区间dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">31</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 846C Four Segments<br>
+								题目大意，给一个长度为n（级别为5000）的数组，要求将其划分为4段，第一、三段里的数加，第二、四段的数减，求如何划分使得结果最大。<br>
+								<br>
+								如果是直接暴力那么复杂度是O(n3)，但是如果只是分成两段的复杂度不就变成了O(n)么，于是能不能把这个问题改为三次分成两段呢？由于还要多一个选段的右端点的过程，所以复杂度是O(3*n2)，能过，记录答案时要注意区间的开闭问题，还是有一定细节在里面的。<br>
+								与其说这题是dp不如说有点像图论中的最短路问题？<br>
+								<br>
+								代码：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <stack>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 200005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair<ll,ll>
+#define inc(i,a,n) for(int i=a;i<n;i++)
+#define vset(a,n,m) for(int i=0;i<n;i++)a[i]=m;
+using namespace std;
+ll a[maxn],dp[5][maxn],qzh[maxn],rcd[5][maxn];
+int main()
+{
+	cfast;
+	int n;
+	cin >> n;
+	inc(i, 1, n + 1)cin >> a[i];
+	inc(i, 1, n + 1)qzh[i] = qzh[i - 1] + a[i];
+	dp[0][0] = 0;
+	inc(x, 1, 5) {
+		inc(i, 1, n + 1) {
+			if (x == 1) {
+				dp[x][i] = qzh[i];
+				rcd[x][i] = 1;
+				continue;
+			}
+			if (x % 2 == 1)
+				dp[x][i] = qzh[i];
+			else
+				dp[x][i] = -qzh[i];
+			rcd[x][i] = 1;
+			inc(j, 0, i+1) {
+				ll qj = qzh[i] - qzh[j];
+				if (x % 2 == 1) {
+					if (dp[x - 1][j] + qj>=dp[x][i]) {
+						dp[x][i] =dp[x - 1][j] + qj;
+						rcd[x][i] = j+1;
+					}	
+				}
+				else {
+					if (dp[x - 1][j] - qj >= dp[x][i]) {
+						dp[x][i] = dp[x - 1][j] - qj;
+						rcd[x][i] = j+1;
+					}
+				}
+			}
+		}
+	}
+	int ans[3];
+	int tmp = n;
+	inc(i, 0, 3) {
+		ans[2 - i] = rcd[4-i][tmp]-1;
+		tmp = rcd[4-i][tmp]-1;
+	}
+	inc(i, 0, 3) {
+		cout << ans[i] << " ";
+	}
+}
+/*
+3
+4 12 6 
+*/
+
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

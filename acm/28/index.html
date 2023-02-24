@@ -1,0 +1,185 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">FrogTraveler有目的线性dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">31</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF1601B Frog Traveler<br>
+								题目大意，有n个点（级别为3e5），第i个点离地平线距离为i，向上可以往上跳1-a[i]距离，但如果是跳到这个点则会下滑b[i]距离，你一开始在离地平线为n的位置，现在需要输出一个跳法让你能跳到地上。<br>
+								<br>
+								要能跳到地上首先你得跳到一个能跳到地上的点上，有子问题出现，判断为线性dp。<br>
+								要想到达那个能跳到地上的点，你必须跳到它上面的某个点并滑下来，因此我们可以把整个过程看作是一条树上的岔路，如果有m个点可以直接跳到地面上，那么同样有m个点可以滑到这些点上，我们应该选哪个呢？当然是最低的那个可以滑到能直接跳到地上的点，因为如果我能到达更高的点，我也能到达这个最低的点，但能到达最低的点的点并不能直接跳到高的点。在选定了要跳的点之后，我又会出现m个能够跳到这个点上的点，于是我会再次重复这个过程，直到第n个点，也就是我的起始点也能跳到需要跳到的点上。因为我的路径是固定的所以直接保存就行。<br>
+								实际上整个过程直接模拟就行，并不需要用到dp，实现的原理在于包含性，即“能跳到高点的地方也能跳到低点”。这种思想确实是dp中最优子结果的思想，在本题中该思想能够直接转化为状态转移的原因是明确的目的性——到达地面，我不需要考虑任何其他的优劣，只要到达地面就行，这让我的转移能够依靠包含关系实现，也就是说这是一个从结果一步一步思考过程的题型。<br>
+								说起来简单但是写起来还挺恶心的……<br>
+								<br>
+								<br>
+								代码：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <stack>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 300005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair<ll,ll>
+#define inc(i,a,n) for(int i=a;i<n;i++)
+#define vset(a,n,m) for(int i=0;i<n;i++)a[i]=m;
+using namespace std;
+ll slip[maxn],a[maxn],ans[maxn],fromto[maxn],slipamt[maxn],rcd[maxn];
+int main() {
+	cfast;
+	int n;
+	cin >> n;
+	ll target = 0,tmp=0;
+	ll step = 0;
+	inc(i, 1, n + 1) {
+		scanf("%lld", &a[i]);
+	}
+	inc(i, 1, n + 1) {
+		ll d;
+		scanf("%lld", &d);
+		slip[i + d] = i;
+		slipamt[i] = d;
+	}
+	inc(i, 1, n + 1) {
+		int target = i - a[i];
+		if (slip[i] > rcd[target]) {
+			rcd[target] = slip[i];
+			fromto[target] = i;
+		}
+	}
+
+	int f = 0;
+	while (f==0) {
+		step++;
+		ll tans = -1,tmp1=tmp,tar1=target;
+		for (int i = tmp; i <= tar1; i++) {
+			if (fromto[i]) {
+				if (fromto[i] == n) {
+					ans[step] = tar1;
+					f = 2;
+					break;
+				}
+				ll slp = slip[fromto[i]];
+				if (target <= slp) {
+					target = slp;
+					tans = i;
+				}
+			}
+		}
+		if (f == 2)break;
+		tmp = tar1;
+		if (tans != -1) {
+			ans[step] = tar1;
+		}
+		else { f = 1; }
+	}
+	if (f == 2) {
+		printf("%d\n", step);
+		inc(i, 1, step + 1) {
+			printf("%d ", ans[step+1-i]);
+		}
+	}
+	else {
+		printf("-1");
+	}
+}
+/*
+3
+4 12 6 
+*/
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

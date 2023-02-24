@@ -1,0 +1,204 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">YetAnotherMinimizationProblem正负号数组和绝对值最小化</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">30</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 1637D<br>
+Yet Another Minimization Problem<br>
+说实话感觉这题我的做法并不是正解，但是简单无脑。<br>
+题目大意为给定两个长度为n的数组，（n范围为100，数字范围也为100），你可以将他们俩对应位置的数进行交换，交换次数任意，求两个数组分别的数组内两两相加的和的平方和的和的最小值(有点绕)，小列个式子可以发现问题可以转化为将a数组-b数组得到c数组，在c数组的每个数前面标加减号来使得结果的绝对值最小。<br>
+由于数字范围为100，n也为100，实际上c数组的和最大为10000，最小为-10000，如果用线性dp的话数组为100*20000也就是1e6，完全符合要求，dp[i][j]表示进行到第i个数且和为j的情况，对于一个新的i，状态转移为dp[0][0]=1，dp[i][j+ci]=dp[i-1][j]和dp[i][j-ci]=dp[i-1][j]，最后只要判断dp[i][n]=1中n绝对值最小的那个即可。<br>
+同时对于每一个值记录它对应的是加还是减，求结果的时候还需要用到。<br>
+为了偷懒不用map，写法看起来有点缺乏观赏性……<br>
+像这种n等于100且每个n都有两种或多种选择的时候，状压是不可取的，毕竟是2^100嘛，可以注意到最后我们把这个接近2^100的可能性限定在了20000内，这真的是因为数组中数字大小绝对值在100以内吗？真的不是因为一共只有100个数吗，如果a[i]<=1e9的时候难道就不行了吗？<br>
+如果是去离散化，将每步得到的答案用set这种东西储存起来，然后dp……<br>
+如果a1=1,a2=2,a3=4,...,a100=2^101还是寄，目前想不到解法。<br>
+<br>
+好，Yet Another Minimization Problem 2<br>
+给定n(1<=n<=100)，一个数组c[n](0<=c[i]<=1e9)，现在可以进行任意次操作，选定i使得c[i]=-c[i]，现在要使任意次操作后得到的c数组之和绝对值最小，求该绝对值大小。<br>
+<br>
+……挺无语的就<br>
+代码(当然不是问题2)：<br>
+
+								
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 200005
+#define mdl 998244353
+using namespace std;
+int a[101],b[101],c[101];
+int dp[20001][101], track[20001][101];
+int v[20001][101];
+int main() {
+	std::ios::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+	int t;
+	cin >> t;
+	while (t--) {
+		memset(v, 0, sizeof(v));
+		int n;
+		cin >> n;
+		ll ans = 0;
+		for (int i = 0; i < n; i++) {
+			cin >> a[i];
+		}
+		for (int i = 0; i < n; i++) {
+			cin >> b[i];
+			c[i] = a[i] - b[i];
+		}
+		int fina = 0, mi = 1e9;
+		for (int i = 0; i < n; i++) {
+			if (i == 0) {
+				dp[10000 + c[i]][0] = c[i];
+				track[10000+c[i]][0] = 1;
+				dp[10000 - c[i]][0] = -c[i];
+				track[10000 - c[i]][0] = 0;
+				v[10000 + c[i]][0] = 1;
+				v[10000 - c[i]][0] = 1;
+			}
+			else {
+				for (int j = 0; j <= 20000; j++) {
+					if (v[j][i - 1] == 0)continue;
+					dp[j + c[i]][i] = j-10000 + c[i];
+					track[j + c[i]][i] = 1;
+					dp[j - c[i]][i] = j-10000 - c[i];
+					track[j - c[i]][i] = 0;
+					v[j + c[i]][i] = 1;
+					v[j - c[i]][i] = 1;
+					if (i == n - 1) {
+						int d1 = dp[j + c[i]][i];
+						if (d1 < 0)d1 = -d1;
+						int d2 = dp[j - c[i]][i];
+						if (d2 < 0)d2 = -d2;
+						if (d1 < mi) {
+							fina = j + c[i];
+							mi = d1;
+						}
+						if (d2 < mi) {
+							fina = j - c[i];
+							mi = d2;
+						}
+					}
+				}
+			}
+		}
+
+		for (int i = n - 1; i >=0; i--) {
+			//cout << "when " << i << " final=" << fina-10000 << endl;
+			if (track[fina][i] == 0) {
+				int tmp = a[i];
+				a[i] = b[i];
+				b[i] = tmp;
+				fina += c[i];
+				//cout << "reversed" << i << endl;
+			}
+			else fina -= c[i];
+		}
+		for (int i = 0; i < n; i++) {
+			ans += a[i] * a[i] * (n - 1);
+			ans += b[i] * b[i] * (n - 1);
+			for (int j = 0; j < i; j++) {
+				ans += 2*a[i] * a[j];
+				ans += 2*b[i] * b[j];
+			}
+		}
+		cout << ans << endl;
+	}
+}
+
+	
+	
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">Fancystack组合数思维题</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">15</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF1666F Fancy stack(总会让我想到Flat snark啊)<br>
+								题目大意：有偶数个块（<=5e3），要求把他叠起来之后偶数的位置从上到下必须递增，而且每个偶数位置都要大于两侧的奇数。<br>
+								<br>
+								本题首先属于全排列，可能会以为是区间合并或者类似Numberstring的尾判，但可惜的是这题没法接受n3复杂度也不能用于四边形不等式，且块长并不是permutation（甚至有重复的块）所以也不能尾判，一般来讲对于这种情况，题目中一定有更合适的限制条件去dp（不会看不出是dp吧）。<br>
+								偶数区域严格递增可以看出来每个偶数位置实际上大小不能超过某个值——偶数位置里全摆放数块中最大的n/2个块时的值，同时它不能小于某个值——因为它严格大于上个偶数位置，而上个偶数位置实际上又大于两侧的奇数位置，并大于再上个偶数位置……所以偶数位置的数实际上必须要大于它上面的所有数以及下面的一个数，同时还要小于等于当摆放为最大的n/2数于偶位置情况时摆放的值。<br>
+								这显然意味着，一个偶数旁边能摆什么奇数部分取决于上一个偶数是什么，而无关于下一个偶数——因为能放在这个偶数旁边意味着一定满足下一个偶数的需求，那么dp[i][j]表示第i个位置放置j时的情况，dp[i][j]可由dp[i-2][k]转移得到，这个k只要小于j且满足本身位置的条件就可以用于转移，所以我们可以用前缀和。<br>
+								对于每个位置，除了从上往下第二个位置可以选择两个比它小的数之外，其他的偶数位置都只能选择一个比他小的数（也就是位于它下面的那个数），所以我需要先预处理出对于每个块，比它小的块数有多少个，那么对于一个i位置（i>2），我能够选的情况就是C(个数-i+1，1)，显然，因为我之前有i-1个数已经因为之前的状态而固定了。<br>
+								因为有多组样例，前缀和计算的时候一定要拉满，不应该吝啬那点时间（反正n2肯定是完全足够的），由于第二个位置的特殊性，n=2的时候需要特判。（两个都是wa过的坑……）<br>
+								全排列的思路之一是利用之前已经推得的状态来限制接下来的选择，而彼时的选择通常与数的大小无关而是只和数量有关，而限制条件就只能在题目中找到了。<br>
+								哦，别忘了对于每个数去除以它重复的次数，这部分需要用到阶乘和逆元，别出锅。<br>
+								<br>
+								代码（你也配2200分？）：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 500005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(ll i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+using namespace std;
+ll a[5005],dp[5005][5005],lesthan[5005],qzh[5005][5005];
+ll fff[5005];
+ll cpow(ll x, ll n) {
+	ll ans = 1;
+	while (n &gt 0) {
+		if (n & 1) ans = (ans * x) % mdl;
+		x = (x * x) % mdl;
+		n &gt&gt= 1;
+	}
+	return ans;
+}
+ll cnt[5005];
+int main()
+{
+	cfast;
+	int t;
+	cin &gt&gt t;
+	inc(i, 1, 5001) {
+		if (i == 1)fff[i] = 1;
+		else fff[i] = fff[i - 1] * i % mdl;
+	}
+	while (t--) {
+		memset(cnt, 0, sizeof(cnt));
+		int n;
+		cin &gt&gt n;
+		inc(i, 1, n + 1) {
+			cin &gt&gt a[i];
+			cnt[a[i]]++;
+		}
+		if (n == 2) {
+			if (a[1] != a[2])cout &lt&lt 1 &lt&lt endl;
+			else cout &lt&lt 0 &lt&lt endl;
+			continue;
+		}
+		sort(a+1, a + n+1);
+		inc(i, 1, n + 1) {
+			if (a[i] != a[i - 1]) {
+				lesthan[i] = i - 1;
+			}
+			else {
+				lesthan[i] = lesthan[i - 1];
+			}
+		}
+		int ff = 0;
+		for (int i = 2; i &lt= n - 2; i+=2) {
+			int f = 0;
+			int tt = 0;
+			int end = n-2;
+			for (int j = i + 1; a[j] &lt a[n / 2 + i/2 + 1]; j++) {
+				if (a[j] &lt= a[i])continue;
+				if (tt == 0)tt = j;
+				f = 1;
+				if (i == 2) {
+					ll ci = (lesthan[j] - 1) * lesthan[j] / 2;
+					dp[i][j] = 2 * ci;
+					if (j == tt)qzh[i][j] = dp[i][j];
+					else qzh[i][j] = qzh[i][j - 1] + dp[i][j];
+					qzh[i][j] %= mdl;
+				}
+				else {
+					dp[i][j] = qzh[i - 2][lesthan[j]] * (lesthan[j]-i+1);
+					dp[i][j] %= mdl;
+					if (j == tt)qzh[i][j] = dp[i][j];
+					else qzh[i][j] = qzh[i][j - 1] + dp[i][j];
+					qzh[i][j] %= mdl;
+				}
+				end = j;
+					//cout &lt&lt "dp." &lt&lt i &lt&lt "." &lt&lt j &lt&lt " = " &lt&lt dp[i][j] &lt&lt endl;
+			}
+			for (int j = 1; j &lt tt; j++) {
+				qzh[i][j] = 0;
+			}
+			for (int j = end + 1; j &lt= n; j++) {
+				qzh[i][j] = qzh[i][j - 1];
+			}
+			if (f == 0) {
+				ff = 1;
+				break;
+			}
+		}
+		if (ff == 1) {
+			cout &lt&lt 0 &lt&lt endl;
+			continue;
+		}
+		ll ans = dp[n - 2][n - 1];
+		inc(i, 1, 5001) {
+			if (cnt[i] &gt= 2) {
+				ans = ans * cpow(fff[cnt[i]], mdl - 2);
+				ans %= mdl;
+			}
+		}
+		cout &lt&lt ans &lt&lt endl;
+		
+	}
+
+	
+
+}
+/*
+3
+8
+2 2 2 3 3 4 7 8
+*/
+	
+
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

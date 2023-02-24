@@ -1,0 +1,198 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">JobLookup路长dp点的合并</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">15</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF1666J Job Lookup<br>
+								题目大意：200个点，每两个点之间有个价值c[i][j]，这些点组成一个二叉树，二叉树的父亲必须比左儿子大，比右儿子小，最后有个总value，是每两个点i,j的距离乘c[i][j]的和，求使得这也value最小的树的形态。<br>
+								<br>
+								二叉树的那个性质一开始很迷惑，但是画图之后就会发现它决定了树的区间性：对于一个新的点（按从小到大排序），你要么将它加在现有点的父亲位置，要么加在它的右儿子位置，这会导致两种类型的区间组成一条从最小值向右到某个值（未必是最大值）的链：正的（新的在父亲）和反的（新的在右儿子）。<br>
+								一开始想到的区间dp是分开考虑这两种情况然后缩点。<br>
+								什么是缩点呢？因为点数这么多而且只能最多接受n3的复杂度，我不可能去计算每两个点之间的距离，所以我只能合并一些点，那么怎么合并？假设我最后的链上只有m个点，每个这样的点又有一堆儿子，那么这些儿子u到其他外面的点v的距离显然可以分解为他们到父亲的距离乘c[u][v]加上父亲到外面这些点的距离加c[u][v]，这样一来我就可以把这些点合并为它的父亲，这样我就只需要算最后这m个点的距离，dp的性质就体现在这里。<br>
+								但现在区间有两种情况，你无法确定同一个区间的里谁是父亲谁是儿子，区间价值w[i][j]有多种情况，而这些情况在合并的时候都要考虑，那怎么办？<br>
+								做了几小时不会，去看了jls的代码，大受震撼。<br>
+								答案是不去讨论谁是父亲谁是儿子，只要讨论这一坨东西合成一个区间之后的价值，那么这个价值怎么去讨论呢？当你将一个点i作为另一个点j的儿子时，显然，对于区间外的点k，点i到k的距离就等于j到k的距离+1，而对于区间内的点，原本这样的距离由于你走到了j点再走回来而浪费了两步（因为这时k和ij在同一条以j为起点的链上，想起来可能比较抽象），所以这个距离就等于j到k的距离+1-2也就是-1。每进行一次区间合并这个i的价值就会重复一次上面的叠加，这样即使不知道谁是父亲也可以完成一个区间的价值。<br>
+								那么这样一来我已经知道合成最大的区间之后最小的价值value是多少了，不过我怎么去确定树的构造呢？在合并的时候动点手脚，既然是区间合并，那合并的时候就一定有最小的分割点，不过通常这个分割点把整个区间划分为了两个部分，中间的割点可能是第一个区间的右端也可能是第二个区间的左端，无法判断哪个才是真正的割点，那我干脆分成三份，割点k的左边，割点k的右边，这样一来割点就一定可以确定是k了（是你，打狼！（区间dp Dire wolf）），在rcd[i][j]里记录下最优割点k，这个k一定是这个区间里的父亲，因为它并不属于旁边两个区间的任何一个（个人觉得这才是jls做法最nb的地方，巧妙的利用了区间dp的性质和题目的构造，瞬间拉开了题解做法几个档次，什么叫世界第一啊），这样的点只有整个区间的父亲。<br>
+								在完成dp之后找到父亲只需要不断重复分割树，每次都取得其中的rcd值，这样就能完成答案的记录。<br>
+								不得不说，整个做法可以用玄妙来形容，狠狠的学习了。<br>
+								本题极度考验抽象思维，造成一种想不到就是想不到的错觉，一天看一题，一题做一天，不过务必要完全掌握。<br>
+								第一次做缩点类型的区间dp，完全的无所适从，以后得多恋恋了。<br>
+								<br>
+								代码（直接看jls代码啊）：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 1000005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(ll i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+using namespace std;
+ll w[201][201],c[201][201],qzh[201][201],rcd[201][201],dp[201][201],ans[201];
+void getw(int n) {
+	inc(i, 1, n + 1) {
+		inc(j, i, n + 1) {
+			w[i][j] = w[i][j - 1];
+			inc(k, 1, n+1) {
+				if (k &lt i||k&gtj) {
+					w[i][j] += c[j][k];
+				}
+				else {
+					w[i][j] -= c[j][k];
+				}
+			}
+			//  cout &lt&lt "w." &lt&lt i &lt&lt "." &lt&lt j &lt&lt " = " &lt&lt w[i][j] &lt&lt endl;
+		}
+	}
+}
+void getans(int left,int right,int val){
+	if (left &gt right)return;
+	if (left == right) {
+		ans[left] = val;
+		return;
+	}
+	int k = rcd[left][right];
+	ans[k] = val;
+	getans(left, k - 1, k);
+	getans(k + 1, right, k);
+}
+int main() {
+	cfast;
+	int n;
+	cin &gt&gt n;
+	inc(i, 1, n + 1) {
+		inc(j, 1, n + 1) {
+			cin &gt&gt c[i][j];
+		}
+	}
+	getw(n);
+	inc(i, 1, n + 1) {
+		inc(j, 1, n + 1) {
+			dp[i][j] = 1e18;
+		}
+	}
+	inc(i, 1, n + 1) {
+		dp[i][i - 1] = 0;
+	}
+	inc(len, 1, n + 1) {
+		inc(i, 1, n + 2 - len) {
+			int j = i + len - 1;
+			inc(k, i, j+1) {
+				if (dp[i][k-1] + dp[k + 1][j] + w[i][j] &lt= dp[i][j]) {
+					dp[i][j] = dp[i][k-1] + dp[k + 1][j] + w[i][j];
+					rcd[i][j] = k;
+				}
+			}
+		//    cout &lt&lt "dp." &lt&lt i &lt&lt "." &lt&lt j &lt&lt " = " &lt&lt dp[i][j] &lt&lt endl;
+		//    cout &lt&lt "rcd." &lt&lt i &lt&lt "." &lt&lt j &lt&lt " = " &lt&lt rcd[i][j] &lt&lt endl;
+		}
+	}
+	getans(1, n, 0);
+	inc(i, 1, n + 1) {
+		cout &lt&lt ans[i] &lt&lt " ";
+	}
+
+	return 0;
+}
+	
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

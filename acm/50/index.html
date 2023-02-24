@@ -1,0 +1,155 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">PrintArticle斜率dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">12</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								HDU 3507 Print Article<br>
+								题目大意：将一串数（5e5）分为多个部分，每个部分的价值为该部分数的和的平方+常数M，求最小能分出的价值。<br>
+								<br>
+								明摆着卡复杂度要求优化dp的题目，而且根据题意来看多半是优先队列，输入数据很多，记得用scanf。<br>
+								列出式子之后发现主要的优化部分在于dp[i]（表示遍历到第i个物品时的最小价值）选择从哪个数转移得到，假设有k和j两个选择，通过构造fx可以得出f(k)-f(j)与其他kj相关函数的关系，在这题中以斜率的形式出现，也就是f(k)-f(j)/q(k)-q(j)<=C（与i有关，但其实无所谓），斜率有关的状态可以形成一条曲线，既然是比较斜率，那么唯一重要的就是凹凸性和常数的方向，可以注意到在这题中方向并不是固定的，因为取决于i，但无论方向在哪，都是要么斜率最大的点要么斜率最小的点是最优选择，所以中间的点可以直接消去，只留下最大和最小的，对于每个i判断一下最大和最小哪个才是最优解。<br>
+								如果用单调队列来维护，单调队列最里面的值不能碰，（因为会需要同时保留一个最大值和一个最小值），也就是说该队列一定是至少有两个元素在里面的。<br>
+								斜率dp在抽象的dp中也显得更加抽象，因为你甚至无法写出像样的方程，同时对于单调队列的理解也非常重要，可以从这道入门题来深入了解一下。<br>
+								一般来讲为了效率和准确性会用移项把除法换成乘法，但这道题直接用double干过去了……<br>
+								<br>
+								代码：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#define ll long long
+#define maxn 500005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(ll i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'using namespace std;
+double a[maxn], dp[maxn], qzh[maxn];
+int qr[maxn];
+inline double xl(int j, int i) {
+    if (qzh[i] == qzh[j])return 0;
+    return (dp[i] + qzh[i] * qzh[i] - dp[j] - qzh[j] * qzh[j]) / (qzh[i] - qzh[j]);
+}
+int main() {
+    cfast;
+    int n;
+    double m;
+    while (scanf("%d%lf",&n,&m)!=EOF) {
+        inc(i, 1, n + 1) {
+            scanf("%lf",&a[i]);
+            qzh[i] = qzh[i - 1] + a[i];
+        }
+        int head = 0, tail = 1;
+        qr[0] = 0;
+        inc(i, 1, n + 1) {
+        //    cout &lt&lt "xxxxxx " &lt&lt xl(qr[head], qr[head + 1]) &lt&lt endl;            while (head &lt tail && xl(qr[head], qr[head + 1]) &lt= 2 * qzh[i]) {
+            //    cout &lt&lt xl(qr[head], qr[head + 1]) &lt&lt endl;                head++;
+            }
+            dp[i] = dp[qr[head]] + m + (qzh[i] - qzh[qr[head]]) * (qzh[i] - qzh[qr[head]]);
+            while (head &lt tail && xl(qr[tail],i)&lt=xl(qr[tail-1],qr[tail])) {
+            //    cout &lt&lt xl(qr[tail], i) &lt&lt " " &lt&lt xl(qr[tail - 1], qr[tail]) &lt&lt endl;                tail--;
+            }tail++;
+            qr[tail] = i;
+        //    cout &lt&lt head &lt&lt " " &lt&lt tail &lt&lt endl;        }
+        printf("%.0lf\n", dp[n]);
+    }
+}
+
+
+
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

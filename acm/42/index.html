@@ -1,0 +1,285 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">ColoringBracket分治区间</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">7</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF106D Coloring Bracket<br>
+								题目大意：给你一个合法的括号串（范围为700），你要对他们涂色，可以涂成红和蓝，同一组括号只能且必须有一边涂色，涂色完了之后相邻的括号不能有相同的染色。<br>
+								<br>
+								由于括号之间的约束条件只与整体有关，所以很容易想到区间的问题。<br>
+								很容易注意到本题的区间有两种情况：区间的左右两个括号是一组，这个时候两边必须有一且只有一边染色，也就是4种情况；而如果左右两个括号不是同一组，那么这个时候就有9种情况了（3^2）。<br>
+								一个区间的转移中，如果左右并非同一组，说明它是由多个左右在同一组的区间合并得到的，这样问题就转化成了分治题目，该区间的状态转移相当于多个区间的合法状态合并，而合并的规则自然就是上面的9种情况的搭配了，已经能想到代码的长度了。<br>
+								如果左右同一组，那么只要递推到他们更里面的状态然后转移就行。<br>
+								边界是形如()的区间，显然他们只能返回前四种状态，且dp值为1，通过提前记录下括号对应的位置可以保证分治处理的区间永远是合法区间。<br>
+								括号长度只有700，主要复杂度集中在9种情况的状态转移以及中间的区间合并，合并的时候向右推进的同时要记录最左边的括号状态，这样这个9又翻了一倍，代码又更加乱了。<br>
+								想了无数种简写的方法还是写到了200行，很难想像是1900分的D题，让我码不得一个小时。<br>
+								用分治解决区间问题的代表，当你无法直接通过遍历的n2复杂度来解决区间问题的时候应该会经常用到（主要是左边界和又边界同时需要处理，而且区间的合并并非只有左右合并，像本题中还有里外合并）。<br>
+								<br>
+								代码：<br>
+								<br>
+								
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <stack>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 200005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair<ll,ll>
+#define inc(i,a,n) for(ll i=a;i<n;i++)
+#define vset(a,n,m) for(ll i=0;i<n;i++)a[i]=m;
+using namespace std;
+ll dp[701][701][9],with[701],dpt[701][9][9],le[3][3],re[3][3];
+stack<ll> stk;
+vector<ll> ban[9];
+void dac(int start, int end) {
+	if (with[start] == end) {
+		if (start + 1 == end) {
+			inc(i, 0, 4)dp[start][end][i] = 1;
+			return;
+		}
+		else {
+			int left = start + 1, right = end - 1;
+			dac(left, right);
+			ll s = 0;
+			inc(i, 0, 9)s += dp[left][right][i];
+			s %= mdl;
+			dp[start][end][0] = (s - dp[left][right][0] - dp[left][right][5] - dp[left][right][7]+(ll)3*mdl)%mdl;
+			dp[start][end][1] = (s - dp[left][right][1] - dp[left][right][5] - dp[left][right][8]+(ll)3*mdl)%mdl;
+			dp[start][end][2] = (s - dp[left][right][2] - dp[left][right][6] - dp[left][right][8]+(ll)3*mdl)%mdl;
+			dp[start][end][3] = (s - dp[left][right][3] - dp[left][right][6] - dp[left][right][7]+(ll)3*mdl)%mdl;
+		}
+	}
+	else {
+		vector<pll> segs;
+		inc(i, start, end + 1) {
+			pll p;
+			p.first = i, p.second = with[i];
+			dac(i, with[i]);
+			segs.push_back(p);
+			i = with[i];
+		}
+		int siz = segs.size();
+		inc(i, 0, 9)dpt[0][i][i] = dp[segs[0].first][segs[0].second][i];
+		inc(i, 1, siz) {
+			int l = segs[i].first, r = segs[i].second;
+			inc(j, 0, 9) {	
+				if (l + 1 == r && j >= 4)break;
+				inc(k, 0, 9) {
+					inc(fr, 0, 9) {
+						
+						int flag = 0;
+						if (ban[j].size()) {
+							inc(b, 0, 3)
+								if (ban[j][b] == fr)flag = 1;
+						}
+						if (flag == 0) {
+							dpt[i][j][k] += dpt[i - 1][fr][k]*dp[l][r][j]%mdl;
+						}
+						dpt[i][j][k] %= mdl;
+						
+					}
+				}
+			}
+		}
+		dp[start][end][0] = 0;
+		inc(i, 0, 3)
+			inc(j, 0, 3)
+			dp[start][end][0] += dpt[siz - 1][re[2][j]][le[0][i]];
+		dp[start][end][0] %= mdl;
+
+		dp[start][end][1] = 0;
+		inc(i, 0, 3)
+			inc(j, 0, 3)
+			dp[start][end][1] += dpt[siz - 1][re[0][j]][le[2][i]];
+		dp[start][end][1] %= mdl;
+
+		dp[start][end][2] = 0;
+		inc(i, 0, 3)
+			inc(j, 0, 3)
+			dp[start][end][2] += dpt[siz - 1][re[2][j]][le[1][i]];
+		dp[start][end][2] %= mdl;
+
+		dp[start][end][3] = 0;
+		inc(i, 0, 3)
+			inc(j, 0, 3)
+			dp[start][end][3] += dpt[siz - 1][re[1][j]][le[2][i]];
+		dp[start][end][3] %= mdl;
+
+		dp[start][end][4] = 0;
+		inc(i, 0, 3)
+			inc(j, 0, 3) {
+				dp[start][end][4] += dpt[siz - 1][re[2][j]][le[2][i]];
+			}
+		dp[start][end][4] %= mdl;
+
+		dp[start][end][5] = 0;
+		inc(i, 0, 3)
+			inc(j, 0, 3)
+			dp[start][end][5] += dpt[siz - 1][re[0][j]][le[0][i]];
+		dp[start][end][5] %= mdl;
+
+		dp[start][end][6] = 0;
+		inc(i, 0, 3)
+			inc(j, 0, 3)
+			dp[start][end][6] += dpt[siz - 1][re[1][j]][le[1][i]];
+		dp[start][end][6] %= mdl;
+
+		dp[start][end][7] = 0;
+		inc(i, 0, 3)
+			inc(j, 0, 3)
+			dp[start][end][7] += dpt[siz - 1][re[1][j]][le[0][i]];
+		dp[start][end][7] %= mdl;
+
+		dp[start][end][8] = 0;
+		inc(i, 0, 3)
+			inc(j, 0, 3)
+			dp[start][end][8] += dpt[siz - 1][re[0][j]][le[1][i]];
+		dp[start][end][8] %= mdl;
+		inc(i, 0, siz) {
+			inc(j, 0, 9) {
+				inc(k, 0, 9) {
+					dpt[i][j][k] = 0;
+				}
+			}
+		}
+	}
+
+}
+void init() {
+	ban[0].push_back(1), ban[0].push_back(5), ban[0].push_back(8);
+	ban[2].push_back(3), ban[2].push_back(6), ban[2].push_back(7);
+	ban[5].push_back(1), ban[5].push_back(5), ban[5].push_back(8);
+	ban[6].push_back(3), ban[6].push_back(6), ban[6].push_back(7);
+	ban[7].push_back(1), ban[7].push_back(5), ban[7].push_back(8);
+	ban[8].push_back(3), ban[8].push_back(6), ban[8].push_back(7);
+	le[0][0] = 0, le[0][1] = 5, le[0][2] = 7;
+	le[1][0] = 2, le[1][1] = 6, le[1][2] = 8;
+	le[2][0] = 1, le[2][1] = 3, le[2][2] = 4;
+	re[0][0] = 1, re[0][1] = 5, re[0][2] = 8;
+	re[1][0] = 3, re[1][1] = 6, re[1][2] = 7;
+	re[2][0] = 0, re[2][1] = 2, re[2][2] = 4;
+}
+int main() {
+	cfast;
+	init();
+	string str;
+	cin >> str;
+	int n = str.length();
+	inc(i, 1, n + 1) {
+		if (str[i - 1] == '(')stk.push(i);
+		else {
+			int t = stk.top();
+			with[t] = i;
+			with[i] = t;
+			stk.pop();
+		}
+	}
+	dac(1, n);
+	ll res = 0;
+	inc(i, 0, 9) {
+		res += dp[1][n][i];
+		res %= mdl;
+	}
+	cout << res;
+}//((()
+
+	
+
+
+	
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

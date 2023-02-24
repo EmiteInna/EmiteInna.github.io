@@ -1,0 +1,218 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">Masha-forgetful哈希</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">31</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF1624E Masha-forgetful<br>
+								题目大意：给你n个长度为m的字符串（n*m不超过1e6），然后再给你一个串，问你能否将整个串表示为长度大于1的子串相加，其中这些子串一定要在前面的串中出现过，求每个子串的来源位置，输入任意即可。<br>
+								<br>
+								看似是很恐怖的字符串题目，实际上我们可以发现，对于每一个子串，它都可以分解为长度为2或3的子串相加，因此我们记录n个字符串中的子串的时候只需要记录长度为2和3的子串，在这里我直接用map来存哈希，map的value值用结构体（数字也行，然后再映射），表示这个子串出现的位置。<br>
+								接下来就是遍历目标串来判定哪些是2哪些是3，这个时候就要用过到dp啦。<br>
+								状态还是很好想的，dp[i]表示以i结尾的串是否合理，状态转移为dp[i]=dp[i-k]&&f[k](从j开始往前的长度为k的字符串是否有)，记得在转移的同时记录下来转移的来源，最后倒推回去求得每个子串的来源位置。<br>
+								题目给了三秒，我最后是702ms过的，内存消耗也不多，仔细想想，虽然有1e6的数据范围，但是长度为2和3的字母组成的串其实一共也没多少个吧（26^2+26^3），所以空间完全不用担心。<br>
+								这题的dp含量其实很小了，毕竟不需要求最小的子串数量（要求的话这题就完全是另一道题了），哈希的建立也非常简单明显，考了一个记录路径但无足轻重，个人感觉不配2000分（）<br>
+								<br>
+								代码：<br>
+								<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <stack>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 200005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+using namespace std;
+struct ck {
+	int start, end, num;
+};
+map< string, ck> has;
+map<string, int> exi;
+stack<ck> ans;
+int dp[1001];
+int main()
+{
+	cfast;
+	int t;
+	cin >> t;
+	while (t--) {
+		int n, m;
+		cin >> n >> m;
+		has.clear();
+		exi.clear();
+		for (int i = 0; i <= m; i++)dp[i] = -1;
+		for (int i = 1; i <= n; i++) {
+			string s;
+			cin >> s;
+			for (int j = 0; j < m-1; j++) {
+				string tmp = "";
+				tmp += s[j];
+				tmp+=s[j + 1];
+				ck c1 = { j + 1,j + 2,i };
+				has[tmp] = c1;
+				exi[tmp] = 1;
+				//cout << "has." << tmp << "=" << c1.start << " " << c1.end << " " << c1.num << endl;
+				if (j < m-2) {
+					tmp += s[j + 2];
+					c1.end = j + 3;
+					has[tmp] = c1;
+					exi[tmp] = 1;
+				//	cout << "has." << tmp << "=" << c1.start << " " << c1.end << " " << c1.num << endl;
+				}
+			}
+		}
+		string a;
+		cin >> a;
+		if (m == 1) {
+			cout << "-1" << endl;
+			continue;
+		}
+		int f = 0;
+		int flag = 0;
+		dp[0]=-1;
+		for (int j = 2; j <= m; j++) {
+			string tmp = "";
+			tmp += a[j - 2];
+			tmp += a[j-1];
+			if (exi[tmp] == 1&&(dp[j-2]!=-1||j-2==0)) {
+				dp[j] = j - 2;
+				//cout << "dp." << j << " = " << dp[j] << endl;
+			}
+			if (j > 2) {
+				tmp = "";
+				tmp += a[j - 3];
+				tmp += a[j - 2];
+				tmp += a[j-1];
+				if (exi[tmp] == 1 && (dp[j - 3] != -1 || j - 3 == 0)) {
+					dp[j] = j - 3;
+				//	cout << "dp." << j << " = " << dp[j] << endl;
+				}
+			}
+		}
+		int now = m;
+		int num = 0;
+		if (dp[m] == -1) {
+			cout << "-1" << endl;
+			continue;
+		}
+		while (now>0) {
+			num++;
+			int tar = dp[now];
+			//cout << "tar=" << tar << endl;
+			string tmp = "";
+			for (int i = tar + 1; i <= now; i++)tmp += a[i-1];
+			ans.push(has[tmp]);
+			now = tar;
+		}
+		cout << num << endl;
+		while (!ans.empty()) {
+			ck c = ans.top();
+			printf("%d %d %d\n", c.start, c.end, c.num);
+			ans.pop();
+		}
+		
+		
+	}
+
+}
+/*
+2
+1 3 1 2 3
+2 6 -1 4 -2 3 -2 3
+*/
+	
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

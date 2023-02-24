@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">MakeThemEqual-通过数值上限转化背包</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">26</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 1633D<br>
+Make Them Equal<br>
+题目大意：你有一个长度为n的数组a，其中每个数都为1，同时你有一个b数组，长度也为n，每个数分别为b[i]，在每次操作中你可以把a数组中的一个数ai变为ai+(ai/x)，x为任意整数，如果你成功让a[i]等于b[i]，你将得到c[i]个硬币，现在问有k次操作最多能得到多少硬币。<br>
+b[i]<=1e3，k<=1e6<br>
+<br>
+这题有些巧妙的地方<br>
+B[i]<=1e3意味着我们可以通过O(n2)的复杂度通过dp求出将1变为b[i]需要多少次操作，即dp[i+i/j]=min(dp[i]+1,dp[i+i/j])，然后这个问题就变成了可以消耗k[i]次操作得到c[i]的报酬，求最大报酬，很容易发现是一个背包dp。<br>
+然而k<=1e6，你背不起，那咋办。<br>
+B[i]<=1e3啊，通过打印出dp[i]进行观察，可以发现1到1e3内需要次数最多的数也只需要12次，也就是说，实际上12000次操作足以得到所有的硬币，那么只要考虑k在12000内的情况就行，这个复杂度背包是可以接受的，复杂度为O(min(12000,k)*n)<br>
+所以说嘛，背包无论怎样也就是背包而已罢了。<br>
+<br>
+								
+<pre><code>
+
+	
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

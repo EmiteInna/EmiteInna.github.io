@@ -1,0 +1,155 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">Road Optimization段问题(区间)</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">26</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 1625C<br>
+								题目大意，一条长度为l的路，上面有n个限速排，在最左边开头也就是0的位置必有一个，在限速牌右边到下一个限速牌之前，车辆的速度都不能超过这个牌的限速，然后现在你可以移除最多k个限速牌（不能移除开头的），要求移除这些牌之后通过这条路所需的最短时间。<br>
+								N<=500,l<=1e5<br>
+								很容易想到这是一道线性dp的题目，因为对于每个限速牌来讲，当你移除了它，改变的仅仅是它之后的速度，它之前的速度没有受到任何的影响，而路牌之后到下一个路牌之前的速度发生了变化，这个变化是多少呢？是这个路牌的前一个路牌所决定的，但是前一个路牌说不定也被移除了捏，那么记录一下上一个没被移除的路牌是谁不就好了。<br>
+								设定dp[i][j][k]表示到从左起第k个路牌处移除了i个路牌，且最右边的没被移除的路牌为j时需要花费的时间。<br>
+								则dp[i][j][k]=dp[i-1][j][k-1]由于可以不移除满k个，答案要取min(dp[i])<br>
+								复杂度为O（n3）<br>
+								没错聪明的同学会发现并不是这样的，实际上第三维根本没有必要，实际上起到最关键作用的只有j而已，对于每个i直接推进到最后一个路牌，dp[i][j]表示的就是这一次的最小值，并且遍历时将初始值直接设置为j=i，那么实际上没有移除的状态也被考虑进去了。<br>
+								答案只需要取dp[k][n+1]就行了。<br>
+								<br>
+								
+<pre><code>
+	#define _CRT_SECURE_NO_WARNINGS
+	#include <iostream>
+	#include <algorithm>
+	#include <utility>
+	#include <vector>
+	#include <map>
+	#include <cstring>
+	#define ll long long
+	#define maxn 200005
+	#define mdl 998244353
+	using namespace std;
+	ll	dp[501][501];
+	int cord[501], spd[501];
+	int main() {
+		std::ios::sync_with_stdio(false);
+		cin.tie(0);
+		cout.tie(0);
+		int n, l, k;
+		cin >> n >> l >> k;
+		ll ans = 0;
+		for (int i = 1; i <= n; i++) {
+			cin >> cord[i];
+		}
+		cord[n + 1] = l;
+		for (int i = 1; i <= n; i++) {
+			cin >> spd[i];
+			
+		}
+		for (int i = 1; i <= n + 1; i++) {
+			ans += spd[i - 1] * (cord[i] - cord[i - 1]);
+		}
+		ll mx = 0;
+		for (int i = 0; i <= k; i++) {
+			if (i == 0) {
+				for (int j = 2; j <= n + 1; j++) {
+					dp[i][j] = dp[i][j - 1] + spd[j - 1] * (cord[j] - cord[j - 1]);
+				}
+			}
+			else {
+				dp[i][2] = dp[0][2];
+				for (int j = 3; j <= n + 1; j++) {
+					dp[i][j] = dp[i][j - 1] + spd[j - 1] * (cord[j] - cord[j - 1]);
+					for (int g = 1; g <= i && j - g >= 2; g++) {
+						dp[i][j] = min(dp[i][j], dp[i - g][j - g - 1] + spd[j - g - 1] * (cord[j] - cord[j - g - 1]));
+					}
+					//cout << "dp." << i << "." << j << " = " << dp[i][j] << endl;
+				}
+			}
+			
+		}
+		cout << dp[k][n+1];
+	}
+	
+	
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

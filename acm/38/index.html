@@ -1,0 +1,165 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">FairNutAndBestPath两种顺序的树形dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">4</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 1083A The Fair Nut and the Best Path<br>
+								题目大意：树的每个节点上可以加w[i]的油，节点之间的边有距离e[i]，会消耗等同距离数量的油，求一条路径使得走完之后剩余的油量最多。<br>
+								<br>
+								就是普通的树形dp，遍历的时候判断一下这条路是否能走，dp[i]记录的是从叶子走到i时获得的最大油量。<br>
+								但有可能会出现这样的情况：当节点u和其儿子v间的路径大于dp[v]时，显然我判断为不能走这条路，但实际上我可以从u走到v，如果从另一条路走到u节点的过程中u获得了足以走这条路的油那么实际上我可以这样走到v。<br>
+								于是我写了两个dfs，一个进行树形dp后序遍历，一个进行前序遍历去更新我所说的情况中被更新的值。<br>
+								结果发现dfs2去掉之后也还是可以ac？？<br>
+								如果我说的情况确实存在且影响最大值，那么显然这个v节点值得我去花这条路径的路长来获取，而且从另一条路走到u的时候我的油量是大于路长的，也就是说首先w[v]>e[u,v]。<br>
+								哦，如果这个式子成立的话第一次好像就能走了。<br>
+								我是sb。<br>
+								树形dp本身还是比较套路化的，保不齐为了坑人就出了什么特殊条件，这次虽然是自作聪明了，不过也算是为以后做准备吧（挣扎）。<br>
+								代码：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <stack>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 300005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair<ll,ll>
+#define inc(i,a,n) for(ll i=a;i<n;i++)
+#define vset(a,n,m) for(ll i=0;i<n;i++)a[i]=m;
+using namespace std;
+map<pll, ll> dis;
+ll wei[maxn],dp[maxn],from[maxn],rcd[maxn];
+vector<ll> tree[maxn];
+ll ans;
+bool cmp(ll l1, ll l2) { return l1 > l2; }
+void dfs(int n, int dad) {
+	int siz = tree[n].size();
+	ll res = wei[n];
+	vector<ll> diss;
+	int mxd = 0;
+	inc(i, 0, siz) {
+		int son = tree[n][i];
+		if (son == dad)continue;
+		dfs(son, n);
+		pll p;
+		p.first = n, p.second = son;
+	//	cout << "n = " << n << " dis from " << son << " = " << dis[p] << endl;
+		if (dp[son] >= dis[p]) {
+			if (dp[son] - dis[p] > 0) {
+				diss.push_back(dp[son] - dis[p]);
+				if (dp[son] - dis[p] >= mxd) {
+					rcd[n] = son;
+					if (dp[son] - dis[p] == mxd)rcd[n] = -1;
+				}
+			}
+		}
+	}
+	sort(diss.begin(), diss.end(),cmp);
+	if (diss.size() >= 2) {
+		ans = max(ans, res + diss[0] + diss[1]);
+	}
+	if (diss.size() >= 1)res =max(res,res+diss[0]);
+	dp[n] = res;
+	ans = max(ans, dp[n]);
+	//cout << "dp." << n << " = " << dp[n] << endl;
+}
+
+
+
+
+	
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">MoamenandXOR细节位运算</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">2</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 1557C Moamen and XOR<br>
+题目大意：给你一个n和k（范围均为2e5），表示一个数组中有n个大小范围为2^k-1的数，问有多少个这样的数组，使得数组的与值大于其异或值，取模1e9+7。<br>
+<br>
+注意到，一个数位的与值只有当其全为1是才为1，而异或值则是有偶数个1时为0，奇数个时为1，所以我们可以把题目的n按奇偶性划分情况：<br>
+①n为奇数，这个时候数位全为1时AND和XOR都为1，而有偶数个1时AND和XOR都为0，其余情况都是AND为0，XOR为1。<br>
+②n为偶数，这个时候数位全为1时AND为1，XOR为0，也是唯一一种AND可以大于XOR的情况，有偶数个1且并不全是1的时候AND和XOR都为0，其余情况AND为0，XOR为1。<br>
+使用dp[i]来记录从右边起第i为合格的方案数，可以发现，如果n个数全是0的时候是符合条件的，所以首先预设dp[0]=1。<br>
+接下来就分奇偶讨论了：<br>
+n奇数的时候，这时无论如何数位上的AND值都不会超过XOR值，所以只能保证在AND和XOR值相等的情况下继续归于下一位，情况数量是C(n,2)+C(n,4)+...+C(n,n-1)，这个和等于2^(n-1)（自己推），加上全1和全0的情况，也就是2^(n-1)+1。<br>
+而n为偶数的时候，全1时AND是可以大于XOR的，这样的话比这位小的数位就随便分配了，而除了全1以外处理是和奇数一样的，递推的乘数变为2^(n-1)-1，多了一个加数为2^(k*n)，k表示比他小的位数数量。<br>
+<br>
+虽然很简单，不过是div2的C题，一定要尽快出才行，还是比较吃位运算的熟练度的，细节上也有一些讲究。<br>
+<br>
+代码：<br>
+<br>
+<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <stack>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 200005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair<ll,ll>
+#define inc(i,a,n) for(ll i=a;i<n;i++)
+#define vset(a,n,m) for(ll i=0;i<n;i++)a[i]=m;
+using namespace std;
+ll cpow(ll x, ll n) {
+	ll ans = 1;
+	while (n > 0) {
+		if (n & 1) ans = (ans * x) % mdl;
+		x = (x * x) % mdl;
+		n >>= 1;
+	}
+	return ans;
+}
+ll dp[maxn];
+int main() {
+	cfast;
+	int t;
+	cin >> t;
+	while (t--) {
+		ll n, k;
+		cin >> n >> k;
+		ll ans = 0;
+		ll ev = 0;
+		if (n % 2 == 0)ev++;
+		dp[0] = 1;
+		inc(i, 1, k + 1) {
+			ll bkw = i - 1;
+			/*if (i == 1) {
+				dp[i] = cpow(2, n - 1) + 1;
+			}
+			else {*/
+				dp[i] = ev * cpow(cpow(2, bkw), n) % mdl +(cpow(2, n - 1) +1- 2*ev) * dp[i-1] % mdl;
+				
+		//    }
+			dp[i] %= mdl;
+		}
+		cout << dp[k] << endl;
+	}
+}
+
+	
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

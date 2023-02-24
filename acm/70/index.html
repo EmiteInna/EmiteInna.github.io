@@ -1,0 +1,170 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">Cobb放缩限制</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">May<span></span></span> <span class="day">13</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF1554B Cobb<br>
+								恐怖的1700分B题，比D题还难，笑死<br>
+								<br>
+								题目大意：给一个数组(1e5，数值范围小于等于n)，和一个k（&lt=min(n,100)），求i*j-k*(a[i]|a[j])，i,j为下标。<br>
+								<br>
+								首先n2是不行的，想办法找到a[i]|a[j]的规律和限制，实际上有个显而易见的尝试,min(a,b)&lt=a|b&lt=max(a,b)，如果我再成熟点的话应该足以发现，这种条件最适合的就是用来放缩。<br>
+								原式中i*j的数量级显然要比a[i]|a[j]更大，所以不妨假设原本最大的东西就是i=n-1,j=n时的结果，那么如果存在i,j，使得f(i,j)&gt=f(n-1,n)（这里f表示原式），那么显然max f(i,j)必须&gt=min f(n-1,n)，a[i]和a[j]的值是无规律的，换句话说可以随便设定，那么a[n-1]|a[n]取最大值时f(n-1,n)取到最小，这个最大值是2n（实际上没这么大，但是因为是放缩所以无所谓），也就是说f(n-1,n)的最小值是n(n-1)-2*k*n，那么f(i,j)的最大值是多少呢，当然是或值为0了（实际上也不可能这么小），这样我们就得到i*j&gt=n(n-1)-2*k*n，j取的越大结果肯定越大吧，所以得到了i*n&gt=n(n-1-2*k)，i&gt=n-1-2*k，这样的话复杂度瞬间缩小到了O(4k2)，k最大只有100，所以就过了。<br>
+								只能说是梦回高中数学了属于是，位运算用于放缩的题目这是我碰到的第一个，不过还是狠狠地学习了。<br>
+								<br>
+								代码（我的解法复杂度是O(nk)，太逊了）：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 300005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(int i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+#define pi 3.141592657
+using namespace std;
+ll gcd(ll a, ll b) {
+	if (a &lt b)swap(a, b);
+	if (b == 0)return a;
+	return gcd(b, a % b);
+}
+ll cpow(ll x, ll n) {
+	ll ans = 1;
+	while (n &gt 0) {
+		if (n & 1) ans = (ans * x) % mdl;
+		x = (x * x) % mdl;
+		n &gt&gt= 1;
+	}
+	return ans;
+}
+
+/*
+-----------------------------------------------------------------------------------
+
+*/
+
+ll a[maxn];
+int main() {
+	cfast;
+	int t=1;
+	cin &gt&gt t;
+	while (t--) {
+		int n, k;
+		cin &gt&gt n &gt&gt k;
+		ll ans = -1e18;
+		inc(i, 0, n) {
+			cin &gt&gt a[i];
+		}
+		inc(i, 0, n) {
+			inc(j, max(i+1, n - 2 * k), n) {
+				ans = max(ans, (ll)(((ll)i+1) * ((ll)j+1) - k * (a[i] | a[j])));
+			}
+		}
+		cout &lt&lt ans &lt&lt endl;
+	}
+}
+/*
+2022.5.6 12:56
+*/
+
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

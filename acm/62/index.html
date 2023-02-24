@@ -1,0 +1,224 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">FunnySubstring另一个字符串dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">25</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 1538E Funny Substrings<br>
+								题目大意：对于一个变量有两种操作：赋值和加算合并（顾名思义），现在有n次操作(不超过50，但t<=1e3，且每个t中n都可以为50，虽然没什么影响吧)，要求完成所有操作后最后一个被操作的变量代表的字符串中有多少个“haha”，注意赋值操作中赋值的字符串最大长度不超过5。<br>
+								<br>
+								显然如果直接去模拟的话最后这个字符串可能被扩展到2^50的长度，是模拟所无法接受的，所以我们只能对于现有的变量去进行简单直接的计算。<br>
+								如果有两个变量a,b，他们本身包含的haha数分别是numa，numb，那么合并之后的haha数量应该是numa+numb+合并产生的haha，那么我只要知道两个变量合并之后产生了多少个haha就能直接完成计算。<br>
+								如何计算呢？Haha的产生一定是通过加算时左边的字符串的结尾和右边的字符串的开头来决定的，而且最多涉及三位，那么对于每个变量，我可以实时地去记录其前三位和后三位，由于原字符串长度只有5，所以对于特殊情况（字符串本身长度小于3）可以直接枚举长度去求解，注意在合并时处理两个变量合并后变量的前三位和后三位时有一定的细节。<br>
+								剩下就是无脑的模拟了，常数虽然有点大但是复杂度完全不虚。<br>
+								比较有意思的题，但是很简单，什么时候我也能做这么简单的E呢？不过话说回来，果然跳过D去直接开E才是最需要勇气的吧（虽然这场的D也很简单，简单到我都没写题解……）。<br>
+								<br>
+								代码：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 500005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(int i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+using namespace std;
+map&ltstring, string&gt head, tail;
+map&ltstring, ll&gt cnt;
+int main() {
+	cfast;
+	int t;
+	cin &gt&gt t;
+	while (t--) {
+		head.clear();
+		tail.clear();
+		cnt.clear();
+		int n;
+		cin &gt&gt n;
+		string var, cmd,last;
+		while (n--) {
+			cin &gt&gt var &gt&gt cmd;
+			last = var;
+			if (cmd[0] == ':') {
+				string str;
+				cin &gt&gt str;
+				cnt[var] = 0;
+				if (str.length() == 1) {
+					tail[var] = "  " + str;
+					head[var] = str + "  ";
+					//  cout &lt&lt tail[var] &lt&lt "*" &lt&lt head[var] &lt&lt endl;
+				}
+				else if (str.length() == 2) {
+					tail[var] = " " + str;
+					head[var] = str + " ";
+					//   cout &lt&lt tail[var] &lt&lt "*" &lt&lt head[var] &lt&lt endl;
+				}
+				else if (str.length() == 3) {
+					tail[var] = str;
+					head[var] = str;
+				//    cout &lt&lt tail[var] &lt&lt "*" &lt&lt head[var] &lt&lt endl;
+				}
+				else if (str.length() == 4) {
+					if (str == "haha")cnt[var] = 1;
+					head[var] = "";
+					inc(i, 0, 3)head[var] += str[i];
+					tail[var] = "";
+					inc(i, 1, 4)tail[var] += str[i];
+					//  cout &lt&lt tail[var] &lt&lt "*" &lt&lt head[var] &lt&lt endl;
+				}
+				else {
+					for (int i = 0; i &lt 2; i++) {
+						if (str[i] == 'h') {
+							if (str[i + 1] == 'a' && str[i + 2] == 'h' && str[i + 3] == 'a')cnt[var] = 1;
+						}
+					}
+					head[var] = "";
+					inc(i, 0, 3)head[var] += str[i];
+					tail[var] = "";
+					inc(i, 2, 5)tail[var] += str[i];
+				//     cout &lt&lt tail[var] &lt&lt "*" &lt&lt head[var] &lt&lt endl;
+
+				}
+			}
+			else {
+				string a, b, pls;
+				cin &gt&gt a &gt&gt pls &gt&gt b;
+				cnt[var] = cnt[a] + cnt[b];
+				if (tail[a] == "hah" && head[b][0] == 'a')cnt[var]++;
+				if (tail[a][1] == 'h' && tail[a][2] == 'a' && head[b][0] == 'h' && head[b][1] == 'a')cnt[var]++;
+				if (tail[a][2] == 'h' && head[b] == "aha")cnt[var]++;
+				head[var] = head[a];
+				if (head[var][1] == ' ') {
+					if (head[b][0] != ' ') {
+						head[var][1] = head[b][0];
+						if (head[var][2] == ' ' && head[b][1] != ' ')
+							head[var][2] = head[b][1];
+					}
+				}
+				else if (head[var][2] == ' ' && head[b][0] != ' ') {
+					head[var][2] = head[b][0];
+				}
+				tail[var] = tail[b];
+				if (tail[var][1] == ' ') {
+					if (tail[a][2] != ' ') {
+						tail[var][1] = tail[a][2];
+						if (tail[var][0] == ' ' && tail[a][1] != ' ')
+							tail[var][0] = tail[a][1];
+					}
+				}
+				else if (tail[var][0] == ' ' && tail[a][2] != ' ') {
+					tail[var][0] = tail[a][2];
+				}
+				//  cout &lt&lt head[var] &lt&lt " " &lt&lt tail[var] &lt&lt endl;
+				// cout &lt&lt cnt[var] &lt&lt " is cnt" &lt&lt endl;
+			}
+		}
+		cout &lt&lt cnt[last] &lt&lt endl;
+	}
+}
+/*
+2022.4.22   (13:42
+
+*/
+	
+	
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

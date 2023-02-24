@@ -1,0 +1,159 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">UptheStrip数论dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">31</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 1561D1  Up the strip(simple version)<br>
+								题目大意：给两个数，n（范围为2e5）和m，你可以对n进行下列操作之一：①使得n=n-x，②使得n=n/x，其中x不得超过n，第二种中x不得为1，求最终使得n=1的方案数，对m取模。<br>
+								<br>
+								非常纯粹的题目，纯粹到只给你两个数字（笑。<br>
+								这题如果仅仅是求路径倒是还好，最烦的地方在于同样的路径可以有多种……比如3一步到1，可以是3/3也可以是3/2,10000到1更是只要除以5000以上的数都可以办到……<br>
+								通过观察（找规律）发现，一个数n除到另一个数k的方案数为n/k-n/(k+1)，有了这个，线性dp就可以实现，但关键是这样一做复杂度就O(n2)了，属实不太能接受。<br>
+								但实际观察就能发现三点①一个数要通过另一个数除得，另一个数首先必须大于等于其两倍（废话），②超过一定范围之后，越大的数除得多个数来获得一个数时，目标数就越小（废话），③假设一个数n除以k能得到的数为fn(k)，可以发现k超过一定范围之后n(k)就恒等于1了，而再此之前fn(k)都是相对离散的（实际上未必真的离散，但是已经够了）。<br>
+								因此我们从k=2开始，由于数值fn(k)和fn(k+1)在这种情况下相差很大，所以很快我们就能找到这个离散形式分布的终点：当fn(k)最终等于fn(k+1)的时候。<br>
+								接下来才是重点，如果我们接下去让k相加，最后碰到的是标志性的一大块n(k)值连续的值，那么有没有什么方法直接处理这些值呢？有，我们反过来。<br>
+								记录下当n(k)等于n(k+1)的时候的k值，并计算出n/k，很容易发现，对于所有i<n/k，n除到i的方案数都是可能很多的，那么到底有多少呢？就是之前提到的n/k-n/(k+1)了。<br>
+								再加上一些细枝末节的东西，包括n直接除到1的做法和n直接减到1的做法。<br>
+								复杂度为O(nk)，其中k表示n(k)==fn(k+1)时k的值，这个值是不会很大的，可以自行想想为什么。<br>
+								在除法相关的题中非常经典的一道题了，既有思维又有dp，做出来之后成就感还是不错的（虽然做的时候非常痛苦就是了……）<br>
+								代码：（是数论+dp标志性的极短代码呢）<br>
+								<br>
+<pre><code>
+	#define _CRT_SECURE_NO_WARNINGS
+	#include <iostream>
+	#include <algorithm>
+	#include <utility>
+	#include <vector>
+	#include <istream>
+	#include <map>
+	#include <cmath>
+	#include <stack>
+	#include <set>
+	#include <cstring>
+	#include <string>
+	#define ll long long
+	#define maxn 200005
+	#define mdl 998244353
+	#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+	#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+	#define pll pair&ltll,ll>
+	#define inc(i,a,n) for(int i=a;i<n;i++)
+	using namespace std;
+	ll dp[maxn], qzh[maxn];
+	inline ll cnt(ll n, ll x) {
+		return n / x - n / (x + 1);
+	}
+	int main()
+	{
+		cfast;
+		ll n, m;
+		cin >> n >> m;
+		inc(i, 2, n + 1) {
+	
+			int now = 2,now1=2;
+			while (now1 &lt= i / 2) {
+				if (i / now1 == i / (1 + now1))break;
+				dp[i] += dp[i / now1];
+				dp[i] = dp[i] % m;
+				now1++;
+			}
+			int mk = i / now1;
+			while (now<=mk) {
+				int ct = cnt(i, now);
+				dp[i] += ct * dp[now];
+				dp[i] = dp[i] % m;
+				now++;
+			}
+			dp[i] += 1 + cnt(i, 1) + qzh[i - 1];
+			dp[i] = dp[i] % m;
+			qzh[i] = (qzh[i - 1] + dp[i]) % m;
+		}
+		cout << dp[n];
+	}
+	
+	
+	
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

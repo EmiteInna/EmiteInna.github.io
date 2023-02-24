@@ -1,0 +1,172 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">InterestingFunctions入门级数位dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">31</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								1538F Interesting Function<br>
+题目大意：你要把l通过不断加1变成r，求数字改变的次数（9到10这种算是改变两次，99到100三次，以此类推），数字规模为1e9。<br>
+<br>
+首先，为什么说它是数位，因为改变的单位是1，所以从l加到r所需的改变次数等于1到r的次数减去1到l-1的次数，也就是答案是线性的。然后，由于数字发生超过1的改变的时机是在进位的时候，也就是说可以将数位作为可以递推的状态。千万要注意，数位dp并不一定要是10进制，但一定和进制有关，所以，即使是BAString那题我们也可以看作数位dp，不过这是题外话了。<br>
+状态非常好做，i为位数,dp[i]=10dp[i-1]+1，数位dp的结果可以使用记忆化dfs。<br>
+实际上这题说是数位板子题都嫌太过了，因为根本没有涉及到数位间的复杂联系……<br>
+<br>
+代码：<br>
+
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <stack>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 2000002
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair<ll,ll>
+#define inc(i,a,n) for(int i=a;i<n;i++)
+using namespace std;
+int dp[10];
+int digit[20];
+int dfs(int pos, bool fp)
+{
+	if (pos == 0)return 0;
+	if (fp == 0)return dp[pos];
+	else {
+		ll ret = 0;
+		int fpmx = digit[pos];
+		inc(i, 0, fpmx) {
+			ret += dp[pos];
+		}
+		ret += dfs(pos - 1, 1);
+		return ret;
+	}
+}
+int cal(int x)
+{
+	int i, len;
+	len = 0;
+	while (x) //求出每一位
+	{
+		digit[++len] = x % 10;
+		x /= 10;
+	}
+	return dfs(len,1);
+}
+void init() {
+	dp[1] = 1;
+	inc(i, 2, 11) {
+		dp[i] = dp[i - 1] * 10 + 1;
+	}
+}
+int main()
+{
+	cfast;
+	int t;
+	cin >> t;
+	init();
+	while (t--) {
+		ll l, r;
+		cin >> l >> r;
+		cout << cal(r) - cal(l) << endl;
+	}
+	return 0;
+}
+/*
+
+*/
+
+	
+	
+	
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

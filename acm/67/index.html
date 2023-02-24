@@ -1,0 +1,227 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">ManhattanSubarrays题不傻逼,是我傻逼</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">May<span></span></span> <span class="day">2</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 1550C<br>
+								题目大意：太烦了，转移过来就是对于一个数组(2e5)，求其中合格的子段数，子段长度&lt=2时子段一定合格，否则必须在该子段中没有长度&gt=3的不下降子序列或者不上升子序列。<br>
+								<br>
+								面对这个题，最先想到的显然就是离散化+权值线段树，于是理所当然地这么做了。<br>
+								由于要求长度为3，换句话说我要在每个i之前找到一个最大的下标，使得该下标时存在长度&gt=3的不下降或不上升子序列，这个下标+1对应的位置就是我从这个i能达到的最远位置——并不是，如果能达到的最远位置是dp[i]，那么dp[i]=max(刚刚那个位置,dp[i-1])，这个很容易就能理解。<br>
+								于是进一步转化，其实相当于就是求，对于每个i，假如upper[i]表示大于等于i的最近一个数的位置，lower[i]表示小于等于，那么每个i的“那个位置”实则就是max(upper[k],lower[j])，其中k&gt=i而j&lt=i，这之中我们需要求两个区间最值：一个大于等于一个大于等于i的数的数最后出现的位置，和一个小于等于一个小于等于i的数的数最后出现的位置（大雾）。然后我们需要三个权值线段树来解决这个问题：一个记录一个数最后出现的位置，一个记录大于等于一个数的数最后出现的位置，一个记录小于等于一个数的数最后出现的位置，然后对于每个i，先处理用第一棵线段树解决出后两个数的数值，接着用后两棵树来求出dp[i]，然后再用第一棵树求出的两个数值来更新后两棵树的新的值，把常数化简到最后可以每个i只进行6次区间操作，也就是O(6nlog)的复杂度，以及三棵线段树的空间复杂度。<br>
+								非常骄傲地花一个半小时解决了这道C题。<br>
+								然后看题解，发现了对于任何序列有一个规律：长度为2N+1的序列中，必定存在一个长度至少为N+1的不上升或不下降子序列，所以对于本题N=2来讲，长度大于等于5的子段一定是存在一个长度为3的不合格序列的，那么对于每个下标只要遍历到长度为4的段长就行了。<br>
+								每天一个ACM小常识。<br>
+								做完这题感觉权值线段树力又提升了，好耶。<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 200005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(int i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+#define pi 3.141592657
+using namespace std;
+ll gcd(ll a, ll b) {
+	if (a &lt b)swap(a, b);
+	if (b == 0)return a;
+	return gcd(b, a % b);
+}
+ll cpow(ll x, ll n) {
+	ll ans = 1;
+	while (n &gt 0) {
+		if (n & 1) ans = (ans * x) % mdl;
+		x = (x * x) % mdl;
+		n &gt&gt= 1;
+	}
+	return ans;
+}
+ll tree[maxn * 4][3];
+void addq(int o, int l, int r, ll x, int ql, int qr,int type) {
+	if (ql &lt= l && r &lt= qr) {
+		tree[o][type] = max(tree[o][type], x);
+		return;
+	}
+	int m = (l + r) / 2;
+	int ls = 2 * o, rs = 2 * o + 1;
+	if (ql &lt= m)addq(ls, l, m, x, ql, qr,type);
+	if (m &lt qr)addq(rs, m + 1, r, x, ql, qr,type);
+	tree[o][type] = max(tree[ls][type], tree[rs][type]);
+}
+ll query(int o, int l, int r, int ql, int qr,int type) {
+	if (ql &lt= l && r &lt= qr) {
+		return tree[o][type];
+	}
+	int m = (l + r) / 2;
+	int ls = 2 * o, rs = 2 * o + 1;
+	ll ret = 0;
+	if (ql &lt= m)ret = query(ls, l, m, ql, qr,type);
+	if (m &lt qr)ret = max(ret, query(rs, m + 1, r, ql, qr,type));
+	return ret;
+}
+ll c[maxn], a[maxn];
+int lsh(int n)
+{
+	sort(c, c + n);
+	int cnt = unique(c, c + n) - c;
+	for (int i = 1 ;i &lt= n; i++)
+		a[i] = lower_bound(c, c + cnt, a[i]) - c + 1;
+	return cnt;
+}
+ll lower[maxn],upper[maxn], dp[maxn];
+int main() {
+	cfast;
+	int t;
+	cin &gt&gt t;
+	while (t--) {
+		int n;
+		cin &gt&gt n;
+		inc(i, 1, n+1) {
+			cin &gt&gt a[i];
+			c[i-1] = a[i];
+		}
+		int cnt=lsh(n);
+		inc(i, 1, 4 * cnt + 1) {
+			tree[i][1] = 0;
+			tree[i][0] = 0;
+			tree[i][2] = 0;
+		}
+		inc(i, 1, cnt+1) {
+			lower[i] = 0;
+			upper[i] = 0;
+			dp[i] = max(1, i - 1);
+		}
+		ll ans = 0;
+		inc(i, 1, n + 1) {
+			ll low = query(1, 1, cnt, 1, a[i],0);
+			ll up = query(1, 1, cnt, a[i], cnt, 0);
+		//	cout &lt&lt "lower of " &lt&lt i &lt&lt " = " &lt&lt low &lt&lt endl;
+		//	cout &lt&lt "upper of " &lt&lt i &lt&lt " = " &lt&lt up &lt&lt endl;
+			
+			addq(1, 1, cnt, i, a[i], a[i],0);
+		/*	inc(k, 1, cnt + 1) {
+				cout &lt&lt query(1, 1, cnt, k, k, 0) &lt&lt " ";
+			}cout &lt&lt endl;*/
+
+			lower[i] = low;
+			upper[i] = up;
+			ll d1 = query(1, 1, cnt, 1, a[i], 1);
+			ll d2 = query(1, 1, cnt, a[i], cnt, 2);
+			addq(1, 1, cnt, low, a[i], a[i], 1);
+			addq(1, 1, cnt, up, a[i], a[i], 2);
+			
+			dp[i] = max(max(d1, d2) + 1,dp[i-1]);
+		//	cout &lt&lt "dp." &lt&lt i &lt&lt " = " &lt&lt dp[i] &lt&lt endl;
+			ans += i - dp[i] + 1;
+		}
+		cout &lt&lt ans &lt&lt endl;
+	}
+}
+/*
+2022.5.2 13:53
+1 5
+6 9 1 9 6
+*/
+
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">HDU5115 Dire Wolf</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">26</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							HDU5115 Dire Wolf<br>
+							题目大意：<br>
+								有n头狼排成一排，每只狼都对相邻的狼的攻击力有加成作用，每杀死一只狼所受到的伤害为当前狼的攻击力（算上加成的部分），被杀死后的狼对相邻的狼的攻击力的加成会被取消，同时，原先与被杀死的相邻的两头狼会变成相邻的狼。要求使得受到的伤害值最小，求出最小值。<br>
+								思路：<br>
+								a[i]表示第i头狼的初始攻击力，b[i]表示第i头狼对相邻狼的加成值。<br>
+								要素察觉：“被杀死的狼相邻的两头狼会变成相邻的狼”<br>
+那么就是经典的区间DP了，关键的一点在于，将一个区间表现为两个区间的和的时候如何决定先打左边区间还是先打右边的区间，如果直接比较的话好像并不准确，毕竟如果先打掉了左边区间的最右端那么又会多出一个左边区间的最右端，然后无限套娃……<br>
+既然这样，就让这两个区间无法相遇好了。<br>
+在合并区间的时候分为三个部分，左区间，中间，右区间，中间是一个大小为1的区间，这样，我在打左边区间和右边区间的时候受到的伤害都是固定的了，不过为什么我不能先打中间再打左右边呢？<br>
+所以说啊，既然在打的时候我们永远先打左边和右边再打中间，那么当中间作为“左边”或“右边”的时候不就是先打中间再打左右边的情况么，在决定带有顺序的区间dp的状态转移时千万不要陷入这种套娃的想法，我把区间分成三个部分进行转移，此时区间是按照我的转移方式进行转移的，而并不是说我根据题目区间实际的转移情况来决定状态转移，(一直想非常帅气地说一句这样的话)，复杂度为O(n3)，或许用dp优化可以使复杂度更小，但我不会。<br>
+区间dp的套路比较固定，偶尔会出现一些小的变动，让你的合并无法顺利进行，这时大部分情况只要对状态转移的方法进行一些微小调整就足够了。<br>
+<br>
+那么再来一题重量级一点的：<br>
+<br>
+ZOJ 3469 Food Delivery<br>
+——“区间DP的套路比较固定” ——“？？？”<br>
+<br>
+可以说是绕中之绕了这一题，一开始非常难想，个人是看题解的。<br>
+为什么说这题是区间dp呢，因为外卖员不会两次经过同一个顾客，换句话讲，如果已经去过更远的位置，那么更近的位置就一定是去过的了，因此已经去过的地方是一个区间，是区间就能转移到下一个区间，而完成一个区间的时候外卖员的位置一定是在区间端点上的，因此对于每个区间，我都需要分别记录最后停留在左端点上和右端点上时的值，好，问题解决。<br>
+不过最头疼的在于，怎么转移呢，对于每个区间，用时最短的方案未必是不满意度最小的方案，因为用时的长度决定了之后的顾客不满意度的增量，但不能决定之前的，反之亦然，这就导致无后效性消失了。<br>
+……（看题解时间）<br>
+既然常规方法无法取消无后效性，那么就直接把后效也加进去好了，在状态转移的时候我直接加上在完成这段区间之后区间外的所有顾客不满意度的增量，不满意度是除了此区间外的两段区间的Bi之和，可以用前缀和来计算。<br>
+这个转移的巧妙在于将原本处于两个维度且都要考虑的时间和不满意度合成了同一个维度，当碰到无法同时处理多维度的情况时不妨想想如何把多个维度合并成同一个维度吧。<br>
+“所以说嘛，区间DP的套路就是固定啊。”<br>
+<br>
+
+							
+							<p>
+								
+	
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

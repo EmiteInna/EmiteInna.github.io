@@ -1,0 +1,227 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">BanquetPreparations线段公共点</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Jun<span>e</span></span> <span class="day">21</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF1607H Banquet Preparations<br>
+								题目大意：每道菜有a克肉b克鱼，会被吃掉共m克，求每个m中有多少吃肉多少吃鱼，使得吃完后不同的菜最少，求吃法（当菜的肉和鱼重量分别相等就看作相同）。<br>
+								<br>
+								最近做过不少这样考虑选择之后的“范围”的题目，显然，两个菜要相同，首先a+b-m要相同，所以在进行处理之前，我们先把a+b-m相同的菜分到一起。<br>
+								然后，m的存在实际告诉了我们吃完之后这个菜重量分布的范围，且由于一组内a+b-m相等，当吃完，也就是m为0时，知道了a就相当于知道了b。因此我们就假设这道菜吃完后的a的范围为[l,r]，这个范围很容易求出，于是题目的要求也就变成了在每组中，找到一些点，使得每个[l,r]都包含这些点中的至少一个，也就是“公共点”。<br>
+								于是很容易想到先把l，r按l排序，由于尽量有包含顺序，所以l和r相等时把r按反顺序排序。从后往前遍历，如果当前的r小于上一个的l，那么无论如何这两段都不会有公共点了，于是建立一个新的公共点，设置为当前的l（因为当然越小越好），否则他们就能找到一个公共点。<br>
+								为每个[l,r]找到该公共点，就成功解决了这道题目。<br>
+								算是求n个线段最小的公共点数的模板题。<br>
+								<br>
+								代码：<br>
+								<br>
+								
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltqueue&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 300005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(int i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+#define pi 3.141592657
+using namespace std;
+ll gcd(ll a, ll b) {
+	if (a &lt b)swap(a, b);
+	if (b == 0)return a;
+	return gcd(b, a % b);
+}
+ll cpow(ll x, ll n) {
+	ll ans = 1;
+	while (n &gt 0) {
+		if (n & 1) ans = (ans * x) % mdl;
+		x = (x * x) % mdl;
+		n &gt&gt= 1;
+	}
+	return ans;
+}
+ll getpos(int p, ll n) {
+	return n / cpow(10, p - 1) % 10;
+}
+ll getwei(ll n) {
+	int res = 0;
+	while (n) {
+		res++;
+		n /= 10;
+	}
+	return res;
+}
+/*
+
+---------------------------------------------------------------------
+5 4
+1 3 11 15 32
+*/
+struct tr {
+	int a , b, m,num;
+	friend bool operator&lt(tr t1, tr t2) {
+		return t1.a &lt t2.a;
+	}
+}trs[maxn];
+struct sg {
+	int a, b,num;
+	friend bool operator&lt(sg s1, sg s2) {
+		if (s1.a == s2.a) {
+			return s1.b &gt s2.b;
+		}
+		return s1.a &lt s2.a;
+	}
+};
+vector&lttr&gt sm[maxn];
+vector&ltsg&gt sgs;
+map&ltint,int&gt has;
+int ansl[maxn], ansr[maxn];
+int main() {
+	cfast;
+	
+	int t;
+	cin &gt&gt t;
+	while (t--) {
+		int n;
+		cin &gt&gt n;
+		has.clear();
+		int xb = 1;
+		inc(i, 0, n) {
+			cin &gt&gt trs[i].a &gt&gt trs[i].b &gt&gt trs[i].m;
+			trs[i].num = i;
+			int ad = trs[i].a + trs[i].b - trs[i].m;
+			if (has[ad] == 0) {
+				has[ad] = xb++;
+			}
+			sm[has[ad]].push_back(trs[i]);
+		}
+		ll ans = 0;
+		for (int i = 1; i &lt xb; i++) {
+			sgs.clear();
+			int mi = 1e9;
+			inc(j, 0, sm[i].size()) {
+				sg s = { max(0,sm[i][j].a - sm[i][j].m),sm[i][j].a - max(0,sm[i][j].m - sm[i][j].b),sm[i][j].num };
+				sgs.push_back(s);
+			}
+			sort(sgs.begin(), sgs.end());
+			for (int j = sgs.size() - 1; j &gt= 0; j--) {
+				if (sgs[j].b &lt mi) {
+					ans++;
+					mi = sgs[j].a;
+				}
+				ansl[sgs[j].num] = trs[sgs[j].num].a-mi;
+				ansr[sgs[j].num] = trs[sgs[j].num].m-ansl[sgs[j].num];
+			}
+		}
+		cout &lt&lt ans &lt&lt endl;
+		inc(i, 0, n) {
+			cout &lt&lt ansl[i] &lt&lt " "&lt&ltansr[i] &lt&lt endl;
+		}
+		inc(i, 1, xb+1)sm[i].clear();
+	}
+}
+/*
+2 3
+1 4
+
+*/
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">LIS</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">25</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+								
+							
+							<p>
+								
+								LIS就是那个LIS，LIS的做法大家其实都知道，在线性dp中也属于经典的。<br>
+								但其实，LIS的思路应该说是非常，典型的不典型？<br>
+								首先，如果要我来说最经典的线性dp，那我应该会选择最大子段和，为什么？因为它符合我在01里说的，前面的最优决策并不一定是最后的最优决策，且定态和转移可以依靠每段的最后一个位置（dp[i]=max(dp[i-1]+a[i],a[i]]，i为该元素的下标），这种dp无论是在转移过程，还是在状态本身值的计算中都是线性的。<br>
+								而LIS显然不属于这类，一个序列可以是断开的，并不那么“线性”，所以从某种意义上来讲，LIS属于另一种最经典的线性dp——它的转移方式依靠的并不是“位置”，而是“值”，并不是靠前一个状态的位置就能推出到下一个状态的转移方程，而是靠前一个状态的值。因此我在这里把最大LIS，包括01中写博客那题的dp称为“位置”类dp，把LIS等称为“值”类dp，虽然不好意思，但我把它开除线性dp籍了（误），既然是值类，那么状态转移靠的就是值，那么dp[value]的内容是什么呢，在LIS中，当然是序列长度，而如果要从同一个值进行转移，我选择的肯定是序列长度最长的那个点，所以dp[value]的值当然也就是结尾为value的子序列的最大长度，而转移的时候就得找到比value小的最大dp值，等等，这不……<br>
+								如果我的序列是1,10000,2,3,4,…,9999,10001，可以看出，我必须老老实实地从头遍历到value才能获得真正的最大dp值，那么我不得N²了吗。<br>
+								LIS的状态靠的是“序列长度”，这个大家都知道，通过每次优化同一序列长度对应的最小元素值，来完成状态转移，把新的值通过这个序列处理，这里dp[len]的内容反而变成了值，dp的前和后颠倒了，显然，这种做法的复杂度是NlogN而非N²，就因为在转移的时候使用了二分，而之所以能够使用二分，是因为dp[len]是一个递增数列。<br>
+								好，一个大胆的结论诞生了，一个dp的状态和内容是可以交换的，而作为线性dp，为了体现出“线性”的优势，最好要使状态转移的复杂度能通过线性运算优化，无论是作为结论的O（1）（最大子段和等，通过浅显的比较，一步完成），还是作为技巧的二分（LIS），都可以，而LIS这里正是因为可以使用二分，才选择了颠倒，以序列长度为状态，可以说是典型的非典型定态了吧。<br>
+								值类dp和位置类dp的最大区别很大程度上就在于，通常值类dp一定会选择能够二分（或其他方法，最多的就是二分）处理的状态转移方式，因此在定态上会绕一下。<br>
+								当然，他们俩的共同点就在于他们都是一维dp，状态只需要一个值就能定出来，所以注定不会难到哪去吧。<br>
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

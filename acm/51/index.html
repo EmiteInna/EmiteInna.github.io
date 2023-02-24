@@ -1,0 +1,246 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">theleastroungway傻逼题</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">12</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF2B，the least round way<br>
+								题目大意，给一个大小为N*N(1000)的矩阵，里面有一些数，求一条路径使得将路径上所有数乘起来得到的0数最少。<br>
+								<br>
+								一眼递推，非常简单，很容易发现每个2和5就能得到一个0，因此最后的0数量等于min(cnt5,cnt2)，那么我只要记录两条路径，一条是2最少的，一条是5最少的，最后选择一条更加少的就可以了。<br>
+								哦不，还有个特例：0可以把整条路径变成只有一个0。<br>
+								还不能只特判0就结束了，毕竟有可能本来的路径可以一个0都没有。<br>
+								<br>
+								绕来绕去还是那题，就是无缘无故感觉被耍了，烦躁，就当练习代码功底了。<br>
+								<br>
+								
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#define ll long long
+#define maxn 500005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(ll i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+using namespace std;
+int cnt2[1001][1001],dp2[1001][1001],dp5[1001][1001],cnt5[1001][1001];
+pii rcd2[1001][1001],rcd5[1001][1001];
+stack&ltchar&gt ans;
+
+int main() {
+	cfast;
+	int n;
+	scanf("%d", &n);
+	int pos0x=-1, pos0y=-1;
+	inc(i, 1, n + 1) {
+		inc(j, 1, n + 1) {
+			int d;
+			scanf("%d", &d);
+			if (d == 0)pos0x = i, pos0y = j;
+			int c2 = 0, c5 = 0;
+			while (d % 10 == 0&&d!=0) {
+				c2++;
+				c5++;
+				d /= 10;
+			}
+			while (d % 2 == 0&&d!=0) {
+				c2++;
+				d /= 2;
+			}
+			while (d % 5 == 0&&d!=0) {
+				c5++;
+				d /= 5;
+			}
+			cnt2[i][j] = c2;
+			cnt5[i][j] = c5;
+		//	cout &lt&lt c2 &lt&lt " " &lt&lt c5 &lt&lt endl;
+		}
+	}
+	
+	dp2[1][1] = cnt2[1][1];
+	dp5[1][1] = cnt5[1][1];
+	inc(i, 2, n + 1) {
+		dp2[i][1] = dp2[i - 1][1]+cnt2[i][1];
+		pii p;
+		p.first = i-1, p.second = 1;
+		rcd2[i][1] = p;
+		dp5[i][1] = dp5[i - 1][1]+cnt5[i][1];
+		p.first = i - 1, p.second = 1;
+		rcd5[i][1] = p;
+	}
+	inc(i, 2, n + 1) {
+		dp2[1][i] = dp2[1][i-1]+cnt2[1][i];
+		pii p;
+		p.first = 1, p.second =i- 1;
+		rcd2[1][i] = p;
+		dp5[1][i] = dp5[1][i-1]+cnt5[1][i];
+		p.first = 1, p.second = i-1;
+		rcd5[1][i] = p;
+	}
+	inc(i, 2, n + 1) {
+		inc(j, 2, n + 1) {
+			pii p;
+			p.first = i, p.second = j;
+			if (dp2[i - 1][j] &lt dp2[i][j - 1]) {
+				dp2[i][j] = dp2[i - 1][j] + cnt2[i][j];
+				p.first = i - 1,p.second=j;
+				rcd2[i][j] = p;
+			}
+			else {
+				dp2[i][j] = dp2[i][j-1] + cnt2[i][j];
+				p.first = i, p.second = j-1;
+				rcd2[i][j] = p;
+			}
+
+			if (dp5[i - 1][j] &lt dp5[i][j - 1]) {
+				dp5[i][j] = dp5[i - 1][j] + cnt5[i][j];
+				p.first = i - 1, p.second = j;
+				rcd5[i][j] = p;
+			}
+			else {
+				dp5[i][j] = dp5[i][j - 1] + cnt5[i][j];
+				p.first = i, p.second = j - 1;
+				rcd5[i][j] = p;
+			}
+		}
+	}
+	if (min(dp2[n][n], dp5[n][n]) &gt 0) {
+		if (pos0x != -1) {
+			printf("1\n");
+			for (int i = 1; i &lt= pos0x - 1; i++)printf("D");
+			for (int i = 1; i &lt= pos0y - 1; i++)printf("R");
+			for (int i = 1; i &lt= n - pos0x; i++)printf("D");
+			for (int i = 1; i &lt= n - pos0y; i++)printf("R");
+			return 0;
+		}
+	}
+	if (dp2[n][n] &lt dp5[n][n]) {
+		int x = n, y = n;
+		while (x * y != 1) {
+			pii p = rcd2[x][y];
+			if (p.first == x - 1)ans.push('D');
+			else ans.push('R');
+			x = p.first, y = p.second;
+		}
+		printf("%d\n", dp2[n][n]);
+		while (ans.size()) {
+			printf("%c", ans.top());
+			ans.pop();
+		}
+	}
+	else {
+		int x = n, y = n;
+		while (x * y !=1) {
+			pii p = rcd5[x][y];
+			if (p.first == x - 1)ans.push('D');
+			else ans.push('R');
+			x = p.first, y = p.second;
+		}
+		printf("%d\n", dp5[n][n]);
+		while (ans.size()) {
+			printf("%c", ans.top());
+			ans.pop();
+		}
+	}
+}
+
+
+
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">SequencePartitioning双限制队列优化dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">12</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								POJ3245 Sequence Partitioning<br>
+								题目大意：给n对（<=5e4）数对(ai,bi)，要求将其分组，使得每组中的bi最小值要大于之后的组中ai的最大值，在这样的分组中，要保证每一组中的ai最大值之和不超过lmt（1e9），求满足条件的划分中使得每组中bi之和的最大值最小的分法，输出最小值。<br>
+								<br>
+								一开始是一个比较绕的讲解，很容易想到先将所有可以划分的位置都记录下来，并且记录这些划分组的ai最大值以及bi之和，接下来问题就转化为将这些划分出的区间进行合并，使得a[i]最大值之和小于lmt，bi之和最大，由于双限制，必须将其中一道限制转掉，于是选择去二分答案，判断在lmt限制下能否达到这个答案。<br>
+								接下来就是要求在满足使得答案能够达到二分的mid值以内的情况下能否限制在lmt之内，由于区间段数太多，可以选择用贪心+dp解决，也就是说ai最大值之和必须尽可能小，根据区间合并的常规状态转移，可以得到dp[i]=dp[k]+max(a[i+1],...,a[k])，（在保证sumB[k]-sumB[i]<=mid的情况下），但是N2是不能去碰的，于是只能想到用一些方式进行优化。<br>
+								观察状态转移，可以发现dp[i]是永远递增的，这一点非常关键：首先这说明了在我确定了后面的max要选哪个值的时候，我的k值可以尽可能小；其次这说明了最大值和次大值之间可以进行状态转移，因此选用单调队列的方法，但是发现由于参数比较多（需要同时记录区间最大值和dp的区间最小值），所以没有什么特别好用的创建单调队列的方法。<br>
+								于是学习了使用multiset对单调队列进行映射，单调队列来维护最大值，multiset来维护区间最小值，转移的时候永远是最大值和次大值进行转移，也就是说当次大值出现在位置k2的时候，如果最大值的位置是k1，那么dp[k1]+k2就可以作为k1+1到k2这个区间的最小值，不需要遍历一个线性表，而只需要取这个单调队列的前两个值。同时也可以注意到这种做法表明只有在队列里至少有两个元素的时候转移可以成立，所以，当新值为最大值的时候可以特判一下从必要位置（因为mid的限制）出发到i的区间最小值，将其与multiset中的最小值进行比较，但是没必要入队（这里非常巧妙）。<br>
+								Multiset的复杂度在NlogN左右，因此这题在复杂度32NlogN左右解决了。<br>
+								做的时候顶级折磨，直到现在想起来还是觉得是个非常神奇的做法，单调队列优化dp的关键在于找到单调性（本题中的dp[i]递增以及k尽量小都是缺一不可的），充满了思维性。<br>
+								<br>
+								代码（multiset都是借鉴题解的，虽然现在也会了）：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <stack>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 50005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair<ll,ll>
+#define inc(i,a,n) for(int i=a;i<n;i++)
+#define vset(a,n,m) for(ll i=0;i<n;i++)a[i]=m;
+#define endl '\n'
+#define cst 130000
+using namespace std;
+ll a[maxn],b[maxn],qzh[maxn];
+ll qa[maxn], qr[maxn],na[maxn],nu[maxn];
+ll minb[maxn], maxa[maxn];
+int avlb[maxn];
+ll blka[maxn], blkb[maxn],dp[maxn];
+multiset<ll> st;
+bool judge(ll mid,ll lmt,int xb) {
+	if (qzh[xb - 1] < mid)return true;
+	st.clear();
+	int head = 0, tail = -1,bhead=1;
+	ll arr = 0;
+//	memset(dp, 0, sizeof(dp));
+	inc(i, 1, xb + 1) {
+		arr += blkb[i];
+		while (arr > mid) {
+			arr -= blkb[bhead];
+			bhead++;
+		}
+		if (bhead > i)return false;
+		while (head <= tail && blka[nu[tail]] <= blka[i]) {
+			if (head < tail) {
+				st.erase(dp[nu[tail-1]] + blka[nu[tail]]);
+			}
+			tail--;
+		}
+		tail++;
+		nu[tail] = i;
+		if (head < tail)st.insert(dp[nu[tail - 1]] + blka[nu[tail]]);
+		while (head <= tail && nu[head] < bhead) {
+			if (head < tail)st.erase(dp[nu[head]] + blka[nu[head + 1]]);
+			head++;
+		}
+		dp[i] = dp[bhead - 1] + blka[nu[head]];
+		if(head<tail)dp[i] = min(dp[i], *st.begin());
+		if (dp[i] > lmt)return false;
+	}
+	return true;
+}
+int main() { 
+	cfast;
+	ll n, lmt;
+	cin >> n >> lmt;
+	minb[0] = 1e9;
+	inc(i, 1, n+1) {
+		cin >> a[i]>>b[i];
+		qzh[i] = qzh[i - 1] + b[i];
+		minb[i] = min(minb[i - 1], b[i]);
+	}
+	for (int i = n; i >= 0; i--) {
+		maxa[i] = max(maxa[i + 1], a[i]);
+	}
+	int xb = 1;
+	int heada = 0, taila = -1;
+	inc(i, 1, n + 1) {
+		
+		while (heada <= taila && a[i] >= qa[taila])taila--;
+		taila++;
+		qa[taila] = a[i];
+		na[taila] = i;
+		if (minb[i] > maxa[i + 1]) {
+			avlb[xb] = i; 
+			while (heada <= taila && na[heada] <= avlb[xb - 1])heada++;
+			blka[xb] = qa[heada];
+			blkb[xb] = qzh[i] - qzh[avlb[xb - 1]];
+			xb++;
+		}
+
+	}
+	if (xb == 2) {
+		cout << blkb[1];
+		return 0;
+	}
+	inc(i, 1, xb) {
+		qzh[i] = qzh[i - 1] + blkb[i];
+	}
+	ll left = 1, right = (1 << 31)-1,ans=right;
+	while (left <= right) {
+		ll mid = (left + right) / 2;
+		if (judge(mid, lmt, xb) == 1) {
+			ans = min(ans, mid);
+			right = mid - 1;
+		}
+		else {
+			left = mid + 1;
+		}
+	}
+	cout << ans << endl;
+
+}
+
+	
+
+
+
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

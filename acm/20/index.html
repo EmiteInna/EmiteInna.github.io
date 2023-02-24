@@ -1,0 +1,184 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">Arena组合数线性DP</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">31</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF1611E2 Escape The Maze(harder version)<br>
+								<br>
+题目大意，给一个树（大小规模为1e5），你从1开始，想要逃到别的子节点，树上有k个朋友（位置给出），你和朋友同时开始移动，只要被朋友抓到你就寄了。现在朋友想要省点体力所以他们想用最小的人数抓到你，让你求出最小需要几个人，如果所有人都上还抓不到那你就赢了，输出-1。<br>
+<br>
+很容易想到，当一个朋友在你来一棵子树之前就站在这棵子树的根上，那么这个子树就不需要其他人了，而达成这个目标的条件是朋友到这个根的距离小于等于“1”到这个根的距离，于是我进行两次dfs，第一次找每棵子树是否存在一个这样的朋友能直接站在子树的根上，如果能，我打个标记，这棵子树我只需要一个人就够了。之后我进行第二次dfs，这一次的dfs就是直接返回需要的人数了，凡是打过标记的我直接返回1，否则往下继续搜索，碰到打标记的还是返回1，否则搜到路上第一个有朋友的点，如果说搜到了叶子节点还没有找到朋友，那么我就可以从这条路成功逃脱。<br>
+由于最优性的缘故还是把它归类在树形dp里了，实际上应该只能算是记忆化搜索吧。<br>
+有一说一，做这题的时候满脑子都是“想和露娜做朋友吗？”……<br>
+1900分对于树形DP还是过于早了呀。什么树分治，我不知道，没听说过，这是数据结构选手应该做的吧。<br>
+<br>
+代码：<br>
+<br>
+								
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 200005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+using namespace std;
+ll vis[maxn], dp[maxn];
+int f;
+vector<ll> sons[maxn];
+int dfs1(int now, int from,int level) {
+	if (vis[now] == 1)return level;
+	int ans = 1e9;
+	for (int i = 0; i < sons[now].size(); i++) {
+		if (sons[now][i] == from)continue;
+		ans = min(ans, dfs1(sons[now][i], now, level + 1));
+	}
+	if (ans - level <= level)dp[now] = 1;
+//	cout << "dfs1." << now << "=" << ans << endl;
+	return ans;
+}
+int dfs2(int now, int from) {
+	if (dp[now] == 1)return 1;
+	if (vis[now] == 1)return 1;
+	int ans = 0;
+	for (int i = 0; i < sons[now].size(); i++) {
+		if (sons[now][i] == from)continue;
+		ans += dfs2(sons[now][i], now);
+	}
+	if (ans == 0) {
+		f = 1;
+	}
+	return ans;
+}
+int main()
+{
+	cfast;
+	int t;
+	cin >> t;
+	while (t--) {
+		f = 0;
+		int n,k;
+		cin >> n >> k;
+		while (k--) {
+			int d;
+			cin >> d;
+			vis[d] = 1;
+		}
+		for (int i = 1; i < n; i++) {
+			int a, b;
+			cin >> a >> b;
+			sons[a].push_back(b);
+			sons[b].push_back(a);
+		}
+		dfs1(1, -1, 0);
+		int ans = dfs2(1, -1);
+		if (f == 1)cout << "-1" << endl;
+		else cout << ans << endl;
+		clr(vis, n+1);
+		clr(dp, n + 1);
+		for(int i=1;i<=n;i++)sons[i].clear();
+	}
+
+
+}
+/*
+2
+1 3 1 2 3
+2 6 -1 4 -2 3 -2 3
+*/
+
+
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">Messsages概率,但是暴力</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">2</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF1612E Messages<br>
+								题目大意：有n个学生（2e5），第i个学生想要第ai个报告，且会接受ki（ki<=20）个报告，你需要在所有报告中ping出t个，如果t超过了ki，那个学生将会随机接受其中ki个，否则全部接受，要求得ping出报告的方式，使得拿到想要报告的学生的期望值最大。<br>
+								<br>
+								首先可以很容易推出，答案中的这个期望值实际上就是每个学生拿到想要报告的概率之和，所以这题根本就不是什么概率dp嘛。<br>
+								ki是在20以内的，实际上你可以发现，真正对期望有的影响是当你ping出小于某些ki的报告，也就是导致其全收时产生的，当t大于20时，无论t怎么增加，最后的概率都不会有太大的变化，甚至当超过了学生一共需求的报告总数时期望值会变小。<br>
+								实际上，对于ping出的每个报告，它对于期望值的贡献是固定的，而且取决于t的值，由于t的值是否大于ki会产生非线性的影响，因此无法消除递推时的后效性，所以dp有点困难……<br>
+								所以既然ki在20以内，n在2e5以内，而且确定了t之后每个ping出的报告带来的收益都是固定的（而且对于每个t，这个收益的计算复杂度也是2e5），我们大可以暴力算出对于每个t中每个报告带来的期望值收益然后直接排序，得到结果应该ping出哪些报告。<br>
+								复杂度为O(knlogn)。<br>
+								可以说是纯纯的数学题了，既不概率也不dp，但是很考验对题目观察和判断的速度。<br>
+								<br>
+								代码：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <stack>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 200005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair<ll,ll>
+#define inc(i,a,n) for(int i=a;i<n;i++)
+#define vset(a,n,m) for(int i=0;i<n;i++)a[i]=m;
+using namespace std;
+vector<double> hav[maxn];
+double dp[25][maxn];
+int rcd[25][maxn];
+struct node {
+	double ex;
+	int num;
+	friend bool operator<(node n1, node n2) {
+		return n1.ex > n2.ex;
+	}
+}sorter[25][maxn];
+int main() {
+	cfast;
+	int n;
+	cin >> n;
+	inc(i, 0, n) {
+		int a;
+		double b;
+		cin >> a >> b;
+		hav[a].push_back(b);
+	}
+	double mx = 0;
+	int tans = 0;
+	inc(i, 1, 21) {
+		inc(j, 1, 200001) {
+			int siz = hav[j].size();
+			double sig = 0;
+			inc(k, 0, siz) {
+				sig += min((double)1, hav[j][k] / (double)i);
+			}
+			sorter[i][j].ex = sig;
+			sorter[i][j].num = j;
+		}
+		sort(sorter[i]+1, sorter[i]+ 200001);
+		double res = 0;
+		inc(j, 1, i + 1)res += sorter[i][j].ex;
+		if (res > mx) {
+			mx = res;
+			tans = i;
+		}
+	}
+	cout << tans << endl;
+	inc(i, 1, tans + 1)cout << sorter[tans][i].num << " ";
+}
+
+
+	
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

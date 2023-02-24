@@ -1,0 +1,158 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">StrangeBeauty</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">31</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 1475G Strange Beauty<br>
+题目大意：给一个长度为n的数组（n级别为2e5），数字范围为2e5，求其中最长的beautiful子序列，定义为其中任意一对数中较大的都能整除较小的。<br>
+<br>
+很容易看出，我们要求的目标beautiful子序列是一个前一项必为后一项因数的子序列，由于数字范围为2e5，实际上我们可以预处理求出每个数字的所有因数（复杂度为O(1+1/2+...+1/n）。<br>
+问题已经解决了，从最大的数开始遍历其所有因数，只要原数组里有就打上标记，并且求这个找到的数能找到的因数数量叠加上去，返回一个找到的数最多的路线，理论上复杂度是O(n)，嗯理论上。<br>
+已经标记过的数就不用再找了。<br>
+值得一提的是这题由于常数较大，如果优化不当dfs做法会超时，所以其实也可以选择顺序遍历的dp做法（虽然复杂度都是O(1+1/2+...+1/n)，但是真的快了很多，原本5秒都t了的dfs顺序dp只花了919ms），所以说，能用dp一次性解决的就不要用记忆化dfs了，血的教训，实际上dp的代码也简洁很多耶。<br>
+Dp的转移方程和for gamers. By gamers.类似。<br>
+<br>
+<br>
+代码：
+
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <stack>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 200005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair<ll,ll>
+#define inc(i,a,n) for(int i=a;i<n;i++)
+#define vset(a,n,m) for(int i=0;i<n;i++)a[i]=m;
+using namespace std;
+
+ll a[maxn],vis[10][maxn],cnt[10][maxn],dp[10][maxn];
+
+int main()
+{
+	cfast;
+	int t;
+	scanf("%d", &t);
+	for(int tt=0;tt<t;tt++){
+		memset(dp, 0, sizeof(dp));
+		int n;
+		scanf("%d", &n);
+		inc(i, 0, n) {
+			scanf("%lld", &a[i]);
+			cnt[tt][a[i]]++;
+		}
+		sort(a, a + n);
+		ll mx = 0;
+		inc(i, 0, n) {
+			if (i > 0 && a[i] == a[i - 1])continue;
+			for (int j = a[i]; j <= 200000; j += a[i]) {
+				if (j == a[i])dp[tt][j] = max(dp[tt][j], cnt[tt][j]);
+				else dp[tt][j] = max(dp[tt][j], cnt[tt][j] + dp[tt][a[i]]);
+				mx = max(mx, dp[tt][j]);
+			}
+		}
+		printf("%lld\n", n - mx);
+		
+	}
+}
+/*
+3
+4 12 6 
+*/
+
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

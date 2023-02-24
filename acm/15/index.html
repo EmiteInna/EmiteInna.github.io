@@ -1,0 +1,178 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">InfiniteSet二进制数位dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">30</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 1635D Infinite Set<br>
+题目大意：给你一个a数组（大小范围为2e5），之后根据a创造一个不重复集合S，S中首先包含a中的所有数，其次包含S中所有数y的二倍加一(2y+1)和四倍(4y)，可以很容易看出S是一个无穷集合。<br>
+要求S中小于2^p的数字的个数。<br>
+<br>
+很容易就能看出这是一道数位，要问为什么，因为按二进制划分区间的话（[1],[2,3],[4,5,6,7]...这样）2Y+1得到的数显然是Y的后一区间，而4Y则在后二区间，所以显然可以得到：对于同一个起源的数，一个区间的数的数量等于前两个区间的数量和。那么我只要将a中的数全都塞进区间里然后做一次到p的斐波那契数列就完了……<br>
+不过问题在于如何去重，a中的两个数可能是同源的（比如2,5,8都可以通过2来得到）。既然都说“同源”了，那么找到“源”不就行了，可以很容易地发现，源其实都是最小的数，观察题目中的转化式子：如果一个数是转化过来的，如果它是奇数，则它只能由2y+1得到，如果是偶数，则它只能由4y得到，这样一来我就能轻松地算出它的“源”，顺便发现了一个没什么用的性质：所有数的源都是1或者2，这让你可以放心地把记录源的数组开的只有两个数字大小（虽然本来也只需要2e5）。<br>
+之后就是把源添加进去然后一路斐波那契加到p的位置，最后求个和就好了。<br>
+虽然全程没有提到位运算但显然是bitmask的一道题目，算是简单的思维题了，作为1800分的DIV2 D题真的好吗（可惜那场我没打。<br>
+代码：<br>
+<br>
+									
+
+								
+<pre><code>
+#define _crt_secure_no_warnings
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 200005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+using namespace std;
+
+ll dp[maxn];
+map<ll, int> v;
+ll a[maxn];
+int pos(ll n) {
+	int st = 1;
+	ll tmp = n;
+	while (tmp != 1) {
+		st++;
+		tmp = tmp / 2;
+	}
+	return st;
+}
+
+
+int main() {
+	std::ios::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+	ll n, p;
+	cin >> n >> p;
+	for (int i = 0; i < n; i++) {
+		cin >> a[i];
+	}
+	sort(a, a + n);
+	for (int i = 0; i < n; i++) {
+		ll tmp = a[i];
+		int f = 0;
+		while (tmp > 1) {
+			if (tmp % 2 == 1) {
+				tmp = tmp / 2;
+			}
+			else {
+				if (tmp % 4 == 0) {
+					tmp = tmp / 4;
+				}
+				else break;
+			}
+			if (v[tmp] == 1) {
+				f = 1;
+				break;
+			}
+		}
+		if (f == 0) {
+			v[a[i]] = 1;
+			dp[pos(a[i])]++;
+			//cout << "dp." << pos(a[i]) << "++" << endl;
+		}
+	}
+	ll ans = dp[1];
+	for (int i = 2; i <= p; i++) {
+		dp[i] += dp[i - 1] + dp[i - 2];
+		dp[i] = dp[i] % mdl;
+		ans = (ans + dp[i]) % mdl;
+	}
+	cout << ans;
+}
+
+
+	
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

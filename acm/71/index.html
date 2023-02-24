@@ -1,0 +1,185 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">AirConditioner分边dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">May<span></span></span> <span class="day">16</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 1547E Air Conditioner<br>
+								题目大意：长度为N（2e5）的房间，有k个空调（&lt=N），每个有一定的位置pi和温度bi，房间里的每个格子的温度为min(bi+|pi-x|)，求每个格子最后的温度。<br>
+								<br>
+								每个空调可以看做一个二维坐标系上会往斜向上两个方向放出射线的点，由于射线的角度是一样的，实际上在一个点上只存在两个方向的射线，左斜向下和右斜向下，而且这两种中每种中只有最下面的那一条有效，那么这时我们不要把两条线综合来看，而是各自只看一个方向，这样问题就很轻易地变成了一个dp问题：因为右斜向下的线在点X上，只有空调位于X左边的时候才有效，在X之后每过一个单位距离就降低一个单位距离，相当于dp1[i]=min(dp1[i-1]+1,ac[i])（因为空调一定是从这一格开始生效），对dp2进行同样的处理，然后答案就是min(dp1[i],dp2[i])了。<br>
+								这题的关键在于把原本二维上的几何分割成了两个线性的问题的比较，如果没有做过很容易看成几何问题然后做不出来呢。<br>
+								<br>
+								代码:<br>
+								<br>
+								
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltqueue&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 300005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(int i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+#define pi 3.141592657
+using namespace std;
+ll gcd(ll a, ll b) {
+	if (a &lt b)swap(a, b);
+	if (b == 0)return a;
+	return gcd(b, a % b);
+}
+ll cpow(ll x, ll n) {
+	ll ans = 1;
+	while (n &gt 0) {
+		if (n & 1) ans = (ans * x) % mdl;
+		x = (x * x) % mdl;
+		n &gt&gt= 1;
+	}
+	return ans;
+}
+/*
+
+---------------------------------------------------------------------
+
+*/
+
+ll tpa[maxn];
+ll dpL[maxn], dpR[maxn];
+ll it[maxn], tp[maxn];
+int main() {
+	cfast;
+	int t = 1;
+	cin &gt&gt t;
+	while (t--) {
+		int m = 0;
+		int n, k;
+		cin &gt&gt n &gt&gt k;
+		inc(i, 1, n + 1) {
+			dpL[i] = 1e15;
+			dpR[i] = 1e15;
+			tpa[i] = 1e15;
+		}
+		dpL[0] = 1e15;
+		dpR[n + 1] = 1e15;
+		inc(i, 0, k) {
+			cin &gt&gt it[i];
+		}
+		inc(i, 0, k) {
+			cin &gt&gt tp[i];
+			tpa[it[i]] = tp[i];
+		}
+		inc(i, 1, n + 1) {
+			dpL[i] = min(dpL[i - 1] + 1, tpa[i]);
+		}
+		for (int i = n; i &gt= 1; i--) {
+			dpR[i] = min(dpR[i + 1] + 1, tpa[i]);
+		}
+		inc(i, 1, n + 1) {
+			cout &lt&lt min(dpL[i], dpR[i]) &lt&lt " ";
+		}cout &lt&lt endl;
+	}
+}
+/*
+2022.5.16 18：41
+
+*/
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

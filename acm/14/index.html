@@ -1,0 +1,233 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">NearestExcludedPoints记忆化反向bfs(DP)</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">30</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 1651D Nearest Excluded Points<br>
+								纪念一下，本场是高光时刻，拿了400+名上了一百多分直接上蓝了，也是第一次上蓝的题嘻嘻。<br>
+								题目大意，给n个点（n范围为2e5），求对于每个点来讲曼哈顿距离最近且并不在已有点集中的点。<br>
+								我定义其为思维题吧，可以想到如果用暴力搜索的话最坏的情况是有一坨点聚在一起时求最中间那个点的情况。因此想到了记忆化，但是记忆化的方向性应该怎么处理呢？<br>
+								如果对于每一个点我只考虑左上方的话，那么对于一个点i来讲设定dp[i]是答案中它对应的点，那么如果一个点j，显然如果j的左边或者上边是空着的，那么答案就是左边或者上边，而如果都不是空的，那么答案就是min(dp[k1],dp[k2])，k1,k2分别表示左边一格和上边一格的点，至于为什么，想想，我只考虑左上方，也就是这个点只能向左方或者上方走，那么无论如何它都会迈出一步到左边一格或者上边一格，而接下来的答案同样在已经走到的那格的左上方，因此我之前那步无论怎么迈，下一步的答案都是确定的，不会因为我的判断而损失更优的路线，好耶，无后效性发现。<br>
+								于是，基于左上方的遍历只要向右下方再进行一次，得到的答案就是正确答案了，这样做的复杂度和反向bfs相比各有优劣，不过要过题都是绰绰有余了（反向bfs请看别人的题解）<br>
+								这题提醒了我曼哈顿距离的方向性是非常明显的，实际上你可以把它看做是单纯地将一维的数轴扩充到了二维而不具有二维应该有的几何性质，因此无论是在dp还是其他什么的时候，你都可以将其当做两维的线性数据来看待，这题的DP做法就是明显的例子。<br>
+								代码：<br>
+									
+
+								
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 200005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+using namespace std;
+struct node {
+	ll x, y;
+	friend bool operator<(node n1, node n2) {
+		if (n1.y == n2.y) {
+			return n1.x < n2.x;
+		}
+		else return n1.y > n2.y;
+	}
+	friend bool operator>(node n1, node n2) {
+		if (n1.y == n2.y) {
+			return n1.x > n2.x;
+		}
+		else return n1.y < n2.y;
+	}
+}pts[maxn],opts[maxn];
+bool cmp1(node n1, node n2) {
+	return n1 < n2;
+}
+bool cmp2(node n1, node n2) {
+	return n1 > n2;
+}
+map<node, node> dp;
+map<node, ll> exi,mi;
+ll cnt(node n1, node n2) {
+	return abs(n1.x - n2.x) + abs(n1.y - n2.y);
+}
+
+int main() {
+	std::ios::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+
+		int n;
+		cin >> n;
+		for (int i = 0; i < n; i++) {
+			scanf("%lld%lld", &pts[i].x, &pts[i].y);
+			opts[i].x = pts[i].x;
+			opts[i].y = pts[i].y;
+			node d = { pts[i].x,pts[i].y };
+			exi[d] = 1;
+		}
+		sort(pts, pts + n,cmp1);
+		for (int i = 0; i < n; i++) {
+			node d0 = { pts[i].x,pts[i].y };
+			if (mi[d0] == 0)mi[d0] = 1e9;
+			node d1 = { pts[i].x - 1,pts[i].y };
+			node d2 = { pts[i].x,pts[i].y + 1 };
+			if (exi[d1] == 0) {
+				if (cnt(d0, d1) <= mi[d0]) {
+					mi[d0] = cnt(d0, d1);
+					dp[d0] = d1;
+				}
+			}
+			else {
+				if (cnt(d0, dp[d1]) <= mi[d0]) {
+					mi[d0] = cnt(d0, dp[d1]);
+					dp[d0] = dp[d1];
+				}
+			}
+
+			if (exi[d2] == 0) {
+				if (cnt(d0, d2) <= mi[d0]) {
+					mi[d0] = cnt(d0, d2);
+					dp[d0] = d2;
+				}
+			}
+			else {
+				if (cnt(d0, dp[d2]) <= mi[d0]) {
+					mi[d0] = cnt(d0, dp[d2]);
+					dp[d0] = dp[d2];
+				}
+			}
+			//cout << "dp." << d0.x << " . " << d0.y << "=" << dp[d0].x << "." << dp[d0].y << endl;
+
+		}
+		sort(pts, pts + n, cmp2);
+		for (int i = 0; i < n; i++) {
+			node d0 = { pts[i].x,pts[i].y };
+			if (mi[d0] == 0)mi[d0] = 1e9;
+			node d1 = { pts[i].x + 1,pts[i].y };
+			node d2 = { pts[i].x,pts[i].y - 1 };
+			if (exi[d1] == 0) {
+				if (cnt(d0, d1) <= mi[d0]) {
+					mi[d0] = cnt(d0, d1);
+					dp[d0] = d1;
+				}
+			}
+			else {
+				if (cnt(d0, dp[d1]) <= mi[d0]) {
+					mi[d0] = cnt(d0, dp[d1]);
+					dp[d0] = dp[d1];
+				}
+			}
+
+			if (exi[d2] == 0) {
+				if (cnt(d0, d2) <= mi[d0]) {
+					mi[d0] = cnt(d0, d2);
+					dp[d0] = d2;
+				}
+			}
+			else {
+				if (cnt(d0, dp[d2]) <= mi[d0]) {
+					mi[d0] = cnt(d0, dp[d2]);
+					dp[d0] = dp[d2];
+				}
+			}
+		}
+		for (int i = 0; i < n; i++) {
+			printf("%lld %lld\n", dp[opts[i]].x, dp[opts[i]].y);
+		}
+	
+	
+	
+}
+
+
+	
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

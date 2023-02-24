@@ -1,0 +1,192 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">Pchelyonok细节巨多的线性dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">1</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 1582E Pchelyonok and Segmenets<br>
+								题目大意：给一个数组，大小范围为1e5，问能否将其分成k段，每一段的长度分别是k，k-1，k-2，...，1，并且每一段的段和要求严格递增，问k的最大值是多少。<br>
+								<br>
+								由于对于一个k，如果它是合格的，那么k-1也是合格的（只要把第一截去掉就行了），所以k可以用二分取得。因为k段的段长度和本身是k(k+1)/2，所以k的范围实际上在500以内，二分可以直接降低复杂度到个位数。也就是接下来我们还能接受接近1e7的复杂度。<br>
+								Dp的状态转移非常好想，因为段必须是连续的，如果我的第a段的头在pos1的位置，那么我前一段可以选择在1-(pos-1)的任何位置，但是为了贪心，我一定要选择最小的那个，如果用dp[i][j]表示第k段结尾为j（用结尾是方便转移，这个不用再谈了吧）时最小的段和，而且j和j+1都是合格的，那么显然，dp[i][j]=min(dp[i][j],dp[i][j-1])，而判断是否合格，我只要判断dp[i-1][j-len]（len为当前段长）是否小于我现在选择的这一段就够了，如果从1到k每一轮我都能找到至少一个合格的数，那么这个k就是合格的。<br>
+								状态好像很简单？不，细节贼多。<br>
+								首先，根据刚刚的那个方程可以轻易看出，如果dp[i][j]合格，那么dp[i][j+1]也一定是合格的（如果不合格我只要让它等于dp[i][j]就行了），因此不合格的j一定是连续地出现在开头的。<br>
+								开头是哪？倒着的等差数列直接求。<br>
+								那么怎么才是不合格呢？一是我当前的段小于等于dp[i-1][j-len]，理所当然，不过还有二，那就是dp[i-1][j-len]本身就不合格，所以反正横竖都要看，我直接设置不合格的dp值为-1吧。<br>
+								容易发现，如果我进行memset的话这程序是铁t的，因为空间大小是500*1e5，所以我们不能memset，但是这个状态转移其实是不需要memset的，为什么呢？因为k等于1的时候任何一个j都是合格的，而任何一个其他k值都是1推上去的，所以每次都会完全覆盖上次存的值，这也要求每个不合格的-1都不能遗漏地被赋值。<br>
+								如果上一个不合格的话，=dp[i][j-1]的状态转移显然不能轻易去放了，好在一旦第一个j合格之后后面的都算作合格，所以用一个flag来判就完了，这个flag刚好还能用来判最终的结果……<br>
+								这个程序的复杂度是O(log(√n)*√n*n)，但实际上跑不了这么多，至于为什么自己想想吧，完全是归功于二分，如果不用二分的话真的的会t，表面上只是log了一个500以内的数而已，实际上k的大小完全能极大地影响判断函数跑的时间。<br>
+								线性dp的最麻烦的地方也就是细节了，千万要理清思路再写代码。<br>
+								代码：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <stack>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 100005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair<ll,ll>
+#define inc(i,a,n) for(int i=a;i<n;i++)
+#define vset(a,n,m) for(int i=0;i<n;i++)a[i]=m;
+using namespace std;
+ll a[maxn],qzh[maxn],dp[500][maxn];
+bool judge(int k,int n) {
+	if ((1 + k) * k / 2 > n)return false;
+	int start = 0;
+	int tpk = k;
+	for (int i = 1; i <= k; i++) {
+		if (tpk == 0)break;
+		start += tpk;
+		int f = 0;
+		if (i == 1) {
+			f = 1;
+			for (int j = start; j <= n; j++) {
+				if (j == start)
+					dp[1][j] = qzh[j] - qzh[j - tpk];
+				else dp[1][j] = min(dp[1][j-1], qzh[j] - qzh[j - tpk]);
+			}
+		}
+		else for (int j = start; j <= n; j++) {
+			if (dp[i - 1][j - tpk] == -1) {
+				dp[i][j] = -1;
+				continue;
+			}
+			if (qzh[j] - qzh[j - tpk] > dp[i - 1][j - tpk]) {
+				if (f == 0)dp[i][j] = qzh[j] - qzh[j - tpk];
+				else dp[i][j] = min(dp[i][j-1], qzh[j] - qzh[j - tpk]);
+				f = 1;
+				
+			}
+			else {
+				if (f == 0)dp[i][j] = -1;
+				else dp[i][j] = dp[i][j - 1];
+			}
+		}
+		
+		if (f == 0)return false;
+		tpk--;
+	}
+	return true;
+}
+int main() {
+	cfast;
+	int t;
+	cin >> t;
+	while (t--) {
+		int n;
+		cin >> n;
+		qzh[0] = 0;
+		inc(i, 1, n+1) {
+			cin >> a[i];
+			qzh[i] = qzh[i - 1] + a[i];
+		}
+		int left = 1, right = n, ans = 1;
+		while (left <= right) {
+			int mid = (left + right) / 2;
+			if (judge(mid,n)) {
+				ans = max(ans, mid);
+				left = mid + 1;
+			}
+			else {
+				right = mid - 1;
+			}
+		}
+		cout << ans << endl;
+	}
+}
+	
+
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

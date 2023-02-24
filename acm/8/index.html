@@ -1,0 +1,162 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">IncreasedSubarraySums加k个数后最大子段和</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">26</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								题目大意：给予n和x，然后是一个大小为n的数组。<br>
+F(k)表示当你将数组中任意k个数加上x之后的最大子段和，要求输出F(0),F(1),...,F(n)。<br>
+n的范围是5000以内。<br>
+<br>
+范围是5000以内，说明可以接受O（n2）的复杂度，一个数组能够接受这样的复杂度说明什么？<br>
+说明可以求出任意一个子段的子段和。<br>
+此题到此结束。<br>
+首先求前缀和，然后处理出长度为i的最大子段和。<br>
+对于k，讨论子段长度为0-n的情况<br>
+当该子段长度小于k，则加上子段长度*x，否则加上k*x，取结果最大的那个子段。<br>
+与其说是dp不如说是前缀和的应用吧。<br>
+所以说，当子段问题能够接受O（n2）的时候，就别d什么p了，直接暴力吧。<br>
+
+								
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>
+#include <istream>
+#include <map>
+#include <cmath>
+#include <stack>
+#include <set>
+#include <cstring>
+#include <string>
+#define ll long long
+#define maxn 1000005
+#define mdl 1000000007
+#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair<ll,ll>
+#define inc(i,a,n) for(int i=a;i<n;i++)
+#define vset(a,n,m) for(int i=0;i<n;i++)a[i]=m;
+using namespace std;
+ll a[5005],dp[5005][5005],mx[5005],qzh[5005];
+int main() {
+	cfast;
+	int t;
+	cin >> t;
+	while (t--) {
+		int n, x;
+		cin >> n >> x;
+		inc(i, 1, n + 1) {
+			cin >> a[i];
+			qzh[i] = qzh[i - 1] + a[i];
+		}
+		mx[0] = 0;
+		inc(i, 1, n + 1) {
+			mx[i] = -1e9;
+			inc(j, 1, n + 2 - i) {
+				mx[i] = max(mx[i], qzh[j + i-1] - qzh[j - 1]);
+			}
+		}
+		inc(k, 0, n + 1) {
+			ll ans = -1e9;
+			inc(j, 0, n + 1) {
+				if (j <= k)ans = max(ans, mx[j] + j * x);
+				else ans = max(ans, mx[j] + k * x);
+
+			}
+			cout << ans << " ";
+		}
+		cout << endl;
+	}
+}
+/*
+3
+4 12 6 
+*/
+
+	
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

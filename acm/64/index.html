@@ -1,0 +1,195 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">LCMs另一个反演</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">26</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								牛客229749 LCMs<br>
+								题目大意：给一个序列（1e5），数字范围1e6，求每对数的LCM之和。<br>
+								<br>
+								众所周知，lcm(a,b)=a*b/gcd(a,b)，而gcd可以反演，1e6刚好支持类埃筛筛法，于是这题轻松地可以转化为对于1e6内的每个d，求得∑bc，其中b和c是d的倍数。<br>
+								一旦转化成这一步，很容易就能想到能不能使用前缀和来实现，但这样的话要去记录对于每个d的倍数有哪些，空间上不支持，时间上也不支持，但是仅仅是求数对和的话，其实不一定需要记录这么多东西吧。<br>
+								于是这里顺带地推出来一个简单地求数对和的方法，虽然可能仅仅适用于这题：首先记录每个数字出现的个数，然后对于每个d，记录下sum(d)和mul(d)，分别是前缀和和数对和，对于每个d，遍历其倍数，每遍历到一个数字a，就在数对和里加上它造成的值，具体的算法可以手推得到为a(cnt[a]*sum(d)+cnt[a]*(cnt[a]-1)/2)，别忘了每步都要去取模。<br>
+								这样的做法由于将对每个数添加到其因数到对每个因数寻找其倍数，复杂度降低到了埃筛复杂度，同时求得了f(1-n)。<br>
+								之后就是利用f(1-n)反演得到g(1-n)，答案就为∑g(i)/i了。<br>
+								本题虽然也很简单，但是涉及到多次转换，勉强算是个能打的题目。<br>
+								<br>
+								代码：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 200005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(int i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+using namespace std;
+bool is_prime[1000001] = { 1,1 };
+ll prime[1000001];
+ll mu[1000001];
+int getmu(int n) {
+	mu[1] = 1;
+	int cnt = 0;
+	for (int i = 2; i &lt= n; i++) {
+		if (!is_prime[i]) {
+			prime[++cnt] = i;
+			mu[i] = -1;
+		}
+		for (int j = 1; j &lt= cnt && i * prime[j] &lt= n; j++) {
+			is_prime[i * prime[j]] = 1;
+			if (i % prime[j] == 0) { mu[i * prime[j]] = 0; break; }
+			else mu[i * prime[j]] = -mu[i];
+		}
+	}
+	return cnt;
+}
+ll sum[1000005], mul[1000005];
+ll cnt[1000005],ans[1000005];
+ll cpow(ll x, ll n) {
+	ll ans = 1;
+	while (n &gt 0) {
+		if (n & 1) ans = (ans * x) % mdl;
+		x = (x * x) % mdl;
+		n &gt&gt= 1;
+	}
+	return ans;
+}
+int main() {
+	cfast;
+//	cout &lt&lt "okinit";
+	getmu(1000000);
+	int n;
+	cin &gt&gt n;
+	inc(i, 0, n) {
+		ll a;
+		cin &gt&gt a;
+		cnt[a]++;
+	}
+	inc(i, 1, 1000001) {
+		for (int j = i; j &lt= 1000000; j += i) {
+			if (cnt[j] != 0) {
+				mul[i] += j * (cnt[j] * sum[i] %mdl+ cnt[j] * (cnt[j] - 1) / 2%mdl*j%mdl) % mdl;
+			}
+			sum[i] += cnt[j] * j;
+			sum[i] %= mdl;
+		}
+	//	if (mul[i] != 0)cout &lt&lt "mul." &lt&lt i &lt&lt " = " &lt&lt mul[i] &lt&lt endl;
+	}
+	ll ss = 0;
+	inc(i, 1, 1000001) {
+		for (int j = i; j &lt= 1000000; j += i) {
+			ans[i] += mu[j/i] * mul[j] % mdl;
+			ans[i] %= mdl;
+		}
+		ans[i] *= cpow(i, mdl - 2);
+		ans[i] %= mdl;
+	//	if(ans[i]!=0)cout &lt&lt "ans." &lt&lt i &lt&lt " = " &lt&lt ans[i] &lt&lt endl;
+		ss += ans[i];
+		ss %= mdl;
+	}
+	cout &lt&lt ss &lt&lt endl;
+}
+/*
+
+*/
+
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

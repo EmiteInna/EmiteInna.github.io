@@ -1,0 +1,186 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">MEX&Increment线性dp&MEX</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Mar<span>c</span></span> <span class="day">30</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF 1619E Mex and Increments<br>
+								题目大意：给一个大小为N的数组(N范围为2e5)，要求能够使数组的MEX等于i(0&lt=i&lt=n)时最小的操作次数，操作为将数组中的一个数+1，要求输出每个i对应的最小次数，如果不能做到就输出-1。<br>
+								<br>
+								好烦这种MEX的题啊……<br>
+								MEX要求的是整个数组的MEX，可以轻松发现，MEX的大小和顺序无关，所以首先我们将数组排序一下。<br>
+								首先，如果MEX要等于i，那么前面的i个数必须是从0到i-1的数，因此如果前面的数中出现了无法变成这些数的数（即大于他们对应位置应该成为的值的数），那么我就无法得到i，化为代数形式也就是：如果a[i]>i，那么i就无法得到，而且之后的i都无法得到了。<br>
+								那么接下来就要开始讨论如何处理i前面的数才能达到结果了……<br>
+								（少女思考中……）<br>
+								可以想出对于每个i，我们的操作分为两个部分，一部分是将小于i的数通过操作使其形成从0到i-1各有至少一个状态，另一部分是将所有等于i的数+1。其中第二种是没有继承性的，也就是说我在i的时候将多少个i加了1对于i+1并没有任何影响，而第一种操作则是拥有继承性的，因为我要组成0-i，首先我依然要组一次0-(i-1)，也就是说，这是个无后效性的最优子问题！<br>
+								接下来是dp部分，如果说在i-1的时候我们一共需要k次操作来形成0-(i-2)，那么在处理i的时候我们需要来形成0-(i-1)的操作数量就是k+一个数值C，这个数值是将一个不等于i-1的数变为i-1的最小需要的步数，那么如何获得它呢？二分。<br>
+								使用cnt数组记录下原有数组中每个数的数量，如果cnt>=2则意味着这个数可以用来操作（因为自己也要保留一份嘛），在获取数值C时二分搜索到最大的cnt>=2的数，同时将其cnt值减一表示我已经用过一次了。<br>
+								dp只需要一维就行了，表示处理数i时第一部分操作需要的操作量，最后每一位i的答案则是dp[i]+cnt[i]（这个cnt需不需要另行拷贝呢？答案是不需要，原因自己想）。<br>
+								虽然烦，不过还是挺有意思的，这题与其说是dp，不如说模拟意味很重呢。<br>
+								代码：<br>
+								
+
+								
+<pre><code>
+	#define _CRT_SECURE_NO_WARNINGS
+	#include <iostream>
+	#include <algorithm>
+	#include <utility>
+	#include <vector>
+	#include <istream>
+	#include <map>
+	#include <cstring>
+	#include <string>
+	#define ll long long
+	#define maxn 200005
+	#define mdl 998244353
+	#define clr(a,n) for(int i=0;i<n;i++)a[i]=0
+	using namespace std;
+	ll a[maxn],cnt[maxn],dp[maxn],ans[maxn];
+	ll vct[maxn],removed[maxn],to[maxn];
+	int main() {
+		std::ios::sync_with_stdio(false);
+		cin.tie(0);
+		cout.tie(0);
+		ll t;
+		cin >> t;
+		while (t--) {
+			
+			ll n;
+			scanf("%lld", &n);
+			ll siz = 1;
+			for (ll i = 0; i &lt n; i++) {
+				scanf("%lld", &a[i]);
+				cnt[a[i]]++;
+				if (cnt[a[i]] >= 2) {
+					vct[siz++] = a[i];
+				}
+			}
+			sort(a, a + n);
+			ll f = 0;
+			dp[0] = 0;
+			sort(vct+1, vct + siz+1);
+			for (ll i = 0; i &lt= n; i++) {
+				if (i&&a[i - 1] >= i) {
+					f = 1;
+					ans[i] = -1;
+				}
+				if (f == 1) {
+					ans[i] = -1;
+					printf("%lld ", ans[i]);
+					continue;
+				}
+				if (i&&cnt[i - 1] == 0) {
+					ll left = 1, right = siz+1;
+					while (left &lt right - 1) {
+						ll mid = (left + right) / 2;
+						if (vct[mid] >= i)right = mid;
+						else left = mid;
+					}
+					int g = left;
+					while (removed[vct[left]] == 1) {
+						if (to[left] != 0)left = to[left];
+						else
+							left--;
+					}
+					if(left&ltg)to[g] = left;
+					dp[i] = dp[i - 1] + (i - 1 - vct[left]);
+					cnt[vct[left]]--;
+					if (cnt[vct[left]] == 1)removed[vct[left]] = 1;
+				}
+				else dp[i] = dp[i - 1];
+				ans[i] = dp[i] + cnt[i];
+				printf("%lld ", ans[i]);
+			}
+			printf("\n");
+			clr(vct, n+1);
+			clr(cnt, n+1);
+			clr(removed, n+1);
+			clr(to, n+1);
+		}
+	}
+	
+	
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>

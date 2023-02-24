@@ -1,0 +1,221 @@
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>风帆大人的博客</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<link rel="icon" href="../../images/knifesmall.png">
+	</head>
+	<body class="is-preload">
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+
+					<!-- Post -->
+						<article class="box post post-excerpt">
+							<header>
+								<h2><a href="#contents">Tylerstring线段树+dp</a></h2>
+							</header>
+							<div class="info">
+								
+								<span class="date"><span class="month">Apr<span>i</span></span> <span class="day">19</span><span class="year">, 2022</span></span>
+								
+								
+							</div>
+							
+
+							
+							<p>
+								CF1648C Tyler and String<br>
+								大意：给两个数组(2e5)，要求将第一个数组任意排列之后其字典序大小小于第二个，问这样的排列的个数。<br>
+								<br>
+								显然，字典序小于对于每一位来讲，要么第一个数组的第一位就小于第二个数组的第一位，要么第一位上两个数组相等，然后在第二位有同样的区别，以此类推。<br>
+								如果在一位上第一个数组小于第二个的话，那么剩下的数位就可以随意排列了，如果相同的话，就递推到下一位，注意在递推的过程中，我们的数集里实际上损失了一个等于第二个数组当前位置上的数。<br>
+								要想O1或者Ologn地将“小于该位上的数的数量”计算出来，容易想到前缀和，然而由于递推的时候会损失一个数，不适合修改的前缀和无法胜任，这时候就想到了用线段树去维护前缀和，损失一个数时相当于比它大的数的前缀和全部-1。<br>
+								还有另外的细节……由于要求不同排列的个数，所以要去计算数位的重复性，使用通常的算完结果之后再去除以重复数量会返回错误，为什么呢？是因为在递推的时候不能简单地看作仅仅损失了一个数，如果计算重复的话，在这个时候损失的数其实可能是等同于该数数量的数中的任意一个，所以我们需要创建一个adder，每次递推都乘上这个个数，为的是保证所有重复的情况都被计算，这样一来才能在除以总重复次数时返回正确结果。<br>
+								然后还有个特殊情况，当递推到最后数组1和数组2的每一位都相等，而数组2还有剩余，这样的话数组1是更小的，于是要在最后的结果上加上一个1。<br>
+								然后出现了世界名画：Output 998244353 Answer:0  <br>
+								不愧是你，CF。<br>
+								本题其实好像和dp没啥关系啊，不是纯data structure吗……<br>
+								嗯，不过一开始想到这个思路确实是借助dp的思维形式的，所以也加入到全家桶里了，算是比较水的一题1900。<br>
+								<br>
+								代码（没有队友不会写线段树了）：<br>
+								<br>
+<pre><code>
+#define _CRT_SECURE_NO_WARNINGS
+#include &ltiostream&gt
+#include &ltalgorithm&gt
+#include &ltutility&gt
+#include &ltvector&gt
+#include &ltistream&gt
+#include &ltmap&gt
+#include &ltcmath&gt
+#include &ltstack&gt
+#include &ltset&gt
+#include &ltcstring&gt
+#include &ltstring&gt
+#include &ltfstream&gt
+#define ll long long
+#define maxn 200005
+#define mdl 998244353
+#define clr(a,n) for(int i=0;i&ltn;i++)a[i]=0
+#define cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+#define pll pair&ltll,ll&gt
+#define pii pair&ltint,int&gt
+#define inc(i,a,n) for(int i=a;i&ltn;i++)
+#define vset(a,n,m) for(ll i=0;i&ltn;i++)a[i]=m;
+#define endl '\n'
+using namespace std;
+ll fv[maxn], inv[maxn];
+ll cpow(ll x, ll n) {
+	ll ans = 1;
+	while (n &gt 0) {
+		if (n & 1) ans = (ans * x) % mdl;
+		x = (x * x) % mdl;
+		n &gt&gt= 1;
+	}
+	return ans;
+}
+void getf(int n) {
+	ll tmp = 1;
+	inc(i, 1, n + 1) {
+		fv[i] = tmp;
+		tmp *= i + 1;
+		tmp %= mdl;
+	}
+}
+ll a[maxn * 4], temp[maxn], ad[4 * maxn],cnt[maxn];
+void addq(ll o, ll l, ll r,ll x,int ql,int qr) {
+	if (ql &lt= l && r &lt= qr) {
+		a[o] += (r - l + 1) * x;
+		ad[o] += x;
+		return;
+	}
+	int m = (l + r) / 2;
+	int ls = 2 * o, rs = 2 * o + 1;
+	if (ql &lt= m) addq(ls, l, m,x,ql,qr);
+	if (m &lt qr) addq(rs, m + 1, r, x,ql,qr);
+	a[o] = a[ls] + a[rs] + (r - l + 1) * ad[o];
+}
+
+ll query(ll o, ll l, ll r, ll d,ll ql,ll qr) {
+	if (qr == 0)return 0;
+	//cout &lt&lt ql &lt&lt " " &lt&lt qr &lt&lt endl;
+	if (ql &lt= l && r &lt= qr) return a[o] + d * (r - l + 1);
+	ll m = (l + r) / 2;
+	ll ls = 2 * o, rs = 2 * o + 1;
+	ll ret = 0;
+	if (ql &lt= m) ret += query(ls, l, m, d + ad[o],ql,qr);
+	if (m &lt qr) ret += query(rs, m + 1, r, d + ad[o],ql,qr);
+	return ret;
+}
+int main() {
+	fv[0] = 1;
+	int n, m;
+	cin &gt&gt n &gt&gt m;
+	ll cst = 200002;
+	getf(cst);
+	inc(i, 0, n) {
+		ll tmp;
+		cin &gt&gt tmp;
+		cnt[tmp]++;
+		addq(1, 1, cst,1,tmp + 1, cst);
+	}
+	ll res = 0;
+	int f = 0;
+	ll adder = 1;
+	inc(i, 0, m) {
+		
+		ll tmp;
+		cin &gt&gt tmp;
+		if (i &gt= n) {
+			f = 1;
+			continue;
+		}
+		ll les = query(1, 1, cst, 0, tmp, tmp);
+		//  cout &lt&lt "les=" &lt&lt les &lt&lt endl;
+		res += adder*les %mdl* fv[n - i - 1] % mdl;
+		res %= mdl;
+		ll jud = query(1, 1, cst, 0, tmp + 1, tmp + 1) - les;
+		if (jud == 0)break;
+		//  cout &lt&lt "jud=" &lt&lt jud &lt&lt endl;
+		//  cout &lt&lt "adder=" &lt&lt adder &lt&lt endl;
+		// cout &lt&lt "res=" &lt&lt res &lt&lt endl;
+		adder *= jud;
+		adder %= mdl;
+		addq(1, 1, cst, -1, tmp + 1, cst);
+		
+		
+	}
+	inc(i,1,cst+1){
+		if (cnt[i] &gt 1) {
+			res *= cpow(fv[cnt[i]], mdl - 2);
+			res %= mdl;
+		}
+	}
+	ll ans = res + f;
+	ans %= mdl;
+	cout &lt&lt ans;
+}
+
+	
+</code></pre>
+						
+
+								
+							</p>
+							<!-- <a href="#" class="image featured"><img src="images/pic03.gif" alt="" /></a> -->
+							
+						</article>
+
+					
+
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<div id="sidebar">			
+					<h1 id="logo"><a href="https://emiteinna.github.io">EMITEINNA</a></h1>			
+					<section class="box text-style1">
+						<div class="inner">
+							<p>
+								今天也来看我了吗？
+							</p>
+						</div>
+					</section>
+					<section class="box recent-posts">
+						<header>
+							<h2>明天</h2>
+						</header>
+						<ul>
+							<li><a href="#">也请</a></li>
+							<li><a href="#">好好地</a></li>
+							<li><a href="#">来</a></li>
+							<li><a href="#">看我</a></li>
+							<li><a href="#">吧</a></li>
+						</ul>
+					</section>	
+					<ul id="copyright">
+						<li>&copy; EmiteInna.</li><li>模板: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+	
+
+		<!-- Scripts
+		脚本引用 -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>
