@@ -1,0 +1,75 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+#pragma kernel CSClear
+#pragma kernel CSSobel
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+RWTexture2D<float4> SpeedMap;
+RWTexture2D<float4> OriginalNormal;
+float _Threshold;
+float _TexWidth;
+float _TexHeight;
+float _SpeedMapHeight;
+float _SpeedMapWidth;
+float _NormalMapWidth;
+float _NormalMapHeight;
+
+
+float rand(float3 x){
+                return frac(sin(dot(x.xyz,float3(12.9898,78.233,53.539)))*43758.5453);
+            }
+float discretization(float x){
+    if(x<=0)return 0;
+    if(x<=(float)18/256)return (float)18/256;
+    if(x<=(float)32/256)return (float)32/256;
+    if(x<=(float)43/256)return (float)43/256;
+    if(x<=(float)61/256)return (float)61/256;
+    if(x<=(float)82/256)return (float)82/256;
+    if(x<=(float)98/256)return (float)98/256;
+    if(x<=(float)123/256)return (float)123/256;
+    if(x<=(float)140/256)return (float)140/256;
+    if(x<=(float)162/256)return (float)162/256;
+    if(x<=(float)186/256)return (float)186/256;
+    if(x<=(float)205/256)return (float)205/256;
+    if(x<=(float)231/256)return (float)231/256;
+    return 1;
+}
+[numthreads(16,16,2)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+
+    float2 idx=float2(id.x,id.y);
+    float2 texsize=float2(_TexWidth,_TexHeight);
+    float2 speedmapsize=float2(_SpeedMapWidth,_SpeedMapHeight);
+    float2 normalmapsize=float2(_NormalMapWidth,_NormalMapHeight);
+  //  float speed=max(0,SpeedMap[idx*speedmapsize/texsize].r-_Threshold);
+    
+    float speed=max(0,discretization(SpeedMap[id.xy].r)-_Threshold);
+ //  float speed=max(0,SpeedMap[id.xy].r-_Threshold);
+    float move=floor(_TexHeight*speed*speed);
+
+    if(id.y-move>=0)
+        Result[float2(id.x,id.y-move)]=float4(OriginalNormal[id.xy].xy,(float)id.y/_TexHeight,1);
+
+       //Result[float2(id.x,id.y-move)]=float4(OriginalNormal[idx*normalmapsize/texsize].xz,(float)id.y/_TexHeight,1);
+  //  Result[id.xy]=float4(0,0,(float)id.y/_TexHeight,1);
+} 
+[numthreads(16,16,2)]
+void CSClear (uint3 id : SV_DispatchThreadID)
+{
+    Result[id.xy]=float4(0,1,0,0);
+} 
+[numthreads(16,16,2)]
+void CSSobel(uint3 id:SV_DispatchThreadID){
+    float gx=0;
+    gx+=Result[float2(id.x+1,id.y+1)].w;
+    gx+=Result[float2(id.x+1,id.y-1)].w;
+    gx+=Result[float2(id.x-1,id.y+1)].w;
+    gx+=Result[float2(id.x-1,id.y-1)].w;
+    gx+=Result[float2(id.x-1,id.y)].w;
+    gx+=Result[float2(id.x+1,id.y)].w;
+    gx+=Result[float2(id.x,id.y-1)].w;
+    gx+=Result[float2(id.x,id.y+1)].w;
+    if(gx<4)Result[id.xy]=float4(Result[id.xy].xyz,0);
+}
