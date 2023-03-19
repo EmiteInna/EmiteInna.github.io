@@ -1,0 +1,199 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>ACM题解：BookofEvil双向树形dp | EmiteInna</title><meta name="author" content="EmiteInna"><meta name="copyright" content="EmiteInna"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="DP系列做题记录。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ACM题解：BookofEvil双向树形dp">
+<meta property="og:url" content="http://emiteinna.github.io/kuru/ACM/acm043/index.html">
+<meta property="og:site_name" content="EmiteInna">
+<meta property="og:description" content="DP系列做题记录。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://emiteinna.github.io/kuru/image/images/qt01.png">
+<meta property="article:published_time" content="2022-04-06T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-03-19T15:56:03.297Z">
+<meta property="article:author" content="EmiteInna">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://emiteinna.github.io/kuru/image/images/qt01.png"><link rel="shortcut icon" href="/kuru/image/images/knifesmall.png"><link rel="canonical" href="http://emiteinna.github.io/kuru/ACM/acm043/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/kuru/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/kuru/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'ACM题解：BookofEvil双向树形dp',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isToc: true,
+  postUpdate: '2023-03-19 23:56:03'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/kuru/css/cursor.min.css"><meta name="generator" content="Hexo 6.3.0"><link rel="stylesheet" href="\kuru\assets\css\APlayer.min.css" class="aplayer-style-marker">
+<script src="\kuru\assets\js\APlayer.min.js" class="aplayer-script-marker"></script>
+</head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">Loading...</div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+
+if (false) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/kuru/image/images/knifesmall.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/kuru/archives/"><div class="headline">Articles</div><div class="length-num">86</div></a><a href="/kuru/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/kuru/categories/"><div class="headline">Categories</div><div class="length-num">3</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/kuru/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/kuru/archives/"><i class="fa-fw fas fa-archive"></i><span> 文档</span></a></div><div class="menus_item"><a class="site-page" href="/kuru/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/kuru/image/images/qt01.png')"><nav id="nav"><span id="blog-info"><a href="/kuru/" title="EmiteInna"><img class="site-icon" src="/kuru/image/images/knife.png"/><span class="site-name">EmiteInna</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/kuru/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/kuru/archives/"><i class="fa-fw fas fa-archive"></i><span> 文档</span></a></div><div class="menus_item"><a class="site-page" href="/kuru/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">ACM题解：BookofEvil双向树形dp</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2022-04-06T16:00:00.000Z" title="Created 2022-04-07 00:00:00">2022-04-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-03-19T15:56:03.297Z" title="Updated 2023-03-19 23:56:03">2023-03-19</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/kuru/categories/ACM/">ACM</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">Word count:</span><span class="word-count">1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">Reading time:</span><span>4min</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="ACM题解：BookofEvil双向树形dp"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><blockquote>
+<p>把过去和现在的笔记记录也搬了过来，也算是给以后留个念想吧，想想一开始打acm就是图一乐，后来发现这游戏还挺上头的，也算是度过了一段电竞生涯（xs）<br>早些时候的笔记写的好中二，连我自己看着都羞耻。<br>不过，就喜欢这种羞耻的感觉。<br>收录的题目大部分是个人认为质量不错的题目，以DP为主，非DP的题目都用※进行了标识。<br>当然，有些题解思路本身也是源自其他人的，不过除非特殊标注，否则都是用的自己的代码。</p>
+</blockquote>
+
+        <div id="aplayer-HmXdtvfi" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;"></div>
+			  <script>
+				  var options = {"narrow":false,"autoplay":false,"showlrc":0,"mode":"random","mutex":true,"theme":"#e6d0b2","preload":"metadata","listmaxheight":"513px","music":[{"title":"12 Etudes Op.25:No. 11 in A minor - Winter Wind","author":"Vladimir Ashkenazy","url":"/kuru/music/winterwind.wav","pic":""}]};
+				  options.element = document.getElementById("aplayer-HmXdtvfi");
+				  var ap = new APlayer(options);
+			    window.aplayers || (window.aplayers = []);
+				  window.aplayers.push(ap);
+			  </script>
+
+<h1 id="题目大意："><a href="#题目大意：" class="headerlink" title="题目大意："></a>题目大意：</h1><p>CF192D Book of Evil<br>众所周知之前做了道假的双向树形dp，这次这个是真的了……<br>题目大意：给一棵树，有n个节点（1e5），m个被污染的点，一个d值，求树上距离这m个点最远距离不超过d的节点数量。</p>
+<h1 id="解："><a href="#解：" class="headerlink" title="解："></a>解：</h1><blockquote>
+<p>由于一个结点通过子树达到的最远距离可以通过后序遍历轻松得出，而除此之外只有通过父亲的走法，这样走到的最远距离即是先走到父亲结点再走到父亲结点能走到的最远距离对应的路（除了本身所在的路）<br>最为典型的双向树形dp，第一次后序遍历的时候用vector或者优先队列保存下来每一个子树传上来的距离，传完之后进行排序，之后进行一次前序遍历，通过之前保存的距离，先判断是否是原先走过的距离，之后向下推。有个细节就是：前序遍历时，如果子节点已经有值，那么父亲节点必须有大于两个值时才能去转移（否则那个唯一的值肯定是该子节点传上来的），但如果子节点没有值，那么父亲节点即使只有一个值也要传下去，不过其实如果写法足够严谨的话是不需要担心这个问题的。<br>如果用stl的话要注意各种越界问题，如果都照顾到的话这题算是一道水题。</p>
+</blockquote>
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight cpp"><figcaption><span>代码</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _CRT_SECURE_NO_WARNINGS</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;utility&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;istream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;map&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stack&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;set&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ll long long</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> maxn 200005</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> mdl 1000000007</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> clr(a,n) for(int i=0;i&lt;n;i++)a[i]=0</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> cfast std::ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> pll pair<span class="string">&lt;ll,ll&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> inc(i,a,n) for(ll i=a;i&lt;n;i++)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> vset(a,n,m) for(ll i=0;i&lt;n;i++)a[i]=m;</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line">ll ans,d,vis[maxn];</span><br><span class="line">vector&lt;ll&gt; tree[maxn], dp[maxn];</span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">cmp</span><span class="params">(ll l1, ll l2)</span> </span>&#123; <span class="keyword">return</span> l1 &gt; l2; &#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">dfs</span><span class="params">(<span class="type">int</span> n, <span class="type">int</span> dad)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (vis[n] == <span class="number">1</span>)dp[n].<span class="built_in">push_back</span>(<span class="number">0</span>);</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; tree[n].<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">		<span class="type">int</span> son = tree[n][i];</span><br><span class="line">		<span class="keyword">if</span> (son == dad)<span class="keyword">continue</span>;</span><br><span class="line">		<span class="built_in">dfs</span>(son, n);</span><br><span class="line">		<span class="keyword">if</span>(dp[son].<span class="built_in">size</span>())dp[n].<span class="built_in">push_back</span>(dp[son][<span class="number">0</span>]+<span class="number">1</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">sort</span>(dp[n].<span class="built_in">begin</span>(), dp[n].<span class="built_in">end</span>(),cmp);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">dfs2</span><span class="params">(<span class="type">int</span> n, <span class="type">int</span> dad)</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; tree[n].<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">		<span class="type">int</span> son = tree[n][i];</span><br><span class="line">		<span class="keyword">if</span> (son == dad)<span class="keyword">continue</span>;</span><br><span class="line">		<span class="keyword">if</span> (dp[n].<span class="built_in">size</span>() &gt;= <span class="number">2</span>) &#123;</span><br><span class="line">			<span class="keyword">if</span> (dp[son].<span class="built_in">size</span>() &amp;&amp; dp[son][<span class="number">0</span>] + <span class="number">1</span> == dp[n][<span class="number">0</span>]) &#123;</span><br><span class="line">				dp[son].<span class="built_in">push_back</span>(dp[n][<span class="number">1</span>]+<span class="number">1</span>);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span> &#123;</span><br><span class="line">				dp[son].<span class="built_in">push_back</span>(dp[n][<span class="number">0</span>]+<span class="number">1</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span> (dp[n].<span class="built_in">size</span>() &gt;= <span class="number">1</span>&amp;&amp;dp[son].<span class="built_in">size</span>()==<span class="number">0</span>) &#123;</span><br><span class="line">			dp[son].<span class="built_in">push_back</span>(dp[n][<span class="number">0</span>] + <span class="number">1</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">sort</span>(dp[son].<span class="built_in">begin</span>(), dp[son].<span class="built_in">end</span>(),cmp);</span><br><span class="line">		<span class="built_in">dfs2</span>(son, n);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (dp[n][<span class="number">0</span>] &lt;= d)ans++;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	cfast;</span><br><span class="line">	ans = <span class="number">0</span>;</span><br><span class="line">	<span class="type">int</span> n, m;</span><br><span class="line">	cin &gt;&gt; n &gt;&gt; m &gt;&gt; d;</span><br><span class="line">	<span class="built_in">inc</span>(i, <span class="number">0</span>, m) &#123;</span><br><span class="line">		ll mon;</span><br><span class="line">		cin &gt;&gt; mon;</span><br><span class="line">		vis[mon] = <span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">inc</span>(i, <span class="number">0</span>, n - <span class="number">1</span>) &#123;</span><br><span class="line">		ll a, b;</span><br><span class="line">		cin &gt;&gt; a &gt;&gt; b;</span><br><span class="line">		tree[a].<span class="built_in">push_back</span>(b);</span><br><span class="line">		tree[b].<span class="built_in">push_back</span>(a);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">dfs</span>(<span class="number">1</span>, <span class="number">-1</span>);</span><br><span class="line">	<span class="built_in">dfs2</span>(<span class="number">1</span>, <span class="number">-1</span>);</span><br><span class="line">	cout &lt;&lt; ans;</span><br><span class="line">&#125;<span class="comment">//((()</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="https://emiteinna.github.io">EmiteInna</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://emiteinna.github.io">https://emiteinna.github.io</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">此文章版权归EmiteInna所有，多看看吧。</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/kuru/image/images/qt01.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/kuru/ACM/acm042/" title="ACM题解：ColoringBracket分治区间"><img class="cover" src="/kuru/image/images/qt01.png" onerror="onerror=null;src='/kuru/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">ACM题解：ColoringBracket分治区间</div></div></a></div><div class="next-post pull-right"><a href="/kuru/ACM/acm044/" title="ACM题解：StringPainter两次区间dp"><img class="cover" src="/kuru/image/images/qt01.png" onerror="onerror=null;src='/kuru/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">ACM题解：StringPainter两次区间dp</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/kuru/image/images/knifesmall.png" onerror="this.onerror=null;this.src='/kuru/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">EmiteInna</div><div class="author-info__description">和风帆大人一起建立的个人主页，和技术无关的东西估计会放b站上。主要方向是游戏程序、游戏美术和一些渲染部分，什么都做一点，但都不太会。</div></div><div class="card-info-data site-data is-center"><a href="/kuru/archives/"><div class="headline">Articles</div><div class="length-num">86</div></a><a href="/kuru/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/kuru/categories/"><div class="headline">Categories</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/emiteInna"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E5%A4%A7%E6%84%8F%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">题目大意：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%A7%A3%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">解：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-number">3.</span> <span class="toc-text">代码</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/kuru/game/demo4/" title="URP轮子合集"><img src="/kuru/image/images/qt03.jpg" onerror="this.onerror=null;this.src='/kuru/img/404.jpg'" alt="URP轮子合集"/></a><div class="content"><a class="title" href="/kuru/game/demo4/" title="URP轮子合集">URP轮子合集</a><time datetime="2023-03-15T04:34:32.000Z" title="Created 2023-03-15 12:34:32">2023-03-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/kuru/game/demo2/" title="ComputeShader整活-屏幕碎裂剥落效果"><img src="/kuru/image/images/qt03.jpg" onerror="this.onerror=null;this.src='/kuru/img/404.jpg'" alt="ComputeShader整活-屏幕碎裂剥落效果"/></a><div class="content"><a class="title" href="/kuru/game/demo2/" title="ComputeShader整活-屏幕碎裂剥落效果">ComputeShader整活-屏幕碎裂剥落效果</a><time datetime="2023-03-04T04:34:32.000Z" title="Created 2023-03-04 12:34:32">2023-03-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/kuru/game/demo3/" title="游戏图形学数学部分"><img src="/kuru/image/images/qt03.jpg" onerror="this.onerror=null;this.src='/kuru/img/404.jpg'" alt="游戏图形学数学部分"/></a><div class="content"><a class="title" href="/kuru/game/demo3/" title="游戏图形学数学部分">游戏图形学数学部分</a><time datetime="2023-02-24T04:34:32.000Z" title="Created 2023-02-24 12:34:32">2023-02-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/kuru/game/demo1/" title="ComputeShader-URP沙地/雪地上脚印/车辙效果实现"><img src="/kuru/image/images/qt03.jpg" onerror="this.onerror=null;this.src='/kuru/img/404.jpg'" alt="ComputeShader-URP沙地/雪地上脚印/车辙效果实现"/></a><div class="content"><a class="title" href="/kuru/game/demo1/" title="ComputeShader-URP沙地/雪地上脚印/车辙效果实现">ComputeShader-URP沙地/雪地上脚印/车辙效果实现</a><time datetime="2023-02-20T04:34:32.000Z" title="Created 2023-02-20 12:34:32">2023-02-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/kuru/game/thankyouurp/" title="整理URP目前碰到的一些问题"><img src="/kuru/image/images/qt03.jpg" onerror="this.onerror=null;this.src='/kuru/img/404.jpg'" alt="整理URP目前碰到的一些问题"/></a><div class="content"><a class="title" href="/kuru/game/thankyouurp/" title="整理URP目前碰到的一些问题">整理URP目前碰到的一些问题</a><time datetime="2023-02-18T04:34:32.000Z" title="Created 2023-02-18 12:34:32">2023-02-18</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2023 By EmiteInna</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">不必理解，只需感受；不必惊慌，因我在此。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/kuru/js/utils.js"></script><script src="/kuru/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><script id="canvas_nest" defer="defer" color="127,127,127" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

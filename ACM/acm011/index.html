@@ -1,0 +1,201 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>ACM题解：YetAnotherMinimizationProblem正负号数组和绝对值最小化 | EmiteInna</title><meta name="author" content="EmiteInna"><meta name="copyright" content="EmiteInna"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="DP系列做题记录。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ACM题解：YetAnotherMinimizationProblem正负号数组和绝对值最小化">
+<meta property="og:url" content="http://emiteinna.github.io/kuru/ACM/acm011/index.html">
+<meta property="og:site_name" content="EmiteInna">
+<meta property="og:description" content="DP系列做题记录。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://emiteinna.github.io/kuru/image/images/qt01.png">
+<meta property="article:published_time" content="2022-03-29T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-03-19T15:57:07.115Z">
+<meta property="article:author" content="EmiteInna">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://emiteinna.github.io/kuru/image/images/qt01.png"><link rel="shortcut icon" href="/kuru/image/images/knifesmall.png"><link rel="canonical" href="http://emiteinna.github.io/kuru/ACM/acm011/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/kuru/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/kuru/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'ACM题解：YetAnotherMinimizationProblem正负号数组和绝对值最小化',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isToc: true,
+  postUpdate: '2023-03-19 23:57:07'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/kuru/css/cursor.min.css"><meta name="generator" content="Hexo 6.3.0"><link rel="stylesheet" href="\kuru\assets\css\APlayer.min.css" class="aplayer-style-marker">
+<script src="\kuru\assets\js\APlayer.min.js" class="aplayer-script-marker"></script>
+</head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">Loading...</div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+
+if (false) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/kuru/image/images/knifesmall.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/kuru/archives/"><div class="headline">Articles</div><div class="length-num">86</div></a><a href="/kuru/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/kuru/categories/"><div class="headline">Categories</div><div class="length-num">3</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/kuru/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/kuru/archives/"><i class="fa-fw fas fa-archive"></i><span> 文档</span></a></div><div class="menus_item"><a class="site-page" href="/kuru/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/kuru/image/images/qt01.png')"><nav id="nav"><span id="blog-info"><a href="/kuru/" title="EmiteInna"><img class="site-icon" src="/kuru/image/images/knife.png"/><span class="site-name">EmiteInna</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/kuru/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/kuru/archives/"><i class="fa-fw fas fa-archive"></i><span> 文档</span></a></div><div class="menus_item"><a class="site-page" href="/kuru/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">ACM题解：YetAnotherMinimizationProblem正负号数组和绝对值最小化</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2022-03-29T16:00:00.000Z" title="Created 2022-03-30 00:00:00">2022-03-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-03-19T15:57:07.115Z" title="Updated 2023-03-19 23:57:07">2023-03-19</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/kuru/categories/ACM/">ACM</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">Word count:</span><span class="word-count">1.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">Reading time:</span><span>5min</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="ACM题解：YetAnotherMinimizationProblem正负号数组和绝对值最小化"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><blockquote>
+<p>把过去和现在的笔记记录也搬了过来，也算是给以后留个念想吧，想想一开始打acm就是图一乐，后来发现这游戏还挺上头的，也算是度过了一段电竞生涯（xs）<br>早些时候的笔记写的好中二，连我自己看着都羞耻。<br>不过，就喜欢这种羞耻的感觉。<br>收录的题目大部分是个人认为质量不错的题目，以DP为主，非DP的题目都用※进行了标识。<br>当然，有些题解思路本身也是源自其他人的，不过除非特殊标注，否则都是用的自己的代码。</p>
+</blockquote>
+
+        <div id="aplayer-bkvKbjUH" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;"></div>
+			  <script>
+				  var options = {"narrow":false,"autoplay":false,"showlrc":0,"mode":"random","mutex":true,"theme":"#e6d0b2","preload":"metadata","listmaxheight":"513px","music":[{"title":"12 Etudes Op.25:No. 11 in A minor - Winter Wind","author":"Vladimir Ashkenazy","url":"/kuru/music/winterwind.wav","pic":""}]};
+				  options.element = document.getElementById("aplayer-bkvKbjUH");
+				  var ap = new APlayer(options);
+			    window.aplayers || (window.aplayers = []);
+				  window.aplayers.push(ap);
+			  </script>
+
+<h1 id="题目大意："><a href="#题目大意：" class="headerlink" title="题目大意："></a>题目大意：</h1><p>CF 1637D<br>Yet Another Minimization Problem<br>说实话感觉这题我的做法并不是正解，但是简单无脑。<br>题目大意为给定两个长度为n的数组，（n范围为100，数字范围也为100），你可以将他们俩对应位置的数进行交换，交换次数任意，求两个数组分别的数组内两两相加的和的平方和的和的最小值(有点绕)，小列个式子可以发现问题可以转化为将a数组-b数组得到c数组，在c数组的每个数前面标加减号来使得结果的绝对值最小。</p>
+<h1 id="解："><a href="#解：" class="headerlink" title="解："></a>解：</h1><blockquote>
+<p>由于数字范围为100，n也为100，实际上c数组的和最大为10000，最小为-10000，如果用线性dp的话数组为100*20000也就是1e6，完全符合要求，dp[i][j]表示进行到第i个数且和为j的情况，对于一个新的i，状态转移为dp[0][0]&#x3D;1，dp[i][j+ci]&#x3D;dp[i-1][j]和dp[i][j-ci]&#x3D;dp[i-1][j]，最后只要判断dp[i][n]&#x3D;1中n绝对值最小的那个即可。<br>同时对于每一个值记录它对应的是加还是减，求结果的时候还需要用到。<br>为了偷懒不用map，写法看起来有点缺乏观赏性……<br>像这种n等于100且每个n都有两种或多种选择的时候，状压是不可取的，毕竟是2^100嘛，可以注意到最后我们把这个接近2^100的可能性限定在了20000内，这真的是因为数组中数字大小绝对值在100以内吗？真的不是因为一共只有100个数吗，如果a[i]&lt;&#x3D;1e9的时候难道就不行了吗？<br>如果是去离散化，将每步得到的答案用set这种东西储存起来，然后dp……<br>如果a1&#x3D;1,a2&#x3D;2,a3&#x3D;4,…,a100&#x3D;2^101还是寄，目前想不到解法。</p>
+<p>好，Yet Another Minimization Problem 2<br>给定n(1&lt;&#x3D;n&lt;&#x3D;100)，一个数组c<a href="0%3C=c%5Bi%5D%3C=1e9">n</a>，现在可以进行任意次操作，选定i使得c[i]&#x3D;-c[i]，现在要使任意次操作后得到的c数组之和绝对值最小，求该绝对值大小。</p>
+<p>……挺无语的就<br>代码(当然不是问题2)：</p>
+</blockquote>
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight cpp"><figcaption><span>代码</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _CRT_SECURE_NO_WARNINGS</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;utility&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;istream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;map&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ll long long</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> maxn 200005</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> mdl 998244353</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="type">int</span> a[<span class="number">101</span>],b[<span class="number">101</span>],c[<span class="number">101</span>];</span><br><span class="line"><span class="type">int</span> dp[<span class="number">20001</span>][<span class="number">101</span>], track[<span class="number">20001</span>][<span class="number">101</span>];</span><br><span class="line"><span class="type">int</span> v[<span class="number">20001</span>][<span class="number">101</span>];</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	std::ios::<span class="built_in">sync_with_stdio</span>(<span class="literal">false</span>);</span><br><span class="line">	cin.<span class="built_in">tie</span>(<span class="number">0</span>);</span><br><span class="line">	cout.<span class="built_in">tie</span>(<span class="number">0</span>);</span><br><span class="line">	<span class="type">int</span> t;</span><br><span class="line">	cin &gt;&gt; t;</span><br><span class="line">	<span class="keyword">while</span> (t--) &#123;</span><br><span class="line">		<span class="built_in">memset</span>(v, <span class="number">0</span>, <span class="built_in">sizeof</span>(v));</span><br><span class="line">		<span class="type">int</span> n;</span><br><span class="line">		cin &gt;&gt; n;</span><br><span class="line">		ll ans = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">			cin &gt;&gt; a[i];</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">			cin &gt;&gt; b[i];</span><br><span class="line">			c[i] = a[i] - b[i];</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="type">int</span> fina = <span class="number">0</span>, mi = <span class="number">1e9</span>;</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">			<span class="keyword">if</span> (i == <span class="number">0</span>) &#123;</span><br><span class="line">				dp[<span class="number">10000</span> + c[i]][<span class="number">0</span>] = c[i];</span><br><span class="line">				track[<span class="number">10000</span>+c[i]][<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">				dp[<span class="number">10000</span> - c[i]][<span class="number">0</span>] = -c[i];</span><br><span class="line">				track[<span class="number">10000</span> - c[i]][<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">				v[<span class="number">10000</span> + c[i]][<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">				v[<span class="number">10000</span> - c[i]][<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span> &#123;</span><br><span class="line">				<span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt;= <span class="number">20000</span>; j++) &#123;</span><br><span class="line">					<span class="keyword">if</span> (v[j][i - <span class="number">1</span>] == <span class="number">0</span>)<span class="keyword">continue</span>;</span><br><span class="line">					dp[j + c[i]][i] = j<span class="number">-10000</span> + c[i];</span><br><span class="line">					track[j + c[i]][i] = <span class="number">1</span>;</span><br><span class="line">					dp[j - c[i]][i] = j<span class="number">-10000</span> - c[i];</span><br><span class="line">					track[j - c[i]][i] = <span class="number">0</span>;</span><br><span class="line">					v[j + c[i]][i] = <span class="number">1</span>;</span><br><span class="line">					v[j - c[i]][i] = <span class="number">1</span>;</span><br><span class="line">					<span class="keyword">if</span> (i == n - <span class="number">1</span>) &#123;</span><br><span class="line">						<span class="type">int</span> d1 = dp[j + c[i]][i];</span><br><span class="line">						<span class="keyword">if</span> (d1 &lt; <span class="number">0</span>)d1 = -d1;</span><br><span class="line">						<span class="type">int</span> d2 = dp[j - c[i]][i];</span><br><span class="line">						<span class="keyword">if</span> (d2 &lt; <span class="number">0</span>)d2 = -d2;</span><br><span class="line">						<span class="keyword">if</span> (d1 &lt; mi) &#123;</span><br><span class="line">							fina = j + c[i];</span><br><span class="line">							mi = d1;</span><br><span class="line">						&#125;</span><br><span class="line">						<span class="keyword">if</span> (d2 &lt; mi) &#123;</span><br><span class="line">							fina = j - c[i];</span><br><span class="line">							mi = d2;</span><br><span class="line">						&#125;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> i = n - <span class="number">1</span>; i &gt;=<span class="number">0</span>; i--) &#123;</span><br><span class="line">			<span class="comment">//cout &lt;&lt; &quot;when &quot; &lt;&lt; i &lt;&lt; &quot; final=&quot; &lt;&lt; fina-10000 &lt;&lt; endl;</span></span><br><span class="line">			<span class="keyword">if</span> (track[fina][i] == <span class="number">0</span>) &#123;</span><br><span class="line">				<span class="type">int</span> tmp = a[i];</span><br><span class="line">				a[i] = b[i];</span><br><span class="line">				b[i] = tmp;</span><br><span class="line">				fina += c[i];</span><br><span class="line">				<span class="comment">//cout &lt;&lt; &quot;reversed&quot; &lt;&lt; i &lt;&lt; endl;</span></span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span> fina -= c[i];</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">			ans += a[i] * a[i] * (n - <span class="number">1</span>);</span><br><span class="line">			ans += b[i] * b[i] * (n - <span class="number">1</span>);</span><br><span class="line">			<span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; i; j++) &#123;</span><br><span class="line">				ans += <span class="number">2</span>*a[i] * a[j];</span><br><span class="line">				ans += <span class="number">2</span>*b[i] * b[j];</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		cout &lt;&lt; ans &lt;&lt; endl;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="https://emiteinna.github.io">EmiteInna</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://emiteinna.github.io">https://emiteinna.github.io</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">此文章版权归EmiteInna所有，多看看吧。</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/kuru/image/images/qt01.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/kuru/ACM/acm004/" title="ACM题解：NumberString"><img class="cover" src="/kuru/image/images/qt01.png" onerror="onerror=null;src='/kuru/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">ACM题解：NumberString</div></div></a></div><div class="next-post pull-right"><a href="/kuru/ACM/acm012/" title="ACM题解：MEX&amp;Increment线性dp&amp;MEX"><img class="cover" src="/kuru/image/images/qt01.png" onerror="onerror=null;src='/kuru/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">ACM题解：MEX&amp;Increment线性dp&amp;MEX</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/kuru/image/images/knifesmall.png" onerror="this.onerror=null;this.src='/kuru/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">EmiteInna</div><div class="author-info__description">和风帆大人一起建立的个人主页，和技术无关的东西估计会放b站上。主要方向是游戏程序、游戏美术和一些渲染部分，什么都做一点，但都不太会。</div></div><div class="card-info-data site-data is-center"><a href="/kuru/archives/"><div class="headline">Articles</div><div class="length-num">86</div></a><a href="/kuru/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/kuru/categories/"><div class="headline">Categories</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/emiteInna"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E5%A4%A7%E6%84%8F%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">题目大意：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%A7%A3%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">解：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-number">3.</span> <span class="toc-text">代码</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/kuru/game/demo4/" title="URP轮子合集"><img src="/kuru/image/images/qt03.jpg" onerror="this.onerror=null;this.src='/kuru/img/404.jpg'" alt="URP轮子合集"/></a><div class="content"><a class="title" href="/kuru/game/demo4/" title="URP轮子合集">URP轮子合集</a><time datetime="2023-03-15T04:34:32.000Z" title="Created 2023-03-15 12:34:32">2023-03-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/kuru/game/demo2/" title="ComputeShader整活-屏幕碎裂剥落效果"><img src="/kuru/image/images/qt03.jpg" onerror="this.onerror=null;this.src='/kuru/img/404.jpg'" alt="ComputeShader整活-屏幕碎裂剥落效果"/></a><div class="content"><a class="title" href="/kuru/game/demo2/" title="ComputeShader整活-屏幕碎裂剥落效果">ComputeShader整活-屏幕碎裂剥落效果</a><time datetime="2023-03-04T04:34:32.000Z" title="Created 2023-03-04 12:34:32">2023-03-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/kuru/game/demo3/" title="游戏图形学数学部分"><img src="/kuru/image/images/qt03.jpg" onerror="this.onerror=null;this.src='/kuru/img/404.jpg'" alt="游戏图形学数学部分"/></a><div class="content"><a class="title" href="/kuru/game/demo3/" title="游戏图形学数学部分">游戏图形学数学部分</a><time datetime="2023-02-24T04:34:32.000Z" title="Created 2023-02-24 12:34:32">2023-02-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/kuru/game/demo1/" title="ComputeShader-URP沙地/雪地上脚印/车辙效果实现"><img src="/kuru/image/images/qt03.jpg" onerror="this.onerror=null;this.src='/kuru/img/404.jpg'" alt="ComputeShader-URP沙地/雪地上脚印/车辙效果实现"/></a><div class="content"><a class="title" href="/kuru/game/demo1/" title="ComputeShader-URP沙地/雪地上脚印/车辙效果实现">ComputeShader-URP沙地/雪地上脚印/车辙效果实现</a><time datetime="2023-02-20T04:34:32.000Z" title="Created 2023-02-20 12:34:32">2023-02-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/kuru/game/thankyouurp/" title="整理URP目前碰到的一些问题"><img src="/kuru/image/images/qt03.jpg" onerror="this.onerror=null;this.src='/kuru/img/404.jpg'" alt="整理URP目前碰到的一些问题"/></a><div class="content"><a class="title" href="/kuru/game/thankyouurp/" title="整理URP目前碰到的一些问题">整理URP目前碰到的一些问题</a><time datetime="2023-02-18T04:34:32.000Z" title="Created 2023-02-18 12:34:32">2023-02-18</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2023 By EmiteInna</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">不必理解，只需感受；不必惊慌，因我在此。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/kuru/js/utils.js"></script><script src="/kuru/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><script id="canvas_nest" defer="defer" color="127,127,127" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
