@@ -1,0 +1,334 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>SD官方基础案例练习(多图) | EmiteInna</title><meta name="author" content="EmiteInna"><meta name="copyright" content="EmiteInna"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="随着一些练习越来越发现学点PCG的必要性了，相比落地而言，PCG的意义更在于创造性、效果的直观控制以及资源产出效率。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SD官方基础案例练习(多图)">
+<meta property="og:url" content="http://emiteinna.github.io/art/sd/index.html">
+<meta property="og:site_name" content="EmiteInna">
+<meta property="og:description" content="随着一些练习越来越发现学点PCG的必要性了，相比落地而言，PCG的意义更在于创造性、效果的直观控制以及资源产出效率。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/black03.jpg">
+<meta property="article:published_time" content="2023-04-30T02:31:09.000Z">
+<meta property="article:modified_time" content="2023-04-30T05:23:13.698Z">
+<meta property="article:author" content="EmiteInna">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/black03.jpg"><link rel="shortcut icon" href="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/knifesmall.png"><link rel="canonical" href="http://emiteinna.github.io/art/sd/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'SD官方基础案例练习(多图)',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isToc: true,
+  postUpdate: '2023-04-30 13:23:13'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/cursor.min.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">Loading...</div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+
+if (false) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/knifesmall.png" onerror="onerror=null;src='https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">91</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">4</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/black03.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="EmiteInna"><img class="site-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/knife.png"/><span class="site-name">EmiteInna</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">SD官方基础案例练习(多图)</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2023-04-30T02:31:09.000Z" title="Created 2023-04-30 10:31:09">2023-04-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-04-30T05:23:13.698Z" title="Updated 2023-04-30 13:23:13">2023-04-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Art/">Art</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">Word count:</span><span class="word-count">3.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">Reading time:</span><span>11min</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="SD官方基础案例练习(多图)"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><blockquote>
+<p>案例链接：<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=Rsud16glp0U&list=PLB0wXHrWAmCy457vxKM4rQuJ-nvYm9j4M&index=23">https://www.youtube.com/watch?v=Rsud16glp0U&amp;list=PLB0wXHrWAmCy457vxKM4rQuJ-nvYm9j4M&amp;index=23</a></p>
+<p>SD的很多思路其实很简单，关键在于调参，这个过程对审美和美术直觉有一定的要求，希望能保持热情然后多练。</p>
+<p>本篇也算是自己的一个复习吧，可能有一些尚未明白的地方，描述会出问题，希望见谅。</p>
+</blockquote>
+<p>​    </p>
+
+			<script>
+				console.error("SyntaxError: Unexpected token ​ in JSON at position 21");
+			</script>
+
+<h1 id="SD官方案例练习"><a href="#SD官方案例练习" class="headerlink" title="SD官方案例练习"></a>SD官方案例练习</h1><h2 id="第一节-星星"><a href="#第一节-星星" class="headerlink" title="第一节 星星"></a>第一节 星星</h2><h3 id="节点：star"><a href="#节点：star" class="headerlink" title="-节点：star"></a>-节点：star</h3><p>一个星星，可以调节大小和其它参数。</p>
+<h3 id="节点：slope-blur-grayscale"><a href="#节点：slope-blur-grayscale" class="headerlink" title="-节点：slope blur grayscale"></a>-节点：slope blur grayscale</h3><p>非常常用的节点，输入一张图和一张blur map，将原图朝向blur map上的梯度进行模糊，能够轻易地做到directional blur的功能，同时经常用于将自己和自己进行slope blur形成边缘模糊的效果，创造细节，应用范围非常广泛。</p>
+<h3 id="节点：multi-dir-warp-grayscale"><a href="#节点：multi-dir-warp-grayscale" class="headerlink" title="-节点：multi dir warp grayscale"></a>-节点：multi dir warp grayscale</h3><p>按照一张强度图进行多方向的warp，常用于创造细节，创造出的细节不容易破坏原有的细节。</p>
+<h3 id="节点：threshold"><a href="#节点：threshold" class="headerlink" title="-节点：threshold"></a>-节点：threshold</h3><p>平平无奇的二值化。</p>
+<h3 id="节点：edge-detect"><a href="#节点：edge-detect" class="headerlink" title="-节点：edge detect"></a>-节点：edge detect</h3><p>平平无奇的描边，可以控制描边粗细和阈值。</p>
+<h3 id="节点：blur-hq"><a href="#节点：blur-hq" class="headerlink" title="-节点：blur hq"></a>-节点：blur hq</h3><p>高斯模糊</p>
+<h3 id="节点：radial-blur"><a href="#节点：radial-blur" class="headerlink" title="-节点：radial blur"></a>-节点：radial blur</h3><p>旋转模糊</p>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p1001.png" alt="最终效果"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p1002.png" alt="最终效果"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p1003.png" alt="最终效果"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p1004.png" alt="最终效果"></p>
+<p>官方案例解释的非常清楚，主要是对这几个基础节点的一些应用。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p1005.png" alt="最终效果"></p>
+<h2 id="第二节-镜像-斜边-tile"><a href="#第二节-镜像-斜边-tile" class="headerlink" title="第二节 镜像-斜边-tile"></a>第二节 镜像-斜边-tile</h2><h3 id="节点：mirror"><a href="#节点：mirror" class="headerlink" title="-节点：mirror"></a>-节点：mirror</h3><p>镜像，可以选择水平、竖直、中心对称。</p>
+<h3 id="节点：bevel"><a href="#节点：bevel" class="headerlink" title="-节点：bevel"></a>-节点：bevel</h3><p>常用的节点，作用是把黑白交界处做一个斜边，配合threshold可以做到控制线条粗细，这个节点对本来就是斜边的地方会继续进行平滑，从而用distance可以做到把原来的软边变硬，作用非常广泛。</p>
+<h3 id="节点：tile-generator"><a href="#节点：tile-generator" class="headerlink" title="-节点：tile generator"></a>-节点：tile generator</h3><p>用基础形生成阵列，可以控制行列数，位置、角度、大小、亮度等偏移，并可以进行随机打乱。</p>
+<h3 id="节点：swirl"><a href="#节点：swirl" class="headerlink" title="节点：swirl"></a>节点：swirl</h3><p>扭曲</p>
+<h3 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h3><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p2001.png" alt="最终效果"></p>
+<p>视频里用一个字母A通过mirror+bevel+threshold做基本型，然后用tile generator做成一个简单图案，通过控制节点参数可以简单地控制生成的图案。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p2002.png" alt="最终效果"></p>
+<p>（意义不明的模拟）</p>
+<h2 id="第三节-曼荼罗图案"><a href="#第三节-曼荼罗图案" class="headerlink" title="第三节 曼荼罗图案"></a>第三节 曼荼罗图案</h2><h3 id="节点：shape"><a href="#节点：shape" class="headerlink" title="-节点：shape"></a>-节点：shape</h3><p>一个基础形状，有很多款式任君挑选。</p>
+<h3 id="节点：splatter-circular"><a href="#节点：splatter-circular" class="headerlink" title="-节点：splatter circular"></a>-节点：splatter circular</h3><p>将一个图案循环放置，可以控制半径和数量。</p>
+<h3 id="节点：gradient-dynamic"><a href="#节点：gradient-dynamic" class="headerlink" title="-节点：gradient(dynamic)"></a>-节点：gradient(dynamic)</h3><p>常用节点，相当于一个lut，将一个灰度域映射到另一个灰度域的非线性变换，可以做到将连续的图案打乱成离散的图案，相当适合用来做镂空纹样。</p>
+<h3 id="节点：levels"><a href="#节点：levels" class="headerlink" title="-节点：levels"></a>-节点：levels</h3><p>常用节点，上面两个节点可以控制亮部和暗部的变化率（或许可以当成gamma变换理解），下面的节点则是整体亮度的控制。</p>
+<h3 id="示例-2"><a href="#示例-2" class="headerlink" title="示例"></a>示例</h3><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p3001.png" alt="最终效果"></p>
+<p>官方的案例，非常清楚，旋转一个提亮过的paraboloid，用tg捏一个lut映射成黑白镂空的纹样，通过blur+threshold来控制纹样粗细。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p3003.png" alt="最终效果"></p>
+<p>自己捏了个图案，用了没有那么规则的新月来形成了特殊的纹样。</p>
+<h2 id="第四节-图形控制"><a href="#第四节-图形控制" class="headerlink" title="第四节 图形控制"></a>第四节 图形控制</h2><h3 id="节点：anisotropic-blur"><a href="#节点：anisotropic-blur" class="headerlink" title="-节点：anisotropic blur"></a>-节点：anisotropic blur</h3><p>各向异性的模糊，相当于一个多方向的directional blur。</p>
+<h3 id="节点：directional-blur"><a href="#节点：directional-blur" class="headerlink" title="-节点：directional blur"></a>-节点：directional blur</h3><p>向一个方向模糊。</p>
+<h3 id="节点：FXAA"><a href="#节点：FXAA" class="headerlink" title="-节点：FXAA"></a>-节点：FXAA</h3><p>平平无奇的抗锯齿，可以配合blur使用。</p>
+<h3 id="示例-3"><a href="#示例-3" class="headerlink" title="示例"></a>示例</h3><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p4001.png" alt="最终效果"></p>
+<p>一些简单的图形变换效果。</p>
+<h2 id="第五节-笔刷效果"><a href="#第五节-笔刷效果" class="headerlink" title="第五节 笔刷效果"></a>第五节 笔刷效果</h2><h3 id="示例-4"><a href="#示例-4" class="headerlink" title="示例"></a>示例</h3><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p5001.png" alt="最终效果"></p>
+<p>思路：用gradient+gradient(dynamic)形成一个连续的噪声条图，用它来进行multi directional warp来达到竖直上不同强度的变换，用高频噪声做细节，anisotropic noise+blend做出毛刺效果，再用一张渐变图作为强度，通过directional blur做出弯曲的效果。</p>
+<p>思路非常容易理解，做出的效果也非常不错，可以用tile sampler来达到画纸的效果，这里只是简单做了一下。</p>
+<h2 id="第六节-木头"><a href="#第六节-木头" class="headerlink" title="第六节 木头"></a>第六节 木头</h2><h3 id="节点：histogram-range"><a href="#节点：histogram-range" class="headerlink" title="-节点：histogram range"></a>-节点：histogram range</h3><p>调整直方图的范围，调节整个图像的值域</p>
+<h3 id="节点：warp"><a href="#节点：warp" class="headerlink" title="-节点：warp"></a>-节点：warp</h3><p>平平无奇的位移</p>
+<h3 id="示例-5"><a href="#示例-5" class="headerlink" title="示例"></a>示例</h3><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p6001.png" alt="最终效果"></p>
+<p>主要思路：基础是一张anisotropic noise，用tile generator生成的圆点进行warp，并混合上圆点，然后用柏林噪声的warp的扭曲，用gradient dynamic去做一个lut将原来连续的噪声条映射成同样连续但是并不规则的条纹，然后用噪声去做细节，调整结果。</p>
+<p>调参调了一会儿，尽量接近视频里的效果，尤其需要注意一开始的blur和中间的lut，不要让木头的对比度太大或者细节频率太高。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p6002.png" alt="最终效果"></p>
+<h2 id="第七节-滴落效果"><a href="#第七节-滴落效果" class="headerlink" title="第七节 滴落效果"></a>第七节 滴落效果</h2><h3 id="节点：histogram-scan"><a href="#节点：histogram-scan" class="headerlink" title="-节点：histogram scan"></a>-节点：histogram scan</h3><p>一个比较锐的灰度部分提取，和histogram select略有区别</p>
+<h3 id="节点：non-uniform-blur-grayscale"><a href="#节点：non-uniform-blur-grayscale" class="headerlink" title="-节点：non uniform blur grayscale"></a>-节点：non uniform blur grayscale</h3><p>能够控制更多参数的blur，包括强度、各向异性、非均匀性</p>
+<h3 id="示例-6"><a href="#示例-6" class="headerlink" title="示例"></a>示例</h3><p>思路非常简单，用噪声+histogram制作出随机散点，用slope blur进行拖尾，slope的强度决定了拖尾距离，然后用各种模糊和warp来制造细节。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p7001.png" alt="最终效果"></p>
+<p>自己的调参和扩展</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p7002.png" alt="最终效果"></p>
+<p>看起来非常答辩的效果。</p>
+<h2 id="第八节-裂痕"><a href="#第八节-裂痕" class="headerlink" title="第八节 裂痕"></a>第八节 裂痕</h2><h3 id="节点：cross-section"><a href="#节点：cross-section" class="headerlink" title="-节点：cross section"></a>-节点：cross section</h3><p>提取图像频域的某一横截面，非常适合制作裂纹，有多种模式，可以是二值、线性、线条向一边或两边模糊。</p>
+<h3 id="节点：high-pass-grayscale"><a href="#节点：high-pass-grayscale" class="headerlink" title="-节点：high pass grayscale"></a>-节点：high pass grayscale</h3><p>平平无奇的高通滤波</p>
+<h3 id="示例-7"><a href="#示例-7" class="headerlink" title="示例"></a>示例</h3><p>其实看完节点效果整个思路也就出来了，cross section的双向模糊模式创造裂痕，用高通滤波限定范围，threshold二值化，blur和mdwp做细节。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p8001.png" alt="最终效果"></p>
+<p>最终的效果纹样取决于取cross section的图，频率比较高的图产生的裂纹也会比较复杂，反之亦然。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p8002.png" alt="最终效果"></p>
+<h2 id="第九节-高度"><a href="#第九节-高度" class="headerlink" title="第九节 高度"></a>第九节 高度</h2><h3 id="节点：auto-levels"><a href="#节点：auto-levels" class="headerlink" title="-节点：auto levels"></a>-节点：auto levels</h3><p>归一化，把灰度值域扩大到0-1</p>
+<h3 id="示例-8"><a href="#示例-8" class="headerlink" title="示例"></a>示例</h3><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p9001.png" alt="最终效果"></p>
+<p>思路是通过slope blur自己创造出硬边、控制锐利程度，调节颜色的值域并做细节，blur进行滤波，可以做出一些简单的高度效果。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p9002.png" alt="最终效果"></p>
+<h2 id="第十节-Koishi-石头"><a href="#第十节-Koishi-石头" class="headerlink" title="第十节 Koishi 石头"></a>第十节 <del>Koishi</del> 石头</h2><h3 id="节点：cube3d"><a href="#节点：cube3d" class="headerlink" title="-节点：cube3d"></a>-节点：cube3d</h3><p>一个3d的cube图。</p>
+<h3 id="节点：crop"><a href="#节点：crop" class="headerlink" title="-节点：crop"></a>-节点：crop</h3><p>截取图中的特定范围，可以配合transform2D使用。</p>
+<h3 id="示例-9"><a href="#示例-9" class="headerlink" title="示例"></a>示例</h3><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p10001.png" alt="最终效果"></p>
+<p>主要思路：用cube3d做基础型去减一个反转的crystal，用1x1的tile generator控制随机量，auto levels增大坡度，用slope blur+cloud（或者任意比较细的连续噪声）做细节，tile generator然后用crop做提取。</p>
+<p>或者直接用parabloid做基础型，使得tile generator可以直接生成想要的结果。</p>
+<p>看上去还是很简单的。</p>
+<p>不过实际操作的时候会发现这个造型很难入愿捏出来，关键在于噪声添加的细节很容易让边变得过于毛躁从而不适合石头应有的硬边，这里其实可以使用上一节中slope blur自己的方法来增加坡度，也可以在前面用bevel直接给一个坡度（使用之前提到的技巧）。</p>
+<p>把tesellation height拉高，形成了这样的效果，细节待进一步增强。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p10002.png" alt="最终效果"></p>
+<p>用slope blur自己的方法加了坡度，然后用hq去去除一些过大的细节，形成这个效果。</p>
+<h2 id="第十一节-Custom-Node"><a href="#第十一节-Custom-Node" class="headerlink" title="第十一节 Custom Node"></a>第十一节 Custom Node</h2><p>主要节点：input，output</p>
+<p>custom node可以看成一个函数，输入一些东西，输出一些东西，可以在里面调整参数，使用这个可以降低耦合，便于修改，也使得graph更加优雅，秉持优雅是最重要的。</p>
+<p>在graph里导出使用其他graph的节点，然后暴露参数。</p>
+<p>没什么好说的，熟练使用就行。</p>
+<p>如果使用不熟练，回头看看就行。</p>
+<h2 id="第十二节-自定义柱形"><a href="#第十二节-自定义柱形" class="headerlink" title="第十二节 自定义柱形"></a>第十二节 自定义柱形</h2><h3 id="节点：shape-extrude"><a href="#节点：shape-extrude" class="headerlink" title="-节点：shape extrude"></a>-节点：shape extrude</h3><p>平平无奇的挤压</p>
+<h3 id="节点：curve"><a href="#节点：curve" class="headerlink" title="-节点：curve"></a>-节点：curve</h3><p>输入贴图成为一条曲线，可以自行控制曲线，输出一张灰度图。</p>
+<h3 id="示例-10"><a href="#示例-10" class="headerlink" title="示例"></a>示例</h3><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p12001.png" alt="最终效果"></p>
+<p>用自定义的图形去extrude，通过curve控制挤压的曲线。</p>
+<p>说实话并不知道为什么用SD做这个，但是使用起来非常方便。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p12002.png" alt="最终效果"></p>
+<p>莫名其妙的产物。</p>
+<h2 id="第十三节-岩石和山崖"><a href="#第十三节-岩石和山崖" class="headerlink" title="第十三节 岩石和山崖"></a>第十三节 岩石和山崖</h2><h3 id="示例-11"><a href="#示例-11" class="headerlink" title="示例"></a>示例</h3><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p13001.png" alt="最终效果"></p>
+<p>主要思路：用tile generator搞出一堆pyramid，调节参数使其融合在一起，用mdwp进行扰乱，用histogram取特定值域，edge detect描边，融合blend在一起来创造硬边，auto level扩大值域。</p>
+<p>这里的描边的作用很显然，是为了创造出石块之间的缝隙的凹槽，我们可以发现，描边的粗细越粗，凹槽也就越粗。同时凹槽的深度其实是由原来的图的亮度决定的，因为描边乘法把亮度归零了，而原来的亮度越亮归零造成的插值也就越大，所以在自己做的时候，我加了个level提高了原来的亮度再进行blend，从而提升凹槽的深度，不过这个的代价是在高值的部分细节变少了，建议认真调一下参来获得最好的效果。</p>
+<p>如果出现大量的很乱的噪声，那么是fractal sum的roughness问题，调整使其减少。</p>
+<p>拉高了height看看结果，和视频里其实还是有差距的，调参太难了。</p>
+<p>（不同levels下的，第二个加了个AO，好看了一点）</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p13002.png" alt="最终效果"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p13003.png" alt="最终效果"></p>
+<p>之后视频中提到可以用3Dshape代替pyramid或者其它的技术(non uniform direction warp)来自定义形状达到更好的效果，就只能自行探索了。</p>
+<h2 id="第十四节-螺纹和侧壁"><a href="#第十四节-螺纹和侧壁" class="headerlink" title="第十四节 螺纹和侧壁"></a>第十四节 螺纹和侧壁</h2><h3 id="节点：vector-warp"><a href="#节点：vector-warp" class="headerlink" title="-节点：vector warp"></a>-节点：vector warp</h3><p>输入一张彩色图，将rg通道作为变换方向输入进行warp，输入后原有的值域从[0,1]映射到[-1,1]，因此如果要让一个轴不动的话，输入应该是0.5。</p>
+<h3 id="节点：RGBA-Merge"><a href="#节点：RGBA-Merge" class="headerlink" title="-节点：RGBA Merge"></a>-节点：RGBA Merge</h3><p>顾名思义，将四张灰度图合成一张彩色图。</p>
+<h3 id="节点：shape-mapper"><a href="#节点：shape-mapper" class="headerlink" title="节点：shape mapper"></a>节点：shape mapper</h3><p>将一个图形以某些方式映射成别的图形，例如将长条弯曲成圆等等。</p>
+<h3 id="示例-12"><a href="#示例-12" class="headerlink" title="示例"></a>示例</h3><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p14001.png" alt="最终效果"></p>
+<p>这节讲的是一些高级的花纹生成方式，主要是一些节点的使用吧，学会了节点就够了。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p14002.png" alt="最终效果"></p>
+<p>然后又做出来了莫名其妙的东西<del>现代主义艺术</del></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p14003.png" alt="最终效果"></p>
+<h2 id="第十五节-石子街道"><a href="#第十五节-石子街道" class="headerlink" title="第十五节 石子街道"></a>第十五节 石子街道</h2><h3 id="节点：flood-fill-to-gradient"><a href="#节点：flood-fill-to-gradient" class="headerlink" title="-节点：flood fill to gradient"></a>-节点：flood fill to gradient</h3><p>给每一块区域添加gradient，范围判定用的大概是阈值填充的方式。</p>
+<h3 id="节点：flood-fill-to-random"><a href="#节点：flood-fill-to-random" class="headerlink" title="-节点：flood fill to random"></a>-节点：flood fill to random</h3><p>和上一个类似，给每块区域添加不同的颜色，配合上一个可以使得每一块gradient不同。</p>
+<h3 id="节点：quantize"><a href="#节点：quantize" class="headerlink" title="-节点：quantize"></a>-节点：quantize</h3><p>量化节点，可以用于调整或去除色阶。</p>
+<h3 id="示例-13"><a href="#示例-13" class="headerlink" title="示例"></a>示例</h3><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p15001.png" alt="最终效果"></p>
+<p>思路：flood fill to gradient和flood fill to random的作用显然是给每一个砖块去添加不同的方向，圆角tile random2和两个flood节点组成了基本的形状，剩下的noise全部都在添加细节，用不断multiply的方式来更新每个砖块的亮度制作细节。</p>
+<p>因为之前的时候也做过这个，所以用旧节点浅捏了一下。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p15002.png" alt="最终效果"></p>
+<p>效果并不好看，太规整了，强行不规整又容易太歪，看不出是街道的样子，考虑到很多原因还是用tile sampler或者generator做更适合吧（）。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p15003.png" alt="最终效果"></p>
+<p>不规整的样子，比起小路更像是什么星球的表面。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p15004.png" alt="最终效果"></p>
+<p>自己用其它的方法整了一套，但是石头还是没法做到像示范那样规整</p>
+<p>另一个版本（没有用bevel）</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p15005.png" alt="最终效果"></p>
+<p>按教程思路用flood fill to gradient的版本（突然发现自己的SD没有tile random 2…），做了些自己的改动，还是很不一样的（感觉。。不如视频的好看）</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p15006.png" alt="最终效果"></p>
+<h2 id="第十六节-皮革"><a href="#第十六节-皮革" class="headerlink" title="第十六节 皮革"></a>第十六节 皮革</h2><h3 id="示例-14"><a href="#示例-14" class="headerlink" title="示例"></a>示例</h3><p>思路十分简单，用voronois或者triangle grid做基础型模拟皮革表面，用之前描边切边的方法控制细节，添加细节并将其输出到材质，目测难度全在调参。</p>
+<p>然后我发现自己的sd2021版本里没有vonoroi也没有triangle，不做了，换新版本再做qwq</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p16001.png" alt="最终效果"></p>
+<p>其实大可以用别的噪声加slope blur来模拟效果，不过没有voronoi这么可控。</p>
+<h2 id="第十七节-焊接缝"><a href="#第十七节-焊接缝" class="headerlink" title="第十七节 焊接缝"></a>第十七节 焊接缝</h2><h3 id="示例-15"><a href="#示例-15" class="headerlink" title="示例"></a>示例</h3><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p17001.png" alt="最终效果"></p>
+<p>主要思路看图就可以理解，基础是有硬边的图形，通过gradient模拟一个平滑的凹凸，不断重复该图形，可以把结果导出到sp进行绘制。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p17002.png" alt="最终效果"></p>
+<p>姑且还是手写了一个。</p>
+<h2 id="第十八节-喷绘"><a href="#第十八节-喷绘" class="headerlink" title="第十八节 喷绘"></a>第十八节 喷绘</h2><h3 id="示例-16"><a href="#示例-16" class="headerlink" title="示例"></a>示例</h3><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p18001.png" alt="最终效果"></p>
+<p>大概是案例的第一个特效向，思路是旋转一个crystal 2，输出法线做vector，然后用这个vector去位移一个圆饼，用blur和threshold来控制粗细，最后加个non uniform blur来控制整体渐变（细小的部分会变淡，粗的部分不太会受到影响）。非常有实用性的思路（魔法），通过调参可以做出非常丰富的效果。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p18002.png" alt="最终效果"></p>
+<h2 id="第十九节-地毯"><a href="#第十九节-地毯" class="headerlink" title="第十九节 地毯"></a>第十九节 地毯</h2><h3 id="示例-17"><a href="#示例-17" class="headerlink" title="示例"></a>示例</h3><p>思路，cross section搓一个折线，上blur hq捏个变化，然后tile sampler，用mdwp做细节。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p19001.png" alt="最终效果"></p>
+<p>用levels混了一下AO避免整体过黑（毕竟地毯毛也是会透光的）</p>
+<h2 id="第二十节-沙滩"><a href="#第二十节-沙滩" class="headerlink" title="第二十节 沙滩"></a>第二十节 沙滩</h2><h3 id="示例-18"><a href="#示例-18" class="headerlink" title="示例"></a>示例</h3><p>梦结束的地方（bushi）</p>
+<p>思路：用anisotropic noise做基础型，non uniform directional warp来控制形状并且加轨迹拖尾，形成一些白线中间框住渐变黑块的效果，blur控制形状，mdwp加细节，也可以用levels来减少一下黑坑。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p20001.png" alt="最终效果"></p>
+<h2 id="第二十一节-织体"><a href="#第二十一节-织体" class="headerlink" title="第二十一节 织体"></a>第二十一节 织体</h2><h3 id="节点：skew"><a href="#节点：skew" class="headerlink" title="-节点：skew"></a>-节点：skew</h3><p>做一个平行的形变</p>
+<h3 id="示例-19"><a href="#示例-19" class="headerlink" title="示例"></a>示例</h3><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p21001.png" alt="最终效果"></p>
+<p>这节主要在于织体纹样的创建，相当有意思，发挥创造性吧。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p21002.png" alt="最终效果"></p>
+<p>跟着捏了一个样例</p>
+<h2 id="第二十二节-高级技巧"><a href="#第二十二节-高级技巧" class="headerlink" title="第二十二节 高级技巧"></a>第二十二节 高级技巧</h2><h3 id="节点：height-blend"><a href="#节点：height-blend" class="headerlink" title="-节点：height blend"></a>-节点：height blend</h3><p>顾名思义的高度混合，有很多可以调节的参数</p>
+<h3 id="示例-20"><a href="#示例-20" class="headerlink" title="示例"></a>示例</h3><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p22001.png" alt="最终效果"></p>
+<p>这节其实没什么新节点，主要是调参，最后用了一个height blend，尽量多调试一下，建议下载官方提供的sbs雪山进行一个学习，能够学到挺多的，也让我进一步认识到了SD的上限所在还是非常遥远，要用好SD需要非常强大的美术直觉，而这并不是一朝一夕可以达成的。</p>
+<h2 id="第二十三节-纺织纹样"><a href="#第二十三节-纺织纹样" class="headerlink" title="第二十三节 纺织纹样"></a>第二十三节 纺织纹样</h2><h3 id="示例-21"><a href="#示例-21" class="headerlink" title="示例"></a>示例</h3><p>主要思路：用tile sampler复制fiber，操作ts的rotation map和mask map功能制作纹样，和底纹合体，然后用bevel和mdwp制作梯度和细节。</p>
+<p>我的版本没有alveolus，用tile generator做了一个（没那么密是因为两个tile开的比较小，实际上会发现细节低下的情况下开大了很容易产生摩尔纹，需要用滤波去消除掉，得不偿失），细节肉眼可见的差，之后再去进行改进。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/arts/p23001.png" alt="最终效果"></p>
+<h2 id="小结（暂时）"><a href="#小结（暂时）" class="headerlink" title="小结（暂时）"></a>小结（暂时）</h2><p>要是细究下去SD的每个节点需要用到很多数字图像处理的知识，而SD本身作为美术PCG软件又对使用者的审美又很高的要求（相当需要直觉）。作为生产贴图的最实用的工具之一，SD是有必要一直了解练习下去的，最后能连出来一个好看的纹理其实也还是非常有成就感的，现在才只是刚刚决心深入学习，希望大家入坑以后都不会放弃。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="https://emiteinna.github.io">EmiteInna</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://emiteinna.github.io">https://emiteinna.github.io</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">此文章版权归EmiteInna所有，多看看吧。</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/black03.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/game/demo8/" title="UnityURPshader光照部分学习分析（下）-ShadowCaster和Depthnormals"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/qt03.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">UnityURPshader光照部分学习分析（下）-ShadowCaster和Depthnormals</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/knifesmall.png" onerror="this.onerror=null;this.src='https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">EmiteInna</div><div class="author-info__description">和风帆大人一起建立的个人主页，和技术无关的东西估计会放b站上。主要方向是游戏程序、游戏美术和一些渲染部分，什么都做一点，但都不太会。</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">91</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/emiteinna"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SD%E5%AE%98%E6%96%B9%E6%A1%88%E4%BE%8B%E7%BB%83%E4%B9%A0"><span class="toc-number">1.</span> <span class="toc-text">SD官方案例练习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E8%8A%82-%E6%98%9F%E6%98%9F"><span class="toc-number">1.1.</span> <span class="toc-text">第一节 星星</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Astar"><span class="toc-number">1.1.1.</span> <span class="toc-text">-节点：star</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Aslope-blur-grayscale"><span class="toc-number">1.1.2.</span> <span class="toc-text">-节点：slope blur grayscale</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Amulti-dir-warp-grayscale"><span class="toc-number">1.1.3.</span> <span class="toc-text">-节点：multi dir warp grayscale</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Athreshold"><span class="toc-number">1.1.4.</span> <span class="toc-text">-节点：threshold</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Aedge-detect"><span class="toc-number">1.1.5.</span> <span class="toc-text">-节点：edge detect</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Ablur-hq"><span class="toc-number">1.1.6.</span> <span class="toc-text">-节点：blur hq</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Aradial-blur"><span class="toc-number">1.1.7.</span> <span class="toc-text">-节点：radial blur</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.1.8.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E8%8A%82-%E9%95%9C%E5%83%8F-%E6%96%9C%E8%BE%B9-tile"><span class="toc-number">1.2.</span> <span class="toc-text">第二节 镜像-斜边-tile</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Amirror"><span class="toc-number">1.2.1.</span> <span class="toc-text">-节点：mirror</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Abevel"><span class="toc-number">1.2.2.</span> <span class="toc-text">-节点：bevel</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Atile-generator"><span class="toc-number">1.2.3.</span> <span class="toc-text">-节点：tile generator</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Aswirl"><span class="toc-number">1.2.4.</span> <span class="toc-text">节点：swirl</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-1"><span class="toc-number">1.2.5.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E8%8A%82-%E6%9B%BC%E8%8D%BC%E7%BD%97%E5%9B%BE%E6%A1%88"><span class="toc-number">1.3.</span> <span class="toc-text">第三节 曼荼罗图案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Ashape"><span class="toc-number">1.3.1.</span> <span class="toc-text">-节点：shape</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Asplatter-circular"><span class="toc-number">1.3.2.</span> <span class="toc-text">-节点：splatter circular</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Agradient-dynamic"><span class="toc-number">1.3.3.</span> <span class="toc-text">-节点：gradient(dynamic)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Alevels"><span class="toc-number">1.3.4.</span> <span class="toc-text">-节点：levels</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-2"><span class="toc-number">1.3.5.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E8%8A%82-%E5%9B%BE%E5%BD%A2%E6%8E%A7%E5%88%B6"><span class="toc-number">1.4.</span> <span class="toc-text">第四节 图形控制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Aanisotropic-blur"><span class="toc-number">1.4.1.</span> <span class="toc-text">-节点：anisotropic blur</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Adirectional-blur"><span class="toc-number">1.4.2.</span> <span class="toc-text">-节点：directional blur</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9AFXAA"><span class="toc-number">1.4.3.</span> <span class="toc-text">-节点：FXAA</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-3"><span class="toc-number">1.4.4.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E8%8A%82-%E7%AC%94%E5%88%B7%E6%95%88%E6%9E%9C"><span class="toc-number">1.5.</span> <span class="toc-text">第五节 笔刷效果</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-4"><span class="toc-number">1.5.1.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E8%8A%82-%E6%9C%A8%E5%A4%B4"><span class="toc-number">1.6.</span> <span class="toc-text">第六节 木头</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Ahistogram-range"><span class="toc-number">1.6.1.</span> <span class="toc-text">-节点：histogram range</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Awarp"><span class="toc-number">1.6.2.</span> <span class="toc-text">-节点：warp</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-5"><span class="toc-number">1.6.3.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%83%E8%8A%82-%E6%BB%B4%E8%90%BD%E6%95%88%E6%9E%9C"><span class="toc-number">1.7.</span> <span class="toc-text">第七节 滴落效果</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Ahistogram-scan"><span class="toc-number">1.7.1.</span> <span class="toc-text">-节点：histogram scan</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Anon-uniform-blur-grayscale"><span class="toc-number">1.7.2.</span> <span class="toc-text">-节点：non uniform blur grayscale</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-6"><span class="toc-number">1.7.3.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AB%E8%8A%82-%E8%A3%82%E7%97%95"><span class="toc-number">1.8.</span> <span class="toc-text">第八节 裂痕</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Across-section"><span class="toc-number">1.8.1.</span> <span class="toc-text">-节点：cross section</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Ahigh-pass-grayscale"><span class="toc-number">1.8.2.</span> <span class="toc-text">-节点：high pass grayscale</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-7"><span class="toc-number">1.8.3.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B9%9D%E8%8A%82-%E9%AB%98%E5%BA%A6"><span class="toc-number">1.9.</span> <span class="toc-text">第九节 高度</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Aauto-levels"><span class="toc-number">1.9.1.</span> <span class="toc-text">-节点：auto levels</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-8"><span class="toc-number">1.9.2.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E8%8A%82-Koishi-%E7%9F%B3%E5%A4%B4"><span class="toc-number">1.10.</span> <span class="toc-text">第十节 Koishi 石头</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Acube3d"><span class="toc-number">1.10.1.</span> <span class="toc-text">-节点：cube3d</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Acrop"><span class="toc-number">1.10.2.</span> <span class="toc-text">-节点：crop</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-9"><span class="toc-number">1.10.3.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E4%B8%80%E8%8A%82-Custom-Node"><span class="toc-number">1.11.</span> <span class="toc-text">第十一节 Custom Node</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E4%BA%8C%E8%8A%82-%E8%87%AA%E5%AE%9A%E4%B9%89%E6%9F%B1%E5%BD%A2"><span class="toc-number">1.12.</span> <span class="toc-text">第十二节 自定义柱形</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Ashape-extrude"><span class="toc-number">1.12.1.</span> <span class="toc-text">-节点：shape extrude</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Acurve"><span class="toc-number">1.12.2.</span> <span class="toc-text">-节点：curve</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-10"><span class="toc-number">1.12.3.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E4%B8%89%E8%8A%82-%E5%B2%A9%E7%9F%B3%E5%92%8C%E5%B1%B1%E5%B4%96"><span class="toc-number">1.13.</span> <span class="toc-text">第十三节 岩石和山崖</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-11"><span class="toc-number">1.13.1.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E5%9B%9B%E8%8A%82-%E8%9E%BA%E7%BA%B9%E5%92%8C%E4%BE%A7%E5%A3%81"><span class="toc-number">1.14.</span> <span class="toc-text">第十四节 螺纹和侧壁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Avector-warp"><span class="toc-number">1.14.1.</span> <span class="toc-text">-节点：vector warp</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9ARGBA-Merge"><span class="toc-number">1.14.2.</span> <span class="toc-text">-节点：RGBA Merge</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Ashape-mapper"><span class="toc-number">1.14.3.</span> <span class="toc-text">节点：shape mapper</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-12"><span class="toc-number">1.14.4.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E4%BA%94%E8%8A%82-%E7%9F%B3%E5%AD%90%E8%A1%97%E9%81%93"><span class="toc-number">1.15.</span> <span class="toc-text">第十五节 石子街道</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Aflood-fill-to-gradient"><span class="toc-number">1.15.1.</span> <span class="toc-text">-节点：flood fill to gradient</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Aflood-fill-to-random"><span class="toc-number">1.15.2.</span> <span class="toc-text">-节点：flood fill to random</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Aquantize"><span class="toc-number">1.15.3.</span> <span class="toc-text">-节点：quantize</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-13"><span class="toc-number">1.15.4.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E5%85%AD%E8%8A%82-%E7%9A%AE%E9%9D%A9"><span class="toc-number">1.16.</span> <span class="toc-text">第十六节 皮革</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-14"><span class="toc-number">1.16.1.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E4%B8%83%E8%8A%82-%E7%84%8A%E6%8E%A5%E7%BC%9D"><span class="toc-number">1.17.</span> <span class="toc-text">第十七节 焊接缝</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-15"><span class="toc-number">1.17.1.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E5%85%AB%E8%8A%82-%E5%96%B7%E7%BB%98"><span class="toc-number">1.18.</span> <span class="toc-text">第十八节 喷绘</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-16"><span class="toc-number">1.18.1.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E4%B9%9D%E8%8A%82-%E5%9C%B0%E6%AF%AF"><span class="toc-number">1.19.</span> <span class="toc-text">第十九节 地毯</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-17"><span class="toc-number">1.19.1.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E5%8D%81%E8%8A%82-%E6%B2%99%E6%BB%A9"><span class="toc-number">1.20.</span> <span class="toc-text">第二十节 沙滩</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-18"><span class="toc-number">1.20.1.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E8%8A%82-%E7%BB%87%E4%BD%93"><span class="toc-number">1.21.</span> <span class="toc-text">第二十一节 织体</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Askew"><span class="toc-number">1.21.1.</span> <span class="toc-text">-节点：skew</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-19"><span class="toc-number">1.21.2.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E8%8A%82-%E9%AB%98%E7%BA%A7%E6%8A%80%E5%B7%A7"><span class="toc-number">1.22.</span> <span class="toc-text">第二十二节 高级技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%EF%BC%9Aheight-blend"><span class="toc-number">1.22.1.</span> <span class="toc-text">-节点：height blend</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-20"><span class="toc-number">1.22.2.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%89%E8%8A%82-%E7%BA%BA%E7%BB%87%E7%BA%B9%E6%A0%B7"><span class="toc-number">1.23.</span> <span class="toc-text">第二十三节 纺织纹样</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-21"><span class="toc-number">1.23.1.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93%EF%BC%88%E6%9A%82%E6%97%B6%EF%BC%89"><span class="toc-number">1.24.</span> <span class="toc-text">小结（暂时）</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/art/sd/" title="SD官方基础案例练习(多图)"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/black03.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="SD官方基础案例练习(多图)"/></a><div class="content"><a class="title" href="/art/sd/" title="SD官方基础案例练习(多图)">SD官方基础案例练习(多图)</a><time datetime="2023-04-30T02:31:09.000Z" title="Created 2023-04-30 10:31:09">2023-04-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/game/demo8/" title="UnityURPshader光照部分学习分析（下）-ShadowCaster和Depthnormals"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/qt03.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="UnityURPshader光照部分学习分析（下）-ShadowCaster和Depthnormals"/></a><div class="content"><a class="title" href="/game/demo8/" title="UnityURPshader光照部分学习分析（下）-ShadowCaster和Depthnormals">UnityURPshader光照部分学习分析（下）-ShadowCaster和Depthnormals</a><time datetime="2023-04-11T06:54:09.000Z" title="Created 2023-04-11 14:54:09">2023-04-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/game/demo7/" title="UnityURPshader光照部分学习分析（中）-全局光照和阴影雾效"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/qt03.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="UnityURPshader光照部分学习分析（中）-全局光照和阴影雾效"/></a><div class="content"><a class="title" href="/game/demo7/" title="UnityURPshader光照部分学习分析（中）-全局光照和阴影雾效">UnityURPshader光照部分学习分析（中）-全局光照和阴影雾效</a><time datetime="2023-04-09T06:09:09.000Z" title="Created 2023-04-09 14:09:09">2023-04-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/game/demo6/" title="UnityURPshader光照部分学习分析（上）-基本结构"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/qt03.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="UnityURPshader光照部分学习分析（上）-基本结构"/></a><div class="content"><a class="title" href="/game/demo6/" title="UnityURPshader光照部分学习分析（上）-基本结构">UnityURPshader光照部分学习分析（上）-基本结构</a><time datetime="2023-04-08T04:58:59.000Z" title="Created 2023-04-08 12:58:59">2023-04-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/game/demo5/" title="游戏向参考链接目录"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://emiteinnakuru.oss-cn-shanghai.aliyuncs.com/image/images/qt03.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="游戏向参考链接目录"/></a><div class="content"><a class="title" href="/game/demo5/" title="游戏向参考链接目录">游戏向参考链接目录</a><time datetime="2023-03-22T04:58:59.000Z" title="Created 2023-03-22 12:58:59">2023-03-22</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2023 By EmiteInna</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">不必理解，只需感受；不必惊慌，因我在此。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><div class="js-pjax"></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><script id="canvas_nest" defer="defer" color="127,127,127" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
